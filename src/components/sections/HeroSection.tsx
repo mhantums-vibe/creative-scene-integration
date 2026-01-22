@@ -80,7 +80,7 @@ export function HeroSection() {
 
             {/* Stats */}
             <motion.div
-              className="grid grid-cols-3 gap-8 mt-12 pt-8 border-t border-white/10"
+              className="grid grid-cols-3 gap-4 sm:gap-8 mt-8 lg:mt-12 pt-6 lg:pt-8 border-t border-white/20"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
@@ -90,9 +90,9 @@ export function HeroSection() {
                 { value: "150+", label: "Happy Clients" },
                 { value: "8+", label: "Years Experience" },
               ].map((stat) => (
-                <div key={stat.label}>
-                  <div className="text-2xl md:text-3xl font-bold text-white">{stat.value}</div>
-                  <div className="text-sm text-white/50">{stat.label}</div>
+                <div key={stat.label} className="text-center lg:text-left">
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">{stat.value}</div>
+                  <div className="text-xs sm:text-sm text-white/70 mt-1">{stat.label}</div>
                 </div>
               ))}
             </motion.div>
