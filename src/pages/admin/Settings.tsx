@@ -14,6 +14,7 @@ interface SiteSettings {
   site_tagline: string;
   logo_url: string | null;
   banner_url: string | null;
+  hero_banner_url: string | null;
 }
 
 export default function AdminSettings() {
@@ -23,6 +24,7 @@ export default function AdminSettings() {
     site_tagline: "",
     logo_url: null,
     banner_url: null,
+    hero_banner_url: null,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -45,6 +47,7 @@ export default function AdminSettings() {
         site_tagline: settingsMap.site_tagline || "Innovative IT Solutions",
         logo_url: settingsMap.logo_url || null,
         banner_url: settingsMap.banner_url || null,
+        hero_banner_url: settingsMap.hero_banner_url || null,
       });
     } catch (error) {
       console.error("Error fetching settings:", error);
@@ -84,6 +87,7 @@ export default function AdminSettings() {
         { key: "site_tagline", value: settings.site_tagline },
         { key: "logo_url", value: settings.logo_url },
         { key: "banner_url", value: settings.banner_url },
+        { key: "hero_banner_url", value: settings.hero_banner_url },
       ];
 
       for (const update of updates) {
@@ -175,7 +179,13 @@ export default function AdminSettings() {
               onUpload={uploadImage}
             />
             <ImageUpload
-              label="Banner Image"
+              label="Hero Banner"
+              value={settings.hero_banner_url}
+              onChange={(url) => setSettings({ ...settings, hero_banner_url: url })}
+              onUpload={uploadImage}
+            />
+            <ImageUpload
+              label="About Banner"
               value={settings.banner_url}
               onChange={(url) => setSettings({ ...settings, banner_url: url })}
               onUpload={uploadImage}
