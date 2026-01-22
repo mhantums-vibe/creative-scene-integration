@@ -5,8 +5,20 @@ import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
+import { BookingDialog } from "@/components/booking/BookingDialog";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export function HeroSection() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleBookingClick = () => {
+    if (!user) {
+      navigate("/login");
+    }
+  };
+
   return (
     <section id="home" className="relative min-h-screen hero-section overflow-hidden pt-16 lg:pt-20">
       <Spotlight
@@ -47,13 +59,22 @@ export function HeroSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="hero" size="xl" className="group">
-                Start Your Project
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button variant="heroOutline" size="xl" className="group">
+              {user ? (
+                <BookingDialog>
+                  <Button variant="hero" size="xl" className="group">
+                    Book an Appointment
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </BookingDialog>
+              ) : (
+                <Button variant="hero" size="xl" className="group" onClick={handleBookingClick}>
+                  Start Your Project
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              )}
+              <Button variant="heroOutline" size="xl" className="group" onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}>
                 <Play className="w-5 h-5" />
-                Watch Demo
+                View Services
               </Button>
             </div>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { User, Package, Settings, LogOut, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { User, Package, Settings, LogOut, Clock, CheckCircle, XCircle, Loader2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { BookingDialog } from "@/components/booking/BookingDialog";
+import { BookingsList } from "@/components/dashboard/BookingsList";
 
 interface Profile {
   id: string;
@@ -29,11 +31,22 @@ interface Order {
   created_at: string;
 }
 
+interface Booking {
+  id: string;
+  service_name: string;
+  booking_date: string;
+  booking_time: string;
+  status: string;
+  notes: string | null;
+  created_at: string;
+}
+
 const Dashboard = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [formData, setFormData] = useState({
     full_name: "",
@@ -45,6 +58,7 @@ const Dashboard = () => {
     if (user) {
       fetchProfile();
       fetchOrders();
+      fetchBookings();
     }
   }, [user]);
 
@@ -74,6 +88,18 @@ const Dashboard = () => {
 
     if (data) {
       setOrders(data);
+    }
+  };
+
+  const fetchBookings = async () => {
+    const { data, error } = await supabase
+      .from("bookings")
+      .select("*")
+      .eq("user_id", user?.id)
+      .order("booking_date", { ascending: false });
+
+    if (data) {
+      setBookings(data);
     }
   };
 
@@ -175,10 +201,14 @@ const Dashboard = () => {
           <p className="text-muted-foreground mb-8">Manage your profile and view your orders</p>
 
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsList className="grid w-full max-w-lg grid-cols-3">
               <TabsTrigger value="profile" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Profile
+              </TabsTrigger>
+              <TabsTrigger value="bookings" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Bookings
               </TabsTrigger>
               <TabsTrigger value="orders" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
@@ -254,6 +284,40 @@ const Dashboard = () => {
                       {isUpdating ? "Updating..." : "Update Profile"}
                     </Button>
                   </form>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Bookings Tab */}
+            <TabsContent value="bookings">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Calendar className="h-5 w-5" />
+                      Your Bookings
+                    </CardTitle>
+                    <CardDescription>
+                      View and manage your appointment bookings
+                    </CardDescription>
+                  </div>
+                  <BookingDialog onSuccess={fetchBookings}>
+                    <Button variant="hero" size="sm">
+                      New Booking
+                    </Button>
+                  </BookingDialog>
+                </CardHeader>
+                <CardContent>
+                  <BookingsList 
+                    bookings={bookings} 
+                    emptyAction={
+                      <BookingDialog onSuccess={fetchBookings}>
+                        <Button variant="hero">
+                          Book an Appointment
+                        </Button>
+                      </BookingDialog>
+                    }
+                  />
                 </CardContent>
               </Card>
             </TabsContent>

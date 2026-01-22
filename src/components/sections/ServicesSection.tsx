@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { BookingDialog } from "@/components/booking/BookingDialog";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const services = [
   {
@@ -70,6 +73,20 @@ const itemVariants = {
 };
 
 export function ServicesSection() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const getServiceValue = (title: string) => {
+    const mapping: Record<string, string> = {
+      "Website Development": "website-development",
+      "App Development": "app-development",
+      "Hosting & Domain": "hosting-domain",
+      "Graphic Design": "graphic-design",
+      "Video Editing": "video-editing",
+      "IT Security": "it-security",
+    };
+    return mapping[title] || "website-development";
+  };
   return (
     <section id="services" className="py-24 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -128,10 +145,23 @@ export function ServicesSection() {
                 </div>
 
                 {/* CTA */}
-                <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80">
-                  Learn More
-                  <ArrowRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
-                </Button>
+                {user ? (
+                  <BookingDialog defaultService={getServiceValue(service.title)}>
+                    <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80">
+                      Book Now
+                      <ArrowRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
+                    </Button>
+                  </BookingDialog>
+                ) : (
+                  <Button 
+                    variant="ghost" 
+                    className="group/btn p-0 h-auto text-primary hover:text-primary/80"
+                    onClick={() => navigate("/login")}
+                  >
+                    Get Started
+                    <ArrowRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
+                  </Button>
+                )}
               </Card>
             </motion.div>
           ))}
