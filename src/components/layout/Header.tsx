@@ -42,7 +42,7 @@ export function Header() {
             </div>
             <span className="text-xl font-bold">
               <span className="text-white">Yess</span>
-              <span className="text-destructive">Bangal</span>
+              <span className="text-primary">Bangal</span>
             </span>
           </motion.a>
 
