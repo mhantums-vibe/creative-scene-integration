@@ -4,13 +4,15 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdmin } from "@/hooks/useAdmin";
 
+import { Link } from "react-router-dom";
+
 const navItems = [
   { name: "Home", href: "#home" },
   { name: "Services", href: "#services" },
   { name: "About", href: "#about" },
   { name: "Portfolio", href: "#portfolio" },
   { name: "Testimonials", href: "#testimonials" },
-  { name: "Careers", href: "/careers" },
+  { name: "Careers", href: "/careers", isRoute: true },
   { name: "Contact", href: "#contact" },
 ];
 
@@ -41,18 +43,50 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item, index) => (
-              <motion.a
-                key={item.name}
-                href={item.href}
-                className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors relative group"
+              item.isRoute ? (
+                <motion.div
+                  key={item.name}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <Link
+                    to={item.href}
+                    className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors relative group inline-block"
+                  >
+                    {item.name}
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4" />
+                  </Link>
+                </motion.div>
+              ) : (
+                <motion.a
+                  key={item.name}
+                  href={item.href}
+                  className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors relative group"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  {item.name}
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4" />
+                </motion.a>
+              )
+            ))}
+            {isAdmin && (
+              <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: navItems.length * 0.1 }}
               >
-                {item.name}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4" />
-              </motion.a>
-            ))}
+                <Link
+                  to="/admin"
+                  className="px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors relative group inline-block"
+                >
+                  Admin
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4" />
+                </Link>
+              </motion.div>
+            )}
           </nav>
 
           {/* Desktop CTA */}
@@ -94,15 +128,35 @@ export function Header() {
             <div className="container mx-auto px-4 py-4">
               <nav className="flex flex-col gap-2">
                 {navItems.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                  item.isRoute ? (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className="px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ) : (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      className="px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </a>
+                  )
+                ))}
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="px-4 py-3 text-primary hover:text-primary/80 hover:bg-white/5 rounded-lg transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {item.name}
-                  </a>
-                ))}
+                    Admin
+                  </Link>
+                )}
                 <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/10">
                   <Button variant="heroOutline" className="w-full" asChild>
                     <a href="/login">Login</a>
