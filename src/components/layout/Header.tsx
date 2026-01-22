@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdmin } from "@/hooks/useAdmin";
-
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Link } from "react-router-dom";
 
 const navItems = [
@@ -19,6 +19,7 @@ const navItems = [
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAdmin } = useAdmin();
+  const { settings } = useSiteSettings();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-accent/95 backdrop-blur-md border-b border-white/10">
@@ -32,11 +33,21 @@ export function Header() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-xl">Y</span>
-            </div>
+            {settings.logo_url ? (
+              <img 
+                src={settings.logo_url} 
+                alt="Logo" 
+                className="w-10 h-10 rounded-lg object-cover" 
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-xl">
+                  {settings.site_name.charAt(0)}
+                </span>
+              </div>
+            )}
             <span className="text-xl font-bold text-white">
-              Yess<span className="text-primary">Bangal</span>
+              {settings.site_name}
             </span>
           </motion.a>
 
