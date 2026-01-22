@@ -52,7 +52,41 @@ export default function AdminApplications() {
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
 
+  // Get signed URL for a resume (admins only via RLS policy)
+  const getSignedUrl = async (resumePath: string): Promise<string | null> => {
+    // Check if we already have a cached signed URL
+    if (signedUrls[resumePath]) {
+      return signedUrls[resumePath];
+    }
+    
+    try {
+      const { data, error } = await supabase.storage
+        .from("resumes")
+        .createSignedUrl(resumePath, 3600); // 1 hour expiry
+      
+      if (error) {
+        console.error("Error creating signed URL:", error);
+        toast.error("Failed to access resume");
+        return null;
+      }
+      
+      // Cache the signed URL
+      setSignedUrls(prev => ({ ...prev, [resumePath]: data.signedUrl }));
+      return data.signedUrl;
+    } catch (error) {
+      console.error("Error getting signed URL:", error);
+      return null;
+    }
+  };
+
+  const handleDownloadResume = async (resumePath: string) => {
+    const url = await getSignedUrl(resumePath);
+    if (url) {
+      window.open(url, "_blank");
+    }
+  };
   const fetchApplications = async () => {
     try {
       let query = supabase
@@ -188,10 +222,12 @@ export default function AdminApplications() {
                         <Button variant="ghost" size="icon" onClick={() => viewDetails(app)}>
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" asChild>
-                          <a href={app.resume_url} target="_blank" rel="noopener noreferrer">
-                            <Download className="h-4 w-4" />
-                          </a>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => handleDownloadResume(app.resume_url)}
+                        >
+                          <Download className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -265,10 +301,8 @@ export default function AdminApplications() {
               )}
 
               <div className="flex gap-2 pt-4">
-                <Button asChild>
-                  <a href={selectedApplication.resume_url} target="_blank" rel="noopener noreferrer">
-                    <Download className="h-4 w-4 mr-2" /> Download Resume
-                  </a>
+                <Button onClick={() => handleDownloadResume(selectedApplication.resume_url)}>
+                  <Download className="h-4 w-4 mr-2" /> Download Resume
                 </Button>
                 <Select
                   value={selectedApplication.status}

@@ -111,11 +111,7 @@ export function JobApplicationDialog({ isOpen, onClose, jobId, jobTitle }: JobAp
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from("resumes")
-        .getPublicUrl(fileName);
-
+      // Store just the file path (bucket is now private, admins use signed URLs)
       // Submit application
       const { error: insertError } = await supabase
         .from("job_applications")
@@ -124,7 +120,7 @@ export function JobApplicationDialog({ isOpen, onClose, jobId, jobTitle }: JobAp
           full_name: data.full_name,
           email: data.email,
           phone: data.phone,
-          resume_url: urlData.publicUrl,
+          resume_url: fileName,
           cover_letter: data.cover_letter || null,
           portfolio_url: data.portfolio_url || null
         });
