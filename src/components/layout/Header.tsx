@@ -31,8 +31,8 @@ export function Header() {
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-xl">Y</span>
             </div>
-            <span className="text-xl font-bold text-red">
-              Yess<span className="text-primary">Bangal</span>
+            <span className="text-xl font-bold text-white">
+              Y<span text-red></span>ess<span className="text-primary">Bangal</span>
             </span>
           </motion.a>
 
