@@ -10,18 +10,29 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
+const passwordSchema = z.string()
+  .min(8, { message: "Password must be at least 8 characters" })
+  .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+  .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+  .regex(/[0-9]/, { message: "Password must contain at least one number" })
+  .regex(/[^A-Za-z0-9]/, { message: "Password must contain at least one special character" });
+
 const loginSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  password: z.string().min(1, { message: "Password is required" }),
 });
 
-const signupSchema = loginSchema.extend({
+const signupPasswordSchema = z.object({
+  email: z.string().trim().email({ message: "Invalid email address" }),
+  password: passwordSchema,
   fullName: z.string().trim().min(2, { message: "Name must be at least 2 characters" }).max(100),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
 });
+
+// signupPasswordSchema is now defined above with full password requirements
 
 interface AuthFormProps {
   mode: "login" | "signup";
@@ -65,7 +76,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           navigate("/dashboard");
         }
       } else {
-        const result = signupSchema.safeParse({ email, password, confirmPassword, fullName });
+        const result = signupPasswordSchema.safeParse({ email, password, confirmPassword, fullName });
         if (!result.success) {
           const fieldErrors: Record<string, string> = {};
           result.error.errors.forEach((err) => {
