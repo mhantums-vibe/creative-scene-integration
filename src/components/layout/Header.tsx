@@ -60,11 +60,11 @@ export function Header() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <Button variant="heroOutline" size="sm">
-              Login
+            <Button variant="heroOutline" size="sm" asChild>
+              <a href="/login">Login</a>
             </Button>
-            <Button variant="hero" size="sm">
-              Get Started
+            <Button variant="hero" size="sm" asChild>
+              <a href="/signup">Get Started</a>
             </Button>
           </motion.div>
 
@@ -102,11 +102,11 @@ export function Header() {
                   </a>
                 ))}
                 <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/10">
-                  <Button variant="heroOutline" className="w-full">
-                    Login
+                  <Button variant="heroOutline" className="w-full" asChild>
+                    <a href="/login">Login</a>
                   </Button>
-                  <Button variant="hero" className="w-full">
-                    Get Started
+                  <Button variant="hero" className="w-full" asChild>
+                    <a href="/signup">Get Started</a>
                   </Button>
                 </div>
               </nav>
