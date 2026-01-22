@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, Users, Target, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 const features = [
   "Expert team with 8+ years of experience",
   "Cutting-edge technology stack",
@@ -18,6 +18,8 @@ const stats = [
 ];
 
 export function AboutSection() {
+  const { settings } = useSiteSettings();
+
   return (
     <section id="about" className="py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -31,15 +33,25 @@ export function AboutSection() {
             transition={{ duration: 0.8 }}
           >
             <div className="relative rounded-2xl overflow-hidden aspect-square lg:aspect-[4/3]">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 rounded-2xl" />
-              
-              {/* Decorative Elements */}
-              <div className="absolute top-8 left-8 w-24 h-24 rounded-xl bg-primary/30 backdrop-blur-sm" />
-              <div className="absolute bottom-12 right-12 w-32 h-32 rounded-full bg-secondary/20 backdrop-blur-sm" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-2xl bg-accent/40 backdrop-blur-md flex items-center justify-center">
-                <span className="text-6xl font-bold text-white">YB</span>
-              </div>
+              {settings.banner_url ? (
+                <img
+                  src={settings.banner_url}
+                  alt="About Banner"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              ) : (
+                <>
+                  {/* Background Pattern */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 rounded-2xl" />
+                  
+                  {/* Decorative Elements */}
+                  <div className="absolute top-8 left-8 w-24 h-24 rounded-xl bg-primary/30 backdrop-blur-sm" />
+                  <div className="absolute bottom-12 right-12 w-32 h-32 rounded-full bg-secondary/20 backdrop-blur-sm" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-2xl bg-accent/40 backdrop-blur-md flex items-center justify-center">
+                    <span className="text-6xl font-bold text-white">YB</span>
+                  </div>
+                </>
+              )}
               
               {/* Floating Stats Card */}
               <motion.div
