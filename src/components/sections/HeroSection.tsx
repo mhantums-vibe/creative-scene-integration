@@ -9,6 +9,7 @@ import { ArrowRight, Play } from "lucide-react";
 import { BookingDialog } from "@/components/booking/BookingDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const stats = [
   { value: 500, suffix: "+", label: "Projects Delivered" },
@@ -19,6 +20,7 @@ const stats = [
 export function HeroSection() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { settings } = useSiteSettings();
 
   const handleBookingClick = () => {
     if (!user) {
@@ -28,6 +30,18 @@ export function HeroSection() {
 
   return (
     <section id="home" className="relative min-h-screen hero-section overflow-hidden pt-16 lg:pt-20">
+      {/* Hero Banner Background */}
+      {settings.hero_banner_url && (
+        <div className="absolute inset-0 z-0">
+          <img
+            src={settings.hero_banner_url}
+            alt="Hero Banner"
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+        </div>
+      )}
+      
       <Spotlight
         className="-top-40 left-0 md:left-60 md:-top-20"
         fill="hsl(145 63% 42%)"

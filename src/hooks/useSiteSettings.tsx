@@ -6,6 +6,7 @@ interface SiteSettings {
   site_tagline: string;
   logo_url: string | null;
   banner_url: string | null;
+  hero_banner_url: string | null;
 }
 
 const defaultSettings: SiteSettings = {
@@ -13,6 +14,7 @@ const defaultSettings: SiteSettings = {
   site_tagline: "Innovative IT Solutions",
   logo_url: null,
   banner_url: null,
+  hero_banner_url: null,
 };
 
 export function useSiteSettings() {
@@ -40,6 +42,7 @@ export function useSiteSettings() {
         site_tagline: settingsMap.site_tagline || defaultSettings.site_tagline,
         logo_url: settingsMap.logo_url || null,
         banner_url: settingsMap.banner_url || null,
+        hero_banner_url: settingsMap.hero_banner_url || null,
       });
     } catch (err) {
       console.error("Error in fetchSettings:", err);
