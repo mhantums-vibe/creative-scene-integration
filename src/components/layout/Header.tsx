@@ -40,7 +40,9 @@ export function Header() {
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-xl">Y</span>
             </div>
-            <span className="text-xl font-bold text-white">YessBangal<span className="text-[#d32c27]">Bangal</span>
+            <span className="text-xl font-bold">
+              <span className="text-white">Yess</span>
+              <span className="text-destructive">Bangal</span>
             </span>
           </motion.a>
 
