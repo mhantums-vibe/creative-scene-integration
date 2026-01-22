@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
 
 const navItems = [
   { name: "Home", href: "#home" },
@@ -20,6 +21,13 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAdmin } = useAdmin();
   const { settings } = useSiteSettings();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-accent/95 backdrop-blur-md border-b border-white/10">
@@ -99,12 +107,26 @@ export function Header() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <Button variant="heroOutline" size="sm" asChild>
-              <a href="/login">Login</a>
-            </Button>
-            <Button variant="hero" size="sm" asChild>
-              <a href="/signup">Get Started</a>
-            </Button>
+            {user ? (
+              <>
+                <Button variant="heroOutline" size="sm" asChild>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+                <Button variant="hero" size="sm" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="heroOutline" size="sm" asChild>
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button variant="hero" size="sm" asChild>
+                  <Link to="/signup">Get Started</Link>
+                </Button>
+              </>
+            )}
           </motion.div>
 
           {/* Mobile Menu Button */}
@@ -161,12 +183,26 @@ export function Header() {
                   </Link>
                 )}
                 <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/10">
-                  <Button variant="heroOutline" className="w-full" asChild>
-                    <a href="/login">Login</a>
-                  </Button>
-                  <Button variant="hero" className="w-full" asChild>
-                    <a href="/signup">Get Started</a>
-                  </Button>
+                  {user ? (
+                    <>
+                      <Button variant="heroOutline" className="w-full" asChild>
+                        <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+                      </Button>
+                      <Button variant="hero" className="w-full" onClick={() => { handleSignOut(); setIsMenuOpen(false); }}>
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign Out
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="heroOutline" className="w-full" asChild>
+                        <Link to="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                      </Button>
+                      <Button variant="hero" className="w-full" asChild>
+                        <Link to="/signup" onClick={() => setIsMenuOpen(false)}>Get Started</Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </nav>
             </div>
