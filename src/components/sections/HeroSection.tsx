@@ -4,10 +4,17 @@ import { motion } from "framer-motion";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 import { Button } from "@/components/ui/button";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { ArrowRight, Play } from "lucide-react";
 import { BookingDialog } from "@/components/booking/BookingDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+
+const stats = [
+  { value: 500, suffix: "+", label: "Projects Delivered" },
+  { value: 150, suffix: "+", label: "Happy Clients" },
+  { value: 8, suffix: "+", label: "Years Experience" },
+];
 
 export function HeroSection() {
   const { user } = useAuth();
@@ -85,13 +92,11 @@ export function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              {[
-                { value: "500+", label: "Projects Delivered" },
-                { value: "150+", label: "Happy Clients" },
-                { value: "8+", label: "Years Experience" },
-              ].map((stat) => (
+              {stats.map((stat) => (
                 <div key={stat.label} className="text-center lg:text-left">
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">{stat.value}</div>
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+                    <AnimatedCounter value={stat.value} suffix={stat.suffix} duration={2000} />
+                  </div>
                   <div className="text-xs sm:text-sm text-white/70 mt-1">{stat.label}</div>
                 </div>
               ))}
