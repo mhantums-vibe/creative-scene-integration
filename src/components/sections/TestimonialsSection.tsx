@@ -84,7 +84,7 @@ export function TestimonialsSection() {
         >
           {testimonials.map((testimonial, index) => (
             <motion.div key={testimonial.name} variants={itemVariants}>
-              <Card className="h-full p-6 lg:p-8 bg-card border-border/50 hover:border-secondary/30 transition-all duration-300">
+              <Card className="h-full p-6 lg:p-8 glass-card-light hover:border-secondary/30 transition-all duration-300">
                 {/* Quote Icon */}
                 <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center mb-6">
                   <Quote className="w-6 h-6 text-secondary" />
