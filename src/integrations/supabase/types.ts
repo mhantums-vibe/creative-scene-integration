@@ -178,6 +178,69 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_items: {
+        Row: {
+          category: string | null
+          client_name: string | null
+          completion_date: string | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          full_description: string | null
+          gallery_images: Json | null
+          github_url: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          is_featured: boolean | null
+          live_url: string | null
+          slug: string
+          technologies: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          client_name?: string | null
+          completion_date?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          full_description?: string | null
+          gallery_images?: Json | null
+          github_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          live_url?: string | null
+          slug: string
+          technologies?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          client_name?: string | null
+          completion_date?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          full_description?: string | null
+          gallery_images?: Json | null
+          github_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          live_url?: string | null
+          slug?: string
+          technologies?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
@@ -216,11 +279,14 @@ export type Database = {
           created_at: string
           description: string
           display_order: number
+          extended_description: string | null
           features: string[]
           icon: string
           icon_url: string | null
           id: string
           is_active: boolean
+          process_steps: Json | null
+          slug: string | null
           title: string
           updated_at: string
         }
@@ -228,11 +294,14 @@ export type Database = {
           created_at?: string
           description: string
           display_order?: number
+          extended_description?: string | null
           features?: string[]
           icon?: string
           icon_url?: string | null
           id?: string
           is_active?: boolean
+          process_steps?: Json | null
+          slug?: string | null
           title: string
           updated_at?: string
         }
@@ -240,11 +309,14 @@ export type Database = {
           created_at?: string
           description?: string
           display_order?: number
+          extended_description?: string | null
           features?: string[]
           icon?: string
           icon_url?: string | null
           id?: string
           is_active?: boolean
+          process_steps?: Json | null
+          slug?: string | null
           title?: string
           updated_at?: string
         }
@@ -273,6 +345,100 @@ export type Database = {
           value?: string | null
         }
         Relationships: []
+      }
+      sub_services: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          service_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          service_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          service_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sub_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testimonials: {
+        Row: {
+          client_name: string
+          client_role: string | null
+          company: string | null
+          content: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          is_featured: boolean | null
+          rating: number | null
+          service_id: string | null
+          video_url: string | null
+        }
+        Insert: {
+          client_name: string
+          client_role?: string | null
+          company?: string | null
+          content: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          rating?: number | null
+          service_id?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          client_name?: string
+          client_role?: string | null
+          company?: string | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          rating?: number | null
+          service_id?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "testimonials_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

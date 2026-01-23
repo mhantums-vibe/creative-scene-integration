@@ -10,10 +10,13 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Careers from "./pages/Careers";
 import Services from "./pages/Services";
+import ServiceDetail from "./pages/services/ServiceDetail";
 import About from "./pages/About";
 import Portfolio from "./pages/Portfolio";
+import PortfolioDetail from "./pages/portfolio/PortfolioDetail";
 import Testimonials from "./pages/Testimonials";
 import Contact from "./pages/Contact";
+import JobDetail from "./pages/careers/JobDetail";
 import NotFound from "./pages/NotFound";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -37,14 +40,17 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/services/:slug" element={<ServiceDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/portfolio/:slug" element={<PortfolioDetail />} />
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/careers" element={<Careers />} />
+            <Route path="/careers/:slug" element={<JobDetail />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="services" element={<AdminServices />} />

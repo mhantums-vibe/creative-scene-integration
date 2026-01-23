@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { motion } from "framer-motion";
-import { ExternalLink, Github, Eye } from "lucide-react";
+import { Eye, Github, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,69 +15,20 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
-const categories = ["All", "Web Development", "Mobile Apps", "UI/UX Design", "Branding"];
-
-const projects = [
-  {
-    id: 1,
-    title: "E-Commerce Platform",
-    description: "A full-featured online shopping platform with payment integration and inventory management.",
-    category: "Web Development",
-    image: "/placeholder.svg",
-    technologies: ["React", "Node.js", "MongoDB", "Stripe"],
-    liveUrl: "#",
-    githubUrl: "#",
-  },
-  {
-    id: 2,
-    title: "Healthcare Mobile App",
-    description: "Patient management and telemedicine application for healthcare providers.",
-    category: "Mobile Apps",
-    image: "/placeholder.svg",
-    technologies: ["React Native", "Firebase", "TypeScript"],
-    liveUrl: "#",
-    githubUrl: "#",
-  },
-  {
-    id: 3,
-    title: "Corporate Brand Identity",
-    description: "Complete brand identity design including logo, guidelines, and marketing materials.",
-    category: "Branding",
-    image: "/placeholder.svg",
-    technologies: ["Figma", "Illustrator", "Photoshop"],
-    liveUrl: "#",
-  },
-  {
-    id: 4,
-    title: "SaaS Dashboard",
-    description: "Analytics dashboard with real-time data visualization and reporting features.",
-    category: "UI/UX Design",
-    image: "/placeholder.svg",
-    technologies: ["Figma", "React", "D3.js", "Tailwind"],
-    liveUrl: "#",
-    githubUrl: "#",
-  },
-  {
-    id: 5,
-    title: "Restaurant Booking System",
-    description: "Online reservation and menu management system for restaurants.",
-    category: "Web Development",
-    image: "/placeholder.svg",
-    technologies: ["Next.js", "PostgreSQL", "Supabase"],
-    liveUrl: "#",
-    githubUrl: "#",
-  },
-  {
-    id: 6,
-    title: "Fitness Tracking App",
-    description: "Mobile app for tracking workouts, nutrition, and health metrics.",
-    category: "Mobile Apps",
-    image: "/placeholder.svg",
-    technologies: ["Flutter", "Firebase", "Dart"],
-    liveUrl: "#",
-  },
-];
+interface PortfolioItem {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  category: string | null;
+  image_url: string | null;
+  technologies: string[];
+  live_url: string | null;
+  github_url: string | null;
+  is_featured: boolean;
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -93,7 +44,29 @@ const itemVariants = {
 };
 
 const Portfolio = () => {
+  const [projects, setProjects] = useState<PortfolioItem[]>([]);
+  const [categories, setCategories] = useState<string[]>(["All"]);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const { data } = await supabase
+        .from("portfolio_items")
+        .select("id, title, slug, description, category, image_url, technologies, live_url, github_url, is_featured")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+
+      if (data) {
+        setProjects(data);
+        const uniqueCategories = ["All", ...new Set(data.map(p => p.category).filter(Boolean) as string[])];
+        setCategories(uniqueCategories);
+      }
+      setLoading(false);
+    };
+
+    fetchProjects();
+  }, []);
 
   const filteredProjects = activeCategory === "All"
     ? projects
@@ -140,88 +113,123 @@ const Portfolio = () => {
         {/* Filter & Projects */}
         <section className="py-20">
           <div className="container mx-auto px-4">
-            {/* Category Filter */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="flex flex-wrap justify-center gap-3 mb-12"
-            >
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant={activeCategory === category ? "hero" : "heroOutline"}
-                  size="sm"
-                  onClick={() => setActiveCategory(category)}
+            {loading ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : projects.length === 0 ? (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground text-lg">No projects available yet. Check back soon!</p>
+              </div>
+            ) : (
+              <>
+                {/* Category Filter */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="flex flex-wrap justify-center gap-3 mb-12"
                 >
-                  {category}
-                </Button>
-              ))}
-            </motion.div>
-
-            {/* Projects Grid */}
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {filteredProjects.map((project) => (
-                <motion.div key={project.id} variants={itemVariants}>
-                  <Card className="group overflow-hidden bg-card/50 backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all duration-300">
-                    {/* Project Image */}
-                    <div className="relative aspect-video overflow-hidden">
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                        <Button size="icon" variant="heroOutline" className="rounded-full" asChild>
-                          <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label="View live site">
-                            <Eye className="w-4 h-4" />
-                          </a>
-                        </Button>
-                        {project.githubUrl && (
-                          <Button size="icon" variant="heroOutline" className="rounded-full" asChild>
-                            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="View source code">
-                              <Github className="w-4 h-4" />
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Project Info */}
-                    <div className="p-6">
-                      <Badge variant="secondary" className="mb-3">
-                        {project.category}
-                      </Badge>
-                      <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-primary transition-colors">
-                        {project.title}
-                      </h3>
-                      <p className="text-white/70 text-sm mb-4 line-clamp-2">
-                        {project.description}
-                      </p>
-                      
-                      {/* Technologies */}
-                      <div className="flex flex-wrap gap-2">
-                        {project.technologies.map((tech) => (
-                          <span
-                            key={tech}
-                            className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/70"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </Card>
+                  {categories.map((category) => (
+                    <Button
+                      key={category}
+                      variant={activeCategory === category ? "hero" : "heroOutline"}
+                      size="sm"
+                      onClick={() => setActiveCategory(category)}
+                    >
+                      {category}
+                    </Button>
+                  ))}
                 </motion.div>
-              ))}
-            </motion.div>
+
+                {/* Projects Grid */}
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                >
+                  {filteredProjects.map((project) => (
+                    <motion.div key={project.id} variants={itemVariants}>
+                      <Link to={`/portfolio/${project.slug}`}>
+                        <Card className="group overflow-hidden bg-card/50 backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all duration-300 cursor-pointer">
+                          {/* Project Image */}
+                          <div className="relative aspect-video overflow-hidden">
+                            {project.image_url ? (
+                              <img
+                                src={project.image_url}
+                                alt={project.title}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-muted flex items-center justify-center">
+                                <span className="text-muted-foreground">No image</span>
+                              </div>
+                            )}
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+                              <Button size="icon" variant="heroOutline" className="rounded-full" aria-label="View project">
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              {project.github_url && (
+                                <Button 
+                                  size="icon" 
+                                  variant="heroOutline" 
+                                  className="rounded-full" 
+                                  asChild
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <a href={project.github_url} target="_blank" rel="noopener noreferrer" aria-label="View source code">
+                                    <Github className="w-4 h-4" />
+                                  </a>
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Project Info */}
+                          <div className="p-6">
+                            {project.category && (
+                              <Badge variant="secondary" className="mb-3">
+                                {project.category}
+                              </Badge>
+                            )}
+                            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-primary transition-colors">
+                              {project.title}
+                            </h3>
+                            {project.description && (
+                              <p className="text-white/70 text-sm mb-4 line-clamp-2">
+                                {project.description}
+                              </p>
+                            )}
+                            
+                            {/* Technologies */}
+                            {project.technologies && project.technologies.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {project.technologies.slice(0, 4).map((tech) => (
+                                  <span
+                                    key={tech}
+                                    className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/70"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
+                                {project.technologies.length > 4 && (
+                                  <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/70">
+                                    +{project.technologies.length - 4}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </Card>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </>
+            )}
           </div>
         </section>
       </main>

@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import * as Icons from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookingDialog } from "@/components/booking/BookingDialog";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
 
 interface Service {
   id: string;
@@ -18,6 +15,7 @@ interface Service {
   icon_url: string | null;
   features: string[];
   display_order: number;
+  slug: string | null;
 }
 
 const containerVariants = {
@@ -58,8 +56,6 @@ const ServiceIcon = ({ service }: { service: Service }) => {
 };
 
 export function ServicesSection() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -67,7 +63,7 @@ export function ServicesSection() {
     const fetchServices = async () => {
       const { data } = await supabase
         .from("services")
-        .select("id, title, description, icon, icon_url, features, display_order")
+        .select("id, title, description, icon, icon_url, features, display_order, slug")
         .eq("is_active", true)
         .order("display_order", { ascending: true });
       setServices(data || []);
@@ -76,8 +72,8 @@ export function ServicesSection() {
     fetchServices();
   }, []);
 
-  const getServiceValue = (title: string) => {
-    return title.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "");
+  const getServiceSlug = (service: Service) => {
+    return service.slug || service.title.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "and");
   };
   return (
     <section id="services" className="py-24 bg-gradient-to-b from-muted/20 to-muted/40">
@@ -142,23 +138,12 @@ export function ServicesSection() {
                 </div>
 
                 {/* CTA */}
-                {user ? (
-                  <BookingDialog defaultService={getServiceValue(service.title)}>
-                    <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80">
-                      Book Now
-                      <ArrowRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
-                    </Button>
-                  </BookingDialog>
-                ) : (
-                  <Button 
-                    variant="ghost" 
-                    className="group/btn p-0 h-auto text-primary hover:text-primary/80"
-                    onClick={() => navigate("/login")}
-                  >
-                    Get Started
+                <Link to={`/services/${getServiceSlug(service)}`}>
+                  <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80">
+                    Learn More
                     <ArrowRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>
-                )}
+                </Link>
               </Card>
             </motion.div>
           ))}
