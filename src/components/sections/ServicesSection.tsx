@@ -15,6 +15,7 @@ interface Service {
   title: string;
   description: string;
   icon: string;
+  icon_url: string | null;
   features: string[];
   display_order: number;
 }
@@ -43,6 +44,19 @@ const DynamicIcon = ({ name }: { name: string }) => {
   return IconComponent ? <IconComponent className="w-7 h-7 text-primary" /> : null;
 };
 
+const ServiceIcon = ({ service }: { service: Service }) => {
+  if (service.icon_url) {
+    return (
+      <img 
+        src={service.icon_url} 
+        alt={service.title}
+        className="w-7 h-7 object-contain"
+      />
+    );
+  }
+  return <DynamicIcon name={service.icon} />;
+};
+
 export function ServicesSection() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -53,7 +67,7 @@ export function ServicesSection() {
     const fetchServices = async () => {
       const { data } = await supabase
         .from("services")
-        .select("id, title, description, icon, features, display_order")
+        .select("id, title, description, icon, icon_url, features, display_order")
         .eq("is_active", true)
         .order("display_order", { ascending: true });
       setServices(data || []);
@@ -108,7 +122,7 @@ export function ServicesSection() {
                 <Card className="group h-full p-6 lg:p-8 card-hover glass-card-light transition-all duration-300">
                   {/* Icon */}
                   <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                    <DynamicIcon name={service.icon} />
+                    <ServiceIcon service={service} />
                   </div>
 
                 {/* Content */}
