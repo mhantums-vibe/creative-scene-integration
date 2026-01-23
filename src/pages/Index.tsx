@@ -18,7 +18,7 @@ const Index = () => {
           <HeroSection />
         </section>
         <section id="services">
-          <ServicesSection />
+          <ServicesSection limit={4} showSeeMore />
         </section>
         <section id="about">
           <AboutSection />
