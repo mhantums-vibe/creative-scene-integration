@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/admin/StatusBadge";
@@ -67,7 +68,7 @@ export default function AdminApplications() {
         .createSignedUrl(resumePath, 3600); // 1 hour expiry
       
       if (error) {
-        console.error("Error creating signed URL:", error);
+        logger.error("Error creating signed URL", error);
         toast.error("Failed to access resume");
         return null;
       }
@@ -76,7 +77,7 @@ export default function AdminApplications() {
       setSignedUrls(prev => ({ ...prev, [resumePath]: data.signedUrl }));
       return data.signedUrl;
     } catch (error) {
-      console.error("Error getting signed URL:", error);
+      logger.error("Error getting signed URL", error);
       return null;
     }
   };
@@ -106,7 +107,7 @@ export default function AdminApplications() {
       if (error) throw error;
       setApplications(data || []);
     } catch (error) {
-      console.error("Error fetching applications:", error);
+      logger.error("Error fetching applications", error);
       toast.error("Failed to fetch applications");
     } finally {
       setIsLoading(false);
@@ -128,7 +129,7 @@ export default function AdminApplications() {
       toast.success("Status updated");
       fetchApplications();
     } catch (error) {
-      console.error("Error updating status:", error);
+      logger.error("Error updating status", error);
       toast.error("Failed to update status");
     }
   };

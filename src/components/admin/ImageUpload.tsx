@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 import { cn } from "@/lib/utils";
 
 interface ImageUploadProps {
@@ -32,7 +33,7 @@ export function ImageUpload({
       const url = await onUpload(file);
       onChange(url);
     } catch (error) {
-      console.error("Upload failed:", error);
+      logger.error("Upload failed", error);
     } finally {
       setIsUploading(false);
     }

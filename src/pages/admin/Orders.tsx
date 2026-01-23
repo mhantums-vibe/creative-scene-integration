@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/admin/StatusBadge";
@@ -61,7 +62,7 @@ export default function AdminOrders() {
       if (error) throw error;
       setOrders(data || []);
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      logger.error("Error fetching orders", error);
       toast.error("Failed to fetch orders");
     } finally {
       setIsLoading(false);
@@ -83,7 +84,7 @@ export default function AdminOrders() {
       toast.success("Status updated");
       fetchOrders();
     } catch (error) {
-      console.error("Error updating status:", error);
+      logger.error("Error updating status", error);
       toast.error("Failed to update status");
     }
   };
@@ -102,7 +103,7 @@ export default function AdminOrders() {
       setIsDeleteDialogOpen(false);
       fetchOrders();
     } catch (error) {
-      console.error("Error deleting order:", error);
+      logger.error("Error deleting order", error);
       toast.error("Failed to delete order");
     }
   };

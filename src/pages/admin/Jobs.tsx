@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -71,7 +72,7 @@ export default function AdminJobs() {
       if (error) throw error;
       setJobs(data || []);
     } catch (error) {
-      console.error("Error fetching jobs:", error);
+      logger.error("Error fetching jobs", error);
       toast.error("Failed to fetch job postings");
     } finally {
       setIsLoading(false);
@@ -135,7 +136,7 @@ export default function AdminJobs() {
       setIsDialogOpen(false);
       fetchJobs();
     } catch (error) {
-      console.error("Error saving job:", error);
+      logger.error("Error saving job", error);
       toast.error("Failed to save job posting");
     } finally {
       setIsSaving(false);
@@ -156,7 +157,7 @@ export default function AdminJobs() {
       setIsDeleteDialogOpen(false);
       fetchJobs();
     } catch (error) {
-      console.error("Error deleting job:", error);
+      logger.error("Error deleting job", error);
       toast.error("Failed to delete job posting");
     }
   };
@@ -172,7 +173,7 @@ export default function AdminJobs() {
       toast.success(`Job ${job.is_active ? "deactivated" : "activated"}`);
       fetchJobs();
     } catch (error) {
-      console.error("Error toggling job status:", error);
+      logger.error("Error toggling job status", error);
       toast.error("Failed to update job status");
     }
   };
