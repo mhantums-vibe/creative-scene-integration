@@ -5,16 +5,17 @@ import { Button } from "@/components/ui/button";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useAuth } from "@/hooks/useAuth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
+// Nav items with both page routes and homepage section IDs
 const navItems = [
-  { name: "Home", href: "/", isRoute: true },
-  { name: "Services", href: "/services", isRoute: true },
-  { name: "About", href: "/about", isRoute: true },
-  { name: "Portfolio", href: "/portfolio", isRoute: true },
-  { name: "Testimonials", href: "/testimonials", isRoute: true },
-  { name: "Careers", href: "/careers", isRoute: true },
-  { name: "Contact", href: "/contact", isRoute: true },
+  { name: "Home", href: "/", sectionId: "home" },
+  { name: "Services", href: "/services", sectionId: "services" },
+  { name: "About", href: "/about", sectionId: "about" },
+  { name: "Portfolio", href: "/portfolio" },
+  { name: "Testimonials", href: "/testimonials", sectionId: "testimonials" },
+  { name: "Careers", href: "/careers" },
+  { name: "Contact", href: "/contact", sectionId: "contact" },
 ];
 
 export function Header() {
@@ -23,10 +24,33 @@ export function Header() {
   const { settings } = useSiteSettings();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  // Handle navigation with smooth scroll support
+  const handleNavClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
+    const isOnHomepage = location.pathname === "/";
+    
+    // If on homepage and item has a section ID, smooth scroll instead of navigate
+    if (isOnHomepage && item.sectionId) {
+      e.preventDefault();
+      const element = document.getElementById(item.sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      return;
+    }
+    
+    // If not on homepage but item has a section ID, navigate to homepage with hash
+    if (!isOnHomepage && item.sectionId && item.name !== "Home") {
+      e.preventDefault();
+      navigate(`/#${item.sectionId}`);
+      return;
+    }
   };
 
   return (
@@ -34,22 +58,27 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <motion.a
-            href="#home"
+          <Link
+            to="/"
             className="flex items-center gap-2"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
+            onClick={(e) => handleNavClick(e, navItems[0])}
           >
-            {settings.logo_url ? (
-              <img src={settings.logo_url} alt="Logo" className="w-15 h-12 rounded-lg object-cover" />
-            ) : (
-              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-xl">{settings.site_name.charAt(0)}</span>
-              </div>
-            )}
-            <span className="text-xl font-bold text-white">{settings.site_name}</span>
-          </motion.a>
+            <motion.div
+              className="flex items-center gap-2"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {settings.logo_url ? (
+                <img src={settings.logo_url} alt="Logo" className="w-15 h-12 rounded-lg object-cover" />
+              ) : (
+                <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                  <span className="text-primary-foreground font-bold text-xl">{settings.site_name.charAt(0)}</span>
+                </div>
+              )}
+              <span className="text-xl font-bold text-white">{settings.site_name}</span>
+            </motion.div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
@@ -62,6 +91,7 @@ export function Header() {
               >
                 <Link
                   to={item.href}
+                  onClick={(e) => handleNavClick(e, item)}
                   className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors relative group inline-block"
                 >
                   {item.name}
@@ -143,7 +173,10 @@ export function Header() {
                     key={item.name}
                     to={item.href}
                     className="px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={(e) => {
+                      handleNavClick(e, item);
+                      setIsMenuOpen(false);
+                    }}
                   >
                     {item.name}
                   </Link>
