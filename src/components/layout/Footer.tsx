@@ -12,21 +12,22 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 
 const footerLinks = {
   services: [
-    { name: "Website Development", href: "#" },
-    { name: "App Development", href: "#" },
-    { name: "Hosting & Domain", href: "#" },
-    { name: "Graphic Design", href: "#" },
-    { name: "Video Editing", href: "#" },
+    { name: "Website Development", href: "/services" },
+    { name: "App Development", href: "/services" },
+    { name: "Hosting & Domain", href: "/services" },
+    { name: "Graphic Design", href: "/services" },
+    { name: "Video Editing", href: "/services" },
   ],
   company: [
-    { name: "About Us", href: "#about" },
-    { name: "Our Team", href: "#" },
+    { name: "About Us", href: "/about" },
+    { name: "Our Team", href: "/about" },
     { name: "Careers", href: "/careers" },
-    { name: "Blog", href: "#" },
-    { name: "Contact", href: "#contact" },
+    { name: "Portfolio", href: "/portfolio" },
+    { name: "Contact", href: "/contact" },
   ],
   support: [
     { name: "Help Center", href: "#" },
@@ -103,12 +104,12 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.services.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
+                  <Link
+                    to={link.href}
                     className="text-sm text-white/70 hover:text-primary transition-colors"
                   >
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -125,12 +126,12 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
+                  <Link
+                    to={link.href}
                     className="text-sm text-white/70 hover:text-primary transition-colors"
                   >
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

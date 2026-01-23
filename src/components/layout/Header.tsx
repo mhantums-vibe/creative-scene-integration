@@ -8,13 +8,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 
 const navItems = [
-  { name: "Home", href: "#home" },
-  { name: "Services", href: "#services" },
-  { name: "About", href: "#about" },
-  { name: "Portfolio", href: "#portfolio" },
-  { name: "Testimonials", href: "#testimonials" },
+  { name: "Home", href: "/", isRoute: true },
+  { name: "Services", href: "/services", isRoute: true },
+  { name: "About", href: "/about", isRoute: true },
+  { name: "Portfolio", href: "/portfolio", isRoute: true },
+  { name: "Testimonials", href: "/testimonials", isRoute: true },
   { name: "Careers", href: "/careers", isRoute: true },
-  { name: "Contact", href: "#contact" },
+  { name: "Contact", href: "/contact", isRoute: true },
 ];
 
 export function Header() {
@@ -53,36 +53,22 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item, index) =>
-              item.isRoute ? (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <Link
-                    to={item.href}
-                    className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors relative group inline-block"
-                  >
-                    {item.name}
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4" />
-                  </Link>
-                </motion.div>
-              ) : (
-                <motion.a
-                  key={item.name}
-                  href={item.href}
-                  className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors relative group"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+            {navItems.map((item, index) => (
+              <motion.div
+                key={item.name}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Link
+                  to={item.href}
+                  className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors relative group inline-block"
                 >
                   {item.name}
                   <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4" />
-                </motion.a>
-              ),
-            )}
+                </Link>
+              </motion.div>
+            ))}
             {isAdmin && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -152,27 +138,16 @@ export function Header() {
           >
             <div className="container mx-auto px-4 py-4">
               <nav className="flex flex-col gap-2">
-                {navItems.map((item) =>
-                  item.isRoute ? (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className="px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  ) : (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className="px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {item.name}
-                    </a>
-                  ),
-                )}
+                {navItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
                 {isAdmin && (
                   <Link
                     to="/admin"
