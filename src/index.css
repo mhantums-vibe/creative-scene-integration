@@ -122,6 +122,7 @@
   .gradient-text-primary {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(135deg, hsl(145 63% 45%) 0%, hsl(145 70% 55%) 100%);
+    filter: drop-shadow(0 0 20px hsl(145 63% 45% / 0.4)) drop-shadow(0 0 40px hsl(145 63% 45% / 0.2));
   }
 
   .gradient-text-secondary {
@@ -132,6 +133,7 @@
   .gradient-text-hero {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(to bottom, hsl(0 0% 98%) 0%, hsl(220 10% 70%) 100%);
+    filter: drop-shadow(0 0 30px hsl(0 0% 100% / 0.3)) drop-shadow(0 0 60px hsl(0 0% 100% / 0.15));
   }
 
   /* iPhone-style frosted glass - dark variant */
