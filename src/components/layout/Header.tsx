@@ -1,22 +1,36 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useAuth } from "@/hooks/useAuth";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
-// Nav items with both page routes and homepage section IDs
-const navItems = [
+// Main visible nav items
+const mainNavItems = [
   { name: "Home", href: "/", sectionId: "home" },
   { name: "Services", href: "/services", sectionId: "services" },
   { name: "About", href: "/about", sectionId: "about" },
+  { name: "Careers", href: "/careers" },
+];
+
+// Secondary items (in dropdown menu)
+const moreNavItems = [
   { name: "Portfolio", href: "/portfolio" },
   { name: "Testimonials", href: "/testimonials", sectionId: "testimonials" },
-  { name: "Careers", href: "/careers" },
   { name: "Contact", href: "/contact", sectionId: "contact" },
 ];
+
+// All nav items for mobile menu
+const allNavItems = [...mainNavItems, ...moreNavItems];
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,7 +46,7 @@ export function Header() {
   };
 
   // Handle navigation with smooth scroll support
-  const handleNavClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
+  const handleNavClick = (e: React.MouseEvent, item: typeof mainNavItems[0]) => {
     const isOnHomepage = location.pathname === "/";
     
     // If on homepage and item has a section ID, smooth scroll instead of navigate
@@ -61,7 +75,7 @@ export function Header() {
           <Link
             to="/"
             className="flex items-center gap-2"
-            onClick={(e) => handleNavClick(e, navItems[0])}
+            onClick={(e) => handleNavClick(e, mainNavItems[0])}
           >
             <motion.div
               className="flex items-center gap-2"
@@ -81,8 +95,9 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
+          {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item, index) => (
+            {mainNavItems.map((item, index) => (
               <motion.div
                 key={item.name}
                 initial={{ opacity: 0, y: -10 }}
@@ -99,21 +114,48 @@ export function Header() {
                 </Link>
               </motion.div>
             ))}
-            {isAdmin && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: navItems.length * 0.1 }}
-              >
-                <Link
-                  to="/admin"
-                  className="px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors relative group inline-block"
+            
+            {/* More Dropdown */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: mainNavItems.length * 0.1 }}
+            >
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors flex items-center gap-1 outline-none">
+                    More
+                    <MoreHorizontal className="h-4 w-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  className="bg-popover/95 backdrop-blur-xl rounded-xl border border-white/10 z-50 min-w-[160px]"
+                  align="end"
                 >
-                  Admin
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4" />
-                </Link>
-              </motion.div>
-            )}
+                  {moreNavItems.map((item) => (
+                    <DropdownMenuItem asChild key={item.name} className="cursor-pointer hover:bg-accent/50 focus:bg-accent/50 rounded-lg transition-colors">
+                      <Link 
+                        to={item.href} 
+                        onClick={(e) => handleNavClick(e, item)}
+                        className="w-full"
+                      >
+                        {item.name}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator className="bg-white/10" />
+                      <DropdownMenuItem asChild className="cursor-pointer hover:bg-accent/50 focus:bg-accent/50 rounded-lg transition-colors">
+                        <Link to="/admin" className="w-full text-primary">
+                          Admin
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </motion.div>
           </nav>
 
           {/* Desktop CTA */}
@@ -168,7 +210,7 @@ export function Header() {
           >
             <div className="container mx-auto px-4 py-4">
               <nav className="flex flex-col gap-2">
-                {navItems.map((item) => (
+                {allNavItems.map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
