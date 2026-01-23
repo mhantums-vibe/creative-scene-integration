@@ -40,6 +40,33 @@ export function useAdmin(): AdminState {
       }
 
       try {
+        // Server-side admin verification via edge function
+        const { data: sessionData } = await supabase.auth.getSession();
+        const accessToken = sessionData?.session?.access_token;
+
+        if (accessToken) {
+          const { data: verifyData, error: verifyError } = await supabase.functions.invoke(
+            "verify-admin",
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+
+          if (!verifyError && verifyData?.isAdmin === true) {
+            setState({
+              isAdmin: true,
+              isManager: false,
+              isStaff: false,
+              userRole: "admin",
+              isLoading: false,
+            });
+            return;
+          }
+        }
+
+        // Fallback: fetch role from database for non-admin roles
         const { data, error } = await supabase
           .from("user_roles")
           .select("role")
