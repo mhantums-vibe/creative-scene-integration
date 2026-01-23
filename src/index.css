@@ -134,16 +134,33 @@
     background-image: linear-gradient(to bottom, hsl(0 0% 98%) 0%, hsl(220 10% 70%) 100%);
   }
 
+  /* iPhone-style frosted glass - dark variant */
   .glass-card {
-    @apply backdrop-blur-xl border border-white/10;
-    background: linear-gradient(135deg, hsl(0 0% 100% / 0.08) 0%, hsl(0 0% 100% / 0.03) 100%);
-    box-shadow: 0 8px 32px hsl(0 0% 0% / 0.1), inset 0 1px 0 hsl(0 0% 100% / 0.1);
+    @apply backdrop-blur-2xl border border-white/20;
+    background: hsl(0 0% 100% / 0.08);
+    box-shadow: 0 8px 32px hsl(0 0% 0% / 0.12), inset 0 1px 0 hsl(0 0% 100% / 0.15);
   }
 
+  /* iPhone-style frosted glass - light variant (clear, no color) */
   .glass-card-light {
-    @apply backdrop-blur-xl border border-border/30;
-    background: linear-gradient(135deg, hsl(0 0% 100% / 0.7) 0%, hsl(0 0% 100% / 0.5) 100%);
-    box-shadow: 0 8px 32px hsl(0 0% 0% / 0.08), inset 0 1px 0 hsl(0 0% 100% / 0.5);
+    @apply backdrop-blur-2xl border border-white/40;
+    background: hsl(0 0% 100% / 0.25);
+    box-shadow: 
+      0 4px 24px hsl(0 0% 0% / 0.06),
+      0 1px 2px hsl(0 0% 0% / 0.04),
+      inset 0 1px 0 hsl(0 0% 100% / 0.6);
+  }
+
+  .glass-card-light:hover {
+    background: hsl(0 0% 100% / 0.35);
+    border-color: hsl(0 0% 100% / 0.5);
+  }
+
+  /* iPhone-style nav glass */
+  .glass-nav {
+    @apply backdrop-blur-2xl border-b border-white/15;
+    background: hsl(0 0% 0% / 0.4);
+    box-shadow: 0 1px 0 hsl(0 0% 100% / 0.05);
   }
 
   .hero-section {

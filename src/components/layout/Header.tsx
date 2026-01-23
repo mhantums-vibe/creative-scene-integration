@@ -30,7 +30,7 @@ export function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-accent/80 backdrop-blur-xl border-b border-white/10 shadow-lg">
+    <header className="fixed top-0 left-0 right-0 z-50 glass-nav">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
@@ -148,7 +148,7 @@ export function Header() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden bg-accent/90 backdrop-blur-xl border-t border-white/10"
+            className="lg:hidden backdrop-blur-2xl bg-black/50 border-t border-white/10"
           >
             <div className="container mx-auto px-4 py-4">
               <nav className="flex flex-col gap-2">
