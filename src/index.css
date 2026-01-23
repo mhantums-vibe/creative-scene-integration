@@ -171,6 +171,15 @@
     box-shadow: 0 1px 0 hsl(0 0% 100% / 0.05);
   }
 
+  /* Scrolled state nav glass */
+  .glass-nav-scrolled {
+    @apply backdrop-blur-2xl border-b border-white/25;
+    background: hsl(0 0% 0% / 0.7);
+    box-shadow: 
+      0 4px 30px hsl(0 0% 0% / 0.3),
+      0 1px 0 hsl(0 0% 100% / 0.08);
+  }
+
   .hero-section {
     background: var(--gradient-hero);
   }
