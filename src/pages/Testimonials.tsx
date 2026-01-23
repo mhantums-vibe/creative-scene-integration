@@ -1,0 +1,192 @@
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { motion } from "framer-motion";
+import { Quote, Star } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Link } from "react-router-dom";
+
+const testimonials = [
+  {
+    name: "Sarah Johnson",
+    role: "CEO, TechStart",
+    content: "YessBangal transformed our online presence completely. Their attention to detail and innovative approach exceeded our expectations. The team was professional and delivered on time.",
+    rating: 5,
+    image: "/placeholder.svg",
+  },
+  {
+    name: "Michael Chen",
+    role: "Founder, GrowthLabs",
+    content: "Working with YessBangal was a game-changer for our startup. They understood our vision and delivered a product that perfectly matched our needs. Highly recommended!",
+    rating: 5,
+    image: "/placeholder.svg",
+  },
+  {
+    name: "Emily Rodriguez",
+    role: "Marketing Director, BrandCo",
+    content: "The team's creativity and technical expertise are unmatched. They created a stunning website that has significantly improved our conversion rates and user engagement.",
+    rating: 5,
+    image: "/placeholder.svg",
+  },
+  {
+    name: "David Thompson",
+    role: "COO, FinanceHub",
+    content: "Professional, reliable, and incredibly talented. YessBangal delivered our complex fintech platform ahead of schedule with all the features we requested and more.",
+    rating: 5,
+    image: "/placeholder.svg",
+  },
+  {
+    name: "Lisa Park",
+    role: "Owner, StyleBoutique",
+    content: "Our e-commerce site has never looked better! Sales have increased by 40% since the redesign. The team was responsive and made the entire process seamless.",
+    rating: 5,
+    image: "/placeholder.svg",
+  },
+  {
+    name: "James Wilson",
+    role: "CTO, DataDrive",
+    content: "The mobile app they developed for us is flawless. The UI/UX design is intuitive, and the performance is exceptional. We've received amazing feedback from our users.",
+    rating: 5,
+    image: "/placeholder.svg",
+  },
+  {
+    name: "Amanda Foster",
+    role: "Director, HealthPlus",
+    content: "YessBangal understood the healthcare industry requirements perfectly. They built a HIPAA-compliant platform that our patients love to use.",
+    rating: 5,
+    image: "/placeholder.svg",
+  },
+  {
+    name: "Robert Kim",
+    role: "Founder, EduLearn",
+    content: "From concept to launch, the team guided us every step of the way. Our e-learning platform is now serving thousands of students thanks to their excellent work.",
+    rating: 4,
+    image: "/placeholder.svg",
+  },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
+
+const Testimonials = () => {
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="pt-20">
+        {/* Hero Banner */}
+        <section className="relative py-16 lg:py-24 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
+          <div className="container mx-auto px-4 relative z-10">
+            <Breadcrumb className="mb-6">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link to="/" className="text-white/70 hover:text-white">Home</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="text-white/50" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-primary">Testimonials</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="max-w-3xl"
+            >
+              <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+                Client <span className="text-primary">Testimonials</span>
+              </h1>
+              <p className="text-lg text-white/70 leading-relaxed">
+                Don't just take our word for it. See what our clients have to say about working with us and the results we've delivered.
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Testimonials Grid */}
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              {testimonials.map((testimonial, index) => (
+                <motion.div key={index} variants={itemVariants}>
+                  <Card className="p-6 h-full bg-card/50 backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all flex flex-col">
+                    {/* Quote Icon */}
+                    <Quote className="w-10 h-10 text-primary/50 mb-4" />
+                    
+                    {/* Rating */}
+                    <div className="flex gap-1 mb-4">
+                      {Array(testimonial.rating)
+                        .fill(0)
+                        .map((_, i) => (
+                          <Star
+                            key={i}
+                            className="w-4 h-4 fill-primary text-primary"
+                          />
+                        ))}
+                      {Array(5 - testimonial.rating)
+                        .fill(0)
+                        .map((_, i) => (
+                          <Star
+                            key={i}
+                            className="w-4 h-4 text-white/30"
+                          />
+                        ))}
+                    </div>
+
+                    {/* Content */}
+                    <p className="text-white/80 flex-grow mb-6 leading-relaxed">
+                      "{testimonial.content}"
+                    </p>
+
+                    {/* Author */}
+                    <div className="flex items-center gap-4 pt-4 border-t border-white/10">
+                      <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                        <span className="text-primary font-semibold text-lg">
+                          {testimonial.name.charAt(0)}
+                        </span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-white">{testimonial.name}</h4>
+                        <p className="text-sm text-white/60">{testimonial.role}</p>
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default Testimonials;
