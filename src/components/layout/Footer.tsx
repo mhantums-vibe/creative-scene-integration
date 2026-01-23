@@ -47,7 +47,7 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-accent text-white">
+    <footer className="relative text-white backdrop-blur-2xl bg-black/60 border-t border-white/10">
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
@@ -151,7 +151,7 @@ export function Footer() {
               <Input
                 type="email"
                 placeholder="Enter your email"
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-11"
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-11 backdrop-blur-xl"
               />
               <Button variant="hero" className="w-full">
                 Subscribe
@@ -163,7 +163,7 @@ export function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-white/15 backdrop-blur-2xl bg-black/30">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-white/60">
@@ -177,7 +177,7 @@ export function Footer() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"
+                  className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-xl flex items-center justify-center hover:bg-white/20 transition-colors"
                 >
                   <social.icon className="w-4 h-4" />
                 </a>
