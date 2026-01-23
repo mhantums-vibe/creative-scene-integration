@@ -218,6 +218,7 @@ export type Database = {
           display_order: number
           features: string[]
           icon: string
+          icon_url: string | null
           id: string
           is_active: boolean
           title: string
@@ -229,6 +230,7 @@ export type Database = {
           display_order?: number
           features?: string[]
           icon?: string
+          icon_url?: string | null
           id?: string
           is_active?: boolean
           title: string
@@ -240,6 +242,7 @@ export type Database = {
           display_order?: number
           features?: string[]
           icon?: string
+          icon_url?: string | null
           id?: string
           is_active?: boolean
           title?: string

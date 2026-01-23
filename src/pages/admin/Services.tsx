@@ -30,14 +30,17 @@ import {
 } from "@/components/ui/select";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-import { Plus, Pencil, Trash2, Loader2, GripVertical } from "lucide-react";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { Plus, Pencil, Trash2, Loader2, GripVertical, Image } from "lucide-react";
 import * as Icons from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Service {
   id: string;
   title: string;
   description: string;
   icon: string;
+  icon_url: string | null;
   features: string[];
   display_order: number;
   is_active: boolean;
@@ -66,6 +69,7 @@ const initialFormData = {
   title: "",
   description: "",
   icon: "Globe",
+  icon_url: null as string | null,
   features: "",
   display_order: 0,
   is_active: true,
@@ -120,6 +124,7 @@ export default function AdminServices() {
       title: service.title,
       description: service.description,
       icon: service.icon,
+      icon_url: service.icon_url,
       features: service.features.join(", "),
       display_order: service.display_order,
       is_active: service.is_active,
@@ -141,6 +146,7 @@ export default function AdminServices() {
         title: formData.title,
         description: formData.description,
         icon: formData.icon,
+        icon_url: formData.icon_url,
         features: featuresArray,
         display_order: formData.display_order,
         is_active: formData.is_active,
@@ -221,6 +227,37 @@ export default function AdminServices() {
     return IconComponent ? <IconComponent className="h-5 w-5" /> : null;
   };
 
+  const ServiceIcon = ({ service }: { service: Service }) => {
+    if (service.icon_url) {
+      return (
+        <img 
+          src={service.icon_url} 
+          alt={service.title}
+          className="h-5 w-5 object-contain"
+        />
+      );
+    }
+    return <DynamicIcon name={service.icon} />;
+  };
+
+  const handleIconUpload = async (file: File): Promise<string> => {
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
+    const filePath = `service-icons/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("site_assets")
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from("site_assets")
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -274,7 +311,7 @@ export default function AdminServices() {
                   </TableCell>
                   <TableCell>
                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <DynamicIcon name={service.icon} />
+                      <ServiceIcon service={service} />
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{service.title}</TableCell>
@@ -364,47 +401,73 @@ export default function AdminServices() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="icon">Icon</Label>
-                <Select
-                  value={formData.icon}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, icon: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableIcons.map((icon) => (
-                      <SelectItem key={icon.value} value={icon.value}>
-                        <div className="flex items-center gap-2">
-                          <DynamicIcon name={icon.value} />
-                          <span>{icon.label}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label>Icon</Label>
+              <Tabs 
+                defaultValue={formData.icon_url ? "upload" : "preset"} 
+                className="w-full"
+              >
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="preset" className="flex items-center gap-2">
+                    <Icons.Shapes className="h-4 w-4" />
+                    Preset Icon
+                  </TabsTrigger>
+                  <TabsTrigger value="upload" className="flex items-center gap-2">
+                    <Image className="h-4 w-4" />
+                    Custom Image
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="preset" className="mt-3">
+                  <Select
+                    value={formData.icon}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, icon: value, icon_url: null })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableIcons.map((icon) => (
+                        <SelectItem key={icon.value} value={icon.value}>
+                          <div className="flex items-center gap-2">
+                            <DynamicIcon name={icon.value} />
+                            <span>{icon.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </TabsContent>
+                <TabsContent value="upload" className="mt-3">
+                  <ImageUpload
+                    value={formData.icon_url}
+                    onChange={(url) => setFormData({ ...formData, icon_url: url })}
+                    onUpload={handleIconUpload}
+                    label=""
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Recommended: Square image, min 64x64px, PNG or SVG
+                  </p>
+                </TabsContent>
+              </Tabs>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="display_order">Display Order</Label>
-                <Input
-                  id="display_order"
-                  type="number"
-                  min={1}
-                  value={formData.display_order}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      display_order: parseInt(e.target.value) || 0,
-                    })
-                  }
-                  required
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="display_order">Display Order</Label>
+              <Input
+                id="display_order"
+                type="number"
+                min={1}
+                value={formData.display_order}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    display_order: parseInt(e.target.value) || 0,
+                  })
+                }
+                required
+              />
             </div>
 
             <div className="space-y-2">
