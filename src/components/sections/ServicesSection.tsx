@@ -88,7 +88,7 @@ export function ServicesSection() {
     return mapping[title] || "website-development";
   };
   return (
-    <section id="services" className="py-24 bg-muted/30">
+    <section id="services" className="py-24 bg-gradient-to-b from-muted/20 to-muted/40">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
@@ -122,7 +122,7 @@ export function ServicesSection() {
         >
           {services.map((service) => (
             <motion.div key={service.title} variants={itemVariants}>
-              <Card className="group h-full p-6 lg:p-8 card-hover glass-card-light hover:border-primary/30 transition-all duration-300">
+              <Card className="group h-full p-6 lg:p-8 card-hover glass-card-light transition-all duration-300">
                 {/* Icon */}
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
                   <service.icon className="w-7 h-7 text-primary" />

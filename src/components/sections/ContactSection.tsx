@@ -96,7 +96,7 @@ export function ContactSection() {
             transition={{ duration: 0.6 }}
           >
             {contactInfo.map((item) => (
-              <Card key={item.title} className="p-5 glass-card-light hover:border-primary/30 transition-colors">
+              <Card key={item.title} className="p-5 glass-card-light transition-colors">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-6 h-6 text-primary" />
@@ -120,7 +120,7 @@ export function ContactSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <Card className="p-6 lg:p-8 glass-card-light">
+            <Card className="p-6 lg:p-8 glass-card-light transition-all duration-300">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
