@@ -39,7 +39,7 @@ const itemVariants = {
 
 const DynamicIcon = ({ name }: { name: string }) => {
   const IconComponent = (Icons as any)[name];
-  return IconComponent ? <IconComponent className="w-7 h-7 text-primary" /> : null;
+  return IconComponent ? <IconComponent className="w-5 h-5 text-primary" /> : null;
 };
 
 const ServiceIcon = ({ service }: { service: Service }) => {
@@ -48,7 +48,7 @@ const ServiceIcon = ({ service }: { service: Service }) => {
       <img 
         src={service.icon_url} 
         alt={service.title}
-        className="w-7 h-7 object-contain"
+        className="w-5 h-5 object-contain"
       />
     );
   }
@@ -112,46 +112,56 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
           </div>
         ) : (
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
           >
-            {(limit ? services.slice(0, limit) : services).map((service) => (
-              <motion.div key={service.id} variants={itemVariants}>
-                <Card className="group h-full p-6 lg:p-8 card-hover glass-card-light transition-all duration-300">
-                  {/* Icon */}
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                    <ServiceIcon service={service} />
-                  </div>
+            {(limit ? services.slice(0, limit) : services).map((service) => {
+              const visibleFeatures = service.features.slice(0, 3);
+              const remainingCount = service.features.length - 3;
+              
+              return (
+                <motion.div key={service.id} variants={itemVariants}>
+                  <Card className="group h-full p-4 lg:p-5 card-hover glass-card-light transition-all duration-300">
+                    {/* Icon */}
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      <ServiceIcon service={service} />
+                    </div>
 
-                {/* Content */}
-                <h3 className="text-xl font-bold text-foreground mb-3">{service.title}</h3>
-                <p className="text-muted-foreground mb-6 leading-relaxed">{service.description}</p>
+                    {/* Content */}
+                    <h3 className="text-lg font-bold text-foreground mb-2">{service.title}</h3>
+                    <p className="text-muted-foreground mb-3 leading-relaxed text-sm line-clamp-2">{service.description}</p>
 
-                {/* Features */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {service.features.map((feature) => (
-                    <span
-                      key={feature}
-                      className="px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-medium"
-                    >
-                      {feature}
-                    </span>
-                  ))}
-                </div>
+                    {/* Features */}
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                      {visibleFeatures.map((feature) => (
+                        <span
+                          key={feature}
+                          className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-medium"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                      {remainingCount > 0 && (
+                        <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                          +{remainingCount}
+                        </span>
+                      )}
+                    </div>
 
-                {/* CTA */}
-                <Link to={`/services/${getServiceSlug(service)}`}>
-                  <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80">
-                    Learn More
-                    <ArrowRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </Card>
-            </motion.div>
-          ))}
+                    {/* CTA */}
+                    <Link to={`/services/${getServiceSlug(service)}`}>
+                      <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80 text-sm">
+                        Learn More
+                        <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover/btn:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
+                  </Card>
+                </motion.div>
+              );
+            })}
         </motion.div>
         )}
 
