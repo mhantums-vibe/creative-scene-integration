@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import type { Database } from "@/integrations/supabase/types";
 
 type AppRole = Database["public"]["Enums"]["app_role"];
@@ -46,7 +47,7 @@ export function useAdmin(): AdminState {
           .single();
 
         if (error) {
-          console.error("Error fetching user role:", error);
+          logger.error("Error fetching user role", error);
           setState({
             isAdmin: false,
             isManager: false,
@@ -66,7 +67,7 @@ export function useAdmin(): AdminState {
           isLoading: false,
         });
       } catch (err) {
-        console.error("Error in fetchRole:", err);
+        logger.error("Error in fetchRole", err);
         setState({
           isAdmin: false,
           isManager: false,

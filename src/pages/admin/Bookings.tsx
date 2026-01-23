@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/admin/StatusBadge";
@@ -63,7 +64,7 @@ export default function AdminBookings() {
       if (error) throw error;
       setBookings(data || []);
     } catch (error) {
-      console.error("Error fetching bookings:", error);
+      logger.error("Error fetching bookings", error);
       toast.error("Failed to fetch bookings");
     } finally {
       setIsLoading(false);
@@ -85,7 +86,7 @@ export default function AdminBookings() {
       toast.success("Status updated");
       fetchBookings();
     } catch (error) {
-      console.error("Error updating status:", error);
+      logger.error("Error updating status", error);
       toast.error("Failed to update status");
     }
   };
@@ -104,7 +105,7 @@ export default function AdminBookings() {
       setIsDeleteDialogOpen(false);
       fetchBookings();
     } catch (error) {
-      console.error("Error deleting booking:", error);
+      logger.error("Error deleting booking", error);
       toast.error("Failed to delete booking");
     }
   };

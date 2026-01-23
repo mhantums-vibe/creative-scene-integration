@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import { StatsCard } from "@/components/admin/StatsCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/admin/StatusBadge";
@@ -214,7 +215,7 @@ export default function AdminDashboard() {
 
         setRecentActivity(activities);
       } catch (error) {
-        console.error("Error fetching stats:", error);
+        logger.error("Error fetching stats", error);
       } finally {
         setIsLoading(false);
       }

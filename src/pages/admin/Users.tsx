@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/admin/StatusBadge";
@@ -82,7 +83,7 @@ export default function AdminUsers() {
 
       setUsers(usersWithRoles);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      logger.error("Error fetching users", error);
       toast.error("Failed to fetch users");
     } finally {
       setIsLoading(false);
@@ -127,7 +128,7 @@ export default function AdminUsers() {
       setIsRoleDialogOpen(false);
       fetchUsers();
     } catch (error) {
-      console.error("Error updating role:", error);
+      logger.error("Error updating role", error);
       toast.error("Failed to update role");
     }
   };
@@ -146,7 +147,7 @@ export default function AdminUsers() {
       setIsDeleteDialogOpen(false);
       fetchUsers();
     } catch (error) {
-      console.error("Error deleting role:", error);
+      logger.error("Error deleting role", error);
       toast.error("Failed to delete role");
     }
   };

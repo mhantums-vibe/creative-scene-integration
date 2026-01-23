@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -136,7 +137,7 @@ export function JobApplicationDialog({ isOpen, onClose, jobId, jobTitle }: JobAp
       setResumeFile(null);
       onClose();
     } catch (error: any) {
-      console.error("Application error:", error);
+      logger.error("Application error", error);
       toast({
         title: "Submission Failed",
         description: error.message || "Something went wrong. Please try again.",

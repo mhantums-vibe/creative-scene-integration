@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,7 +51,7 @@ export default function AdminSettings() {
         hero_banner_url: settingsMap.hero_banner_url || null,
       });
     } catch (error) {
-      console.error("Error fetching settings:", error);
+      logger.error("Error fetching settings", error);
       toast.error("Failed to fetch settings");
     } finally {
       setIsLoading(false);
@@ -108,7 +109,7 @@ export default function AdminSettings() {
 
       toast.success("Settings saved successfully");
     } catch (error) {
-      console.error("Error saving settings:", error);
+      logger.error("Error saving settings", error);
       toast.error("Failed to save settings");
     } finally {
       setIsSaving(false);

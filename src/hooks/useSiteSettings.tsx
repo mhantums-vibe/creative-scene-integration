@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 interface SiteSettings {
   site_name: string;
@@ -28,7 +29,7 @@ export function useSiteSettings() {
         .select("key, value");
 
       if (error) {
-        console.error("Error fetching site settings:", error);
+        logger.error("Error fetching site settings", error);
         return;
       }
 
@@ -45,7 +46,7 @@ export function useSiteSettings() {
         hero_banner_url: settingsMap.hero_banner_url || null,
       });
     } catch (err) {
-      console.error("Error in fetchSettings:", err);
+      logger.error("Error in fetchSettings", err);
     } finally {
       setIsLoading(false);
     }
