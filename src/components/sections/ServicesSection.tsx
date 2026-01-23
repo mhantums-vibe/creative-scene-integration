@@ -55,7 +55,12 @@ const ServiceIcon = ({ service }: { service: Service }) => {
   return <DynamicIcon name={service.icon} />;
 };
 
-export function ServicesSection() {
+interface ServicesSectionProps {
+  limit?: number;
+  showSeeMore?: boolean;
+}
+
+export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionProps) {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -107,13 +112,13 @@ export function ServicesSection() {
           </div>
         ) : (
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
           >
-            {services.map((service) => (
+            {(limit ? services.slice(0, limit) : services).map((service) => (
               <motion.div key={service.id} variants={itemVariants}>
                 <Card className="group h-full p-6 lg:p-8 card-hover glass-card-light transition-all duration-300">
                   {/* Icon */}
@@ -148,6 +153,24 @@ export function ServicesSection() {
             </motion.div>
           ))}
         </motion.div>
+        )}
+
+        {/* See More Button */}
+        {showSeeMore && services.length > (limit || 0) && (
+          <motion.div 
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <Link to="/services">
+              <Button size="lg" className="group">
+                See All Services
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </motion.div>
         )}
       </div>
     </section>
