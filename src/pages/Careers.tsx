@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { JobCard } from "@/components/careers/JobCard";
-import { JobApplicationDialog } from "@/components/careers/JobApplicationDialog";
 import { 
   Briefcase, 
   Globe, 
@@ -39,8 +37,6 @@ const benefits = [
 ];
 
 export default function Careers() {
-  const [selectedJob, setSelectedJob] = useState<{ id: string; title: string } | null>(null);
-
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["job-postings"],
     queryFn: async () => {
@@ -148,12 +144,7 @@ export default function Careers() {
           ) : jobs && jobs.length > 0 ? (
             <div className="max-w-3xl mx-auto space-y-4">
               {jobs.map((job, index) => (
-                <JobCard
-                  key={job.id}
-                  job={job}
-                  index={index}
-                  onApply={() => setSelectedJob({ id: job.id, title: job.title })}
-                />
+                <JobCard key={job.id} job={job} index={index} />
               ))}
             </div>
           ) : (
@@ -173,14 +164,6 @@ export default function Careers() {
       </section>
 
       <Footer />
-
-      {/* Application Dialog */}
-      <JobApplicationDialog
-        isOpen={!!selectedJob}
-        onClose={() => setSelectedJob(null)}
-        jobId={selectedJob?.id || ""}
-        jobTitle={selectedJob?.title || ""}
-      />
     </div>
   );
 }
