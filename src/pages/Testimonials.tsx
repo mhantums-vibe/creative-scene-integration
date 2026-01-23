@@ -132,22 +132,22 @@ const Testimonials = () => {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5"
             >
               {testimonials.map((testimonial, index) => (
                 <motion.div key={index} variants={itemVariants}>
-                  <Card className="p-6 h-full bg-card/50 backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all flex flex-col">
+                  <Card className="p-4 h-full bg-card/50 backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all flex flex-col">
                     {/* Quote Icon */}
-                    <Quote className="w-10 h-10 text-primary/50 mb-4" />
+                    <Quote className="w-6 h-6 text-primary/50 mb-2" />
                     
                     {/* Rating */}
-                    <div className="flex gap-1 mb-4">
+                    <div className="flex gap-1 mb-2">
                       {Array(testimonial.rating)
                         .fill(0)
                         .map((_, i) => (
                           <Star
                             key={i}
-                            className="w-4 h-4 fill-primary text-primary"
+                            className="w-3.5 h-3.5 fill-primary text-primary"
                           />
                         ))}
                       {Array(5 - testimonial.rating)
@@ -155,26 +155,26 @@ const Testimonials = () => {
                         .map((_, i) => (
                           <Star
                             key={i}
-                            className="w-4 h-4 text-white/30"
+                            className="w-3.5 h-3.5 text-white/30"
                           />
                         ))}
                     </div>
 
                     {/* Content */}
-                    <p className="text-white/80 flex-grow mb-6 leading-relaxed">
+                    <p className="text-white/80 flex-grow mb-3 leading-relaxed text-sm line-clamp-3">
                       "{testimonial.content}"
                     </p>
 
                     {/* Author */}
-                    <div className="flex items-center gap-4 pt-4 border-t border-white/10">
-                      <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                        <span className="text-primary font-semibold text-lg">
+                    <div className="flex items-center gap-3 pt-3 border-t border-white/10">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                        <span className="text-primary font-semibold text-base">
                           {testimonial.name.charAt(0)}
                         </span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white">{testimonial.name}</h4>
-                        <p className="text-sm text-white/60">{testimonial.role}</p>
+                        <h4 className="font-semibold text-white text-sm">{testimonial.name}</h4>
+                        <p className="text-xs text-white/60">{testimonial.role}</p>
                       </div>
                     </div>
                   </Card>
