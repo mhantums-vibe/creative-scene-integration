@@ -1,57 +1,23 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  Globe, 
-  Smartphone, 
-  Server, 
-  Palette, 
-  Video, 
-  Shield,
-  ArrowRight
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import * as Icons from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookingDialog } from "@/components/booking/BookingDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
-const services = [
-  {
-    icon: Globe,
-    title: "Website Development",
-    description: "Custom, responsive websites built with modern technologies for optimal performance and user experience.",
-    features: ["Custom Design", "SEO Optimized", "Mobile First"],
-  },
-  {
-    icon: Smartphone,
-    title: "App Development",
-    description: "Native and cross-platform mobile applications that deliver seamless experiences across all devices.",
-    features: ["iOS & Android", "Cross-Platform", "UI/UX Focus"],
-  },
-  {
-    icon: Server,
-    title: "Hosting & Domain",
-    description: "Reliable hosting solutions and domain management with 99.9% uptime guarantee and 24/7 support.",
-    features: ["99.9% Uptime", "SSL Included", "24/7 Support"],
-  },
-  {
-    icon: Palette,
-    title: "Graphic Design",
-    description: "Creative visual solutions including logos, branding, marketing materials, and digital assets.",
-    features: ["Brand Identity", "Print Design", "Digital Assets"],
-  },
-  {
-    icon: Video,
-    title: "Video Editing",
-    description: "Professional video production and editing services for marketing, social media, and corporate needs.",
-    features: ["Motion Graphics", "Color Grading", "Sound Design"],
-  },
-  {
-    icon: Shield,
-    title: "IT Security",
-    description: "Comprehensive security solutions to protect your digital assets and ensure business continuity.",
-    features: ["Threat Analysis", "Data Protection", "Compliance"],
-  },
-];
+interface Service {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  features: string[];
+  display_order: number;
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -72,20 +38,32 @@ const itemVariants = {
   },
 };
 
+const DynamicIcon = ({ name }: { name: string }) => {
+  const IconComponent = (Icons as any)[name];
+  return IconComponent ? <IconComponent className="w-7 h-7 text-primary" /> : null;
+};
+
 export function ServicesSection() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      const { data } = await supabase
+        .from("services")
+        .select("id, title, description, icon, features, display_order")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+      setServices(data || []);
+      setLoading(false);
+    };
+    fetchServices();
+  }, []);
 
   const getServiceValue = (title: string) => {
-    const mapping: Record<string, string> = {
-      "Website Development": "website-development",
-      "App Development": "app-development",
-      "Hosting & Domain": "hosting-domain",
-      "Graphic Design": "graphic-design",
-      "Video Editing": "video-editing",
-      "IT Security": "it-security",
-    };
-    return mapping[title] || "website-development";
+    return title.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "");
   };
   return (
     <section id="services" className="py-24 bg-gradient-to-b from-muted/20 to-muted/40">
@@ -113,20 +91,25 @@ export function ServicesSection() {
         </motion.div>
 
         {/* Services Grid */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          {services.map((service) => (
-            <motion.div key={service.title} variants={itemVariants}>
-              <Card className="group h-full p-6 lg:p-8 card-hover glass-card-light transition-all duration-300">
-                {/* Icon */}
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                  <service.icon className="w-7 h-7 text-primary" />
-                </div>
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            {services.map((service) => (
+              <motion.div key={service.id} variants={itemVariants}>
+                <Card className="group h-full p-6 lg:p-8 card-hover glass-card-light transition-all duration-300">
+                  {/* Icon */}
+                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                    <DynamicIcon name={service.icon} />
+                  </div>
 
                 {/* Content */}
                 <h3 className="text-xl font-bold text-foreground mb-3">{service.title}</h3>
@@ -166,6 +149,7 @@ export function ServicesSection() {
             </motion.div>
           ))}
         </motion.div>
+        )}
       </div>
     </section>
   );
