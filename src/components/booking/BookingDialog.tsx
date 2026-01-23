@@ -43,14 +43,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
-const services = [
-  { value: "website-development", label: "Website Development" },
-  { value: "app-development", label: "App Development" },
-  { value: "hosting-domain", label: "Hosting & Domain" },
-  { value: "graphic-design", label: "Graphic Design" },
-  { value: "video-editing", label: "Video Editing" },
-  { value: "it-security", label: "IT Security" },
-];
+import { useEffect } from "react";
 
 const timeSlots = [
   "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
@@ -77,6 +70,25 @@ export function BookingDialog({ children, defaultService, onSuccess }: BookingDi
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [services, setServices] = useState<{ value: string; label: string }[]>([]);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      const { data } = await supabase
+        .from("services")
+        .select("id, title")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+
+      setServices(
+        data?.map((s) => ({
+          value: s.title.toLowerCase().replace(/\s+/g, "-").replace(/&/g, ""),
+          label: s.title,
+        })) || []
+      );
+    };
+    fetchServices();
+  }, []);
 
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),

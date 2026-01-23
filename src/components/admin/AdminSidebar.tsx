@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
+  Layers,
   Briefcase,
   FileText,
   Calendar,
@@ -29,6 +30,7 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
+  { title: "Services", url: "/admin/services", icon: Layers },
   { title: "Job Postings", url: "/admin/jobs", icon: Briefcase },
   { title: "Applications", url: "/admin/applications", icon: FileText },
   { title: "Bookings", url: "/admin/bookings", icon: Calendar },
