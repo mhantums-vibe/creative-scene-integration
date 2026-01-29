@@ -81,7 +81,7 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
     return service.slug || service.title.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "and");
   };
   return (
-    <section id="services" className="py-24 relative overflow-hidden bg-gradient-to-b from-accent via-accent/95 to-accent/90">
+    <section id="services" className="py-24 bg-gradient-to-b from-muted/20 to-muted/40">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
@@ -94,12 +94,12 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
           <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
             Our Services
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Comprehensive IT Solutions
             <br />
             <span className="gradient-text-primary">for Every Need</span>
           </h2>
-          <p className="text-lg text-white/70">
+          <p className="text-lg text-muted-foreground">
             We offer a wide range of digital services to help your business thrive 
             in the modern digital landscape.
           </p>
@@ -131,15 +131,15 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
                     </div>
 
                     {/* Content */}
-                    <h3 className="text-lg font-bold text-white mb-2">{service.title}</h3>
-                    <p className="text-white/70 mb-3 leading-relaxed text-sm line-clamp-2">{service.description}</p>
+                    <h3 className="text-lg font-bold text-foreground mb-2">{service.title}</h3>
+                    <p className="text-muted-foreground mb-3 leading-relaxed text-sm line-clamp-2">{service.description}</p>
 
                     {/* Features */}
                     <div className="flex flex-wrap gap-1.5 mb-3">
                       {visibleFeatures.map((feature) => (
                         <span
                           key={feature}
-                          className="px-2 py-0.5 rounded-full bg-white/10 text-white/80 text-xs font-medium"
+                          className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-medium"
                         >
                           {feature}
                         </span>
