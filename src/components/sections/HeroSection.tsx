@@ -29,7 +29,7 @@ export function HeroSection() {
   };
 
   return (
-    <section id="home" className="relative min-h-screen hero-section overflow-hidden pt-20 lg:pt-24">
+    <section id="home" className="relative min-h-screen hero-section overflow-hidden pt-16 lg:pt-20">
       {/* Hero Banner Background */}
       {settings.hero_banner_url && (
         <div className="absolute inset-0 z-0">
@@ -60,7 +60,7 @@ export function HeroSection() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mt-4 mb-6 w-fit"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6 w-fit"
             >
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               Transforming Ideas into Digital Reality
@@ -111,7 +111,7 @@ export function HeroSection() {
                   <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white drop-shadow-lg">
                     <AnimatedCounter value={stat.value} suffix={stat.suffix} duration={2000} />
                   </div>
-                  <div className="text-xs sm:text-sm text-white mt-1 font-semibold drop-shadow-md">{stat.label}</div>
+                  <div className="text-xs sm:text-sm text-white/90 mt-1 font-medium">{stat.label}</div>
                 </div>
               ))}
             </motion.div>
@@ -133,7 +133,7 @@ export function HeroSection() {
       </div>
 
       {/* Decorative elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent pointer-events-none" />
     </section>
   );
 }
