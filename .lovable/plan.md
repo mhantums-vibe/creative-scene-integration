@@ -1,83 +1,38 @@
 
-## Fix Services Cards Visibility
+## Fix "Learn More" Button Hover Color and Padding
 
 ### Problem
-The services cards are blending into the section background because:
-- **Cards**: Use `glass-card-light` with a semi-transparent white background (`hsl(0 0% 100% / 0.25)`)
-- **Section**: Uses a light gradient background (`bg-gradient-to-b from-muted/20 to-muted/40`)
-- **Result**: Low contrast between cards and background makes them nearly invisible
+The "Learn More" button in the services section has these issues:
+1. **Hover color conflict**: The `ghost` variant applies `hover:bg-accent` (dark grey background) which clashes with the intended transparent/link-style behavior
+2. **Padding override issues**: The button has `p-0` but is fighting against the variant's default padding expectations
 
----
+### Current Code (Line 156 in ServicesSection.tsx)
+```tsx
+<Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80 text-sm">
+```
 
 ### Solution
-Change the services section to use a **dark background** so the light glass cards stand out clearly. This creates proper contrast and makes the glass effect pop.
+Change the button to use the `link` variant instead of `ghost`, which is better suited for this use case - it's designed for text-only buttons with hover underline instead of background color change.
 
----
-
-### Visual Comparison
-
-**Before:**
-```text
-+--------------------------------------------------+
-|  Light grey section background (muted/20-40)     |
-|  +------------+  +------------+  +------------+  |
-|  | Card       |  | Card       |  | Card       |  |
-|  | (white 25%)|  | (white 25%)|  | (white 25%)|  |
-|  +------------+  +------------+  +------------+  |
-|                                                  |
-|  Cards blend into light background - LOW CONTRAST|
-+--------------------------------------------------+
-```
-
-**After:**
-```text
-+--------------------------------------------------+
-|  Dark section background (accent gradient)       |
-|  +------------+  +------------+  +------------+  |
-|  | Card       |  | Card       |  | Card       |  |
-|  | (white 25%)|  | (white 25%)|  | (white 25%)|  |
-|  +------------+  +------------+  +------------+  |
-|                                                  |
-|  Cards pop against dark background - HIGH CONTRAST|
-+--------------------------------------------------+
-```
-
----
-
-### Changes Required
+### Changes
 
 #### File: `src/components/sections/ServicesSection.tsx`
 
-**1. Change section background** (line 84):
-- From: `bg-gradient-to-b from-muted/20 to-muted/40`
-- To: `bg-gradient-to-b from-accent via-accent/95 to-accent/90`
+**Line 156** - Update button styling:
 
-**2. Update section header text colors** (lines 94-105):
-- Tag badge: Keep `bg-primary/10 text-primary` (works on dark)
-- Main heading: `text-foreground` → `text-white`
-- Subheading span: Keep `gradient-text-primary` (already has glow)
-- Description: `text-muted-foreground` → `text-white/70`
+| Current | Fixed |
+|---------|-------|
+| `variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80 text-sm"` | `variant="link" className="group/btn p-0 h-auto text-sm hover:no-underline"` |
 
-**3. Update card text colors for contrast** (lines 134-135):
-- Title: `text-foreground` → `text-white`
-- Description: `text-muted-foreground` → `text-white/70`
+The `link` variant already includes:
+- `text-primary` - green text color
+- `underline-offset-4 hover:underline` - subtle hover effect
+- No background color change on hover
 
-**4. Update feature tags** (lines 140-142):
-- From: `bg-muted text-muted-foreground`
-- To: `bg-white/10 text-white/80`
-
----
-
-### Files to Modify
-
-| File | Changes |
-|------|---------|
-| `src/components/sections/ServicesSection.tsx` | Change to dark background, update text colors for contrast |
-
----
+Adding `hover:no-underline` keeps it clean while relying on the arrow animation for feedback.
 
 ### Result
-- Dark background creates strong contrast with light glass cards
-- Glass frosted effect becomes clearly visible
-- Maintains the iPhone-style aesthetic while improving readability
-- Consistent with the dark hero section design language
+- Clean hover state without dark background appearing
+- Maintains the primary green color
+- Arrow animation still provides visual feedback on hover
+- Proper padding with `p-0 h-auto` for compact link-style appearance
