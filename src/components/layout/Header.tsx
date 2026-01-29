@@ -87,28 +87,28 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className={cn(
           "flex items-center justify-between transition-all duration-300",
-          isScrolled ? "h-14 lg:h-16" : "h-16 lg:h-20"
+          isScrolled ? "h-12 lg:h-14" : "h-14 lg:h-16"
         )}>
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-2"
+            className="flex items-center gap-1.5"
             onClick={(e) => handleNavClick(e, mainNavItems[0])}
           >
             <motion.div
-              className="flex items-center gap-2"
+              className="flex items-center gap-1.5"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
               {settings.logo_url ? (
-                <img src={settings.logo_url} alt="Logo" className="w-15 h-12 rounded-lg object-cover" />
+                <img src={settings.logo_url} alt="Logo" className="w-12 h-10 rounded-lg object-cover" />
               ) : (
-                <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-xl">{settings.site_name.charAt(0)}</span>
+                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                  <span className="text-primary-foreground font-bold text-lg">{settings.site_name.charAt(0)}</span>
                 </div>
               )}
-              <span className="text-xl font-bold text-white">{settings.site_name}</span>
+              <span className="text-lg font-bold text-white">{settings.site_name}</span>
             </motion.div>
           </Link>
 
@@ -125,10 +125,10 @@ export function Header() {
                 <Link
                   to={item.href}
                   onClick={(e) => handleNavClick(e, item)}
-                  className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors relative group inline-block"
+                  className="px-3 py-1.5 text-xs font-medium text-white/80 hover:text-white transition-colors relative group inline-block"
                 >
                   {item.name}
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4" />
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1.5px] bg-primary transition-all duration-300 group-hover:w-3/4" />
                 </Link>
               </motion.div>
             ))}
@@ -141,13 +141,13 @@ export function Header() {
             >
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors flex items-center gap-1 outline-none">
+                  <button className="px-3 py-1.5 text-xs font-medium text-white/80 hover:text-white transition-colors flex items-center gap-1 outline-none">
                     More
-                    <MoreHorizontal className="h-4 w-4" />
+                    <MoreHorizontal className="h-3.5 w-3.5" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
-                  className="bg-popover/95 backdrop-blur-xl rounded-xl border border-white/10 z-50 min-w-[160px]"
+                  className="bg-popover/95 backdrop-blur-xl rounded-xl border border-white/10 z-50 min-w-[140px]"
                   align="end"
                 >
                   {moreNavItems.map((item) => (
@@ -178,27 +178,27 @@ export function Header() {
 
           {/* Desktop CTA */}
           <motion.div
-            className="hidden lg:flex items-center gap-3"
+            className="hidden lg:flex items-center gap-2"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             {user ? (
               <>
-                <Button variant="heroOutline" size="sm" asChild>
+                <Button variant="heroOutline" size="xs" asChild>
                   <Link to="/dashboard">Dashboard</Link>
                 </Button>
-                <Button variant="hero" size="sm" onClick={handleSignOut}>
-                  <LogOut className="h-4 w-4 mr-2" />
+                <Button variant="hero" size="xs" onClick={handleSignOut}>
+                  <LogOut className="h-3.5 w-3.5 mr-1.5" />
                   Sign Out
                 </Button>
               </>
             ) : (
               <>
-                <Button variant="heroOutline" size="sm" asChild>
+                <Button variant="heroOutline" size="xs" asChild>
                   <Link to="/login">Login</Link>
                 </Button>
-                <Button variant="hero" size="sm" asChild>
+                <Button variant="hero" size="xs" asChild>
                   <Link to="/signup">Get Started</Link>
                 </Button>
               </>
@@ -207,11 +207,11 @@ export function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 text-white"
+            className="lg:hidden p-1.5 text-white"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
@@ -226,13 +226,13 @@ export function Header() {
             transition={{ duration: 0.3 }}
             className="lg:hidden backdrop-blur-2xl bg-black/50 border-t border-white/10"
           >
-            <div className="container mx-auto px-4 py-4">
-              <nav className="flex flex-col gap-2">
+            <div className="container mx-auto px-4 py-3">
+              <nav className="flex flex-col gap-1.5">
                 {allNavItems.map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
-                    className="px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                    className="px-3 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                     onClick={(e) => {
                       handleNavClick(e, item);
                       setIsMenuOpen(false);
@@ -244,13 +244,13 @@ export function Header() {
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    className="px-4 py-3 text-primary hover:text-primary/80 hover:bg-white/5 rounded-lg transition-colors"
+                    className="px-3 py-2.5 text-primary hover:text-primary/80 hover:bg-white/5 rounded-lg transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Admin
                   </Link>
                 )}
-                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/10">
+                <div className="flex flex-col gap-1.5 mt-3 pt-3 border-t border-white/10">
                   {user ? (
                     <>
                       <Button variant="heroOutline" className="w-full" asChild>
