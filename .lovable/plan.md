@@ -1,101 +1,90 @@
 
-
-## Compact Navigation Bar
+## Fix Hero Section Visual Issues
 
 ### Overview
-Reduce the size and spacing of the navigation bar for a sleeker, more streamlined appearance while maintaining all functionality and the existing glassmorphism aesthetic.
+Address two visual issues in the hero section:
+1. Stats labels ("Projects Delivered", "Happy Clients", "Years Experience") are not visible due to white blur/gradient overlay at the bottom
+2. Navigation bar overlaps with the "Transforming Ideas into Digital Reality" tag badge
 
 ---
 
-### Current vs. Compact Design
+### Issue 1: Stats Text Visibility
 
-| Element | Current | Compact |
-|---------|---------|---------|
-| Header height (default) | `h-16 lg:h-20` | `h-14 lg:h-16` |
-| Header height (scrolled) | `h-14 lg:h-16` | `h-12 lg:h-14` |
-| Container padding | `px-4` | `px-3 lg:px-4` |
-| Logo image | `w-15 h-12` | `w-12 h-10` |
-| Logo fallback | `w-10 h-10` | `w-8 h-8` |
-| Site name text | `text-xl` | `text-lg` |
-| Nav link padding | `px-4 py-2` | `px-3 py-1.5` |
-| Nav link text | `text-sm` | `text-xs` |
-| More button | `px-4 py-2 text-sm` | `px-3 py-1.5 text-xs` |
-| CTA button gap | `gap-3` | `gap-2` |
-| CTA button size | `size="sm"` | Custom `size="xs"` |
-| Mobile menu button | `p-2` + `size={24}` | `p-1.5` + `size={20}` |
-| Mobile nav padding | `py-4` | `py-3` |
-| Mobile link padding | `px-4 py-3` | `px-3 py-2.5` |
+**Problem**: The bottom gradient overlay (`bg-gradient-to-t from-background to-transparent`) creates a white blur effect that obscures the stats section labels.
+
+**Root Cause**: The decorative gradient at line 136 in HeroSection.tsx spans `h-20` (80px) height and uses `from-background` which is white in light mode, creating a wash-out effect over the dark stats text.
+
+**Solution**:
+- Remove or reduce the decorative bottom gradient
+- Ensure stats text has sufficient contrast with enhanced text shadows/drop shadows
+- Add a subtle dark backdrop behind the stats to ensure readability
+
+**Changes to `src/components/sections/HeroSection.tsx`**:
+
+| Line | Current | Fixed |
+|------|---------|-------|
+| 114 | `text-white/90` | `text-white` |
+| 136 | `h-20 bg-gradient-to-t from-background to-transparent` | Remove or change to `h-12 bg-gradient-to-t from-background/30 to-transparent` |
 
 ---
 
-### Visual Comparison
+### Issue 2: Navigation Bar Overlap
 
-**Before (current):**
+**Problem**: The compact navigation bar now overlaps with the hero content tag badge due to insufficient top padding.
+
+**Root Cause**: The hero section uses `pt-16 lg:pt-20` padding, but after compacting the header, the actual header height is now `h-14 lg:h-16` (not scrolled) which should be sufficient. However, the content padding may not account for the actual visible space needed.
+
+**Solution**:
+- Adjust the hero section top padding to ensure content clears the navigation bar
+- Add a `mt-` margin to the tag badge to create breathing room below the header
+
+**Changes to `src/components/sections/HeroSection.tsx`**:
+
+| Element | Current | Fixed |
+|---------|---------|-------|
+| Section padding | `pt-16 lg:pt-20` | `pt-20 lg:pt-24` |
+| Tag badge | `mb-6` | `mt-4 mb-6` |
+
+---
+
+### Summary of Changes
+
+#### File: `src/components/sections/HeroSection.tsx`
+
+1. **Increase section top padding** (line 32):
+   - `pt-16 lg:pt-20` → `pt-20 lg:pt-24`
+
+2. **Add top margin to tag badge** (line 63):
+   - `mb-6` → `mt-4 mb-6`
+
+3. **Improve stats label visibility** (line 114):
+   - `text-white/90` → `text-white font-semibold`
+   - Add text shadow for better contrast
+
+4. **Reduce/adjust bottom gradient** (line 136):
+   - `h-20 bg-gradient-to-t from-background to-transparent` → `h-16 bg-gradient-to-t from-black/20 to-transparent`
+
+---
+
+### Visual Outcome
+
+**Before**:
 ```text
-+------------------------------------------------------------------+
-|  [Logo]  SiteName     Home  Services  About  Careers  More  |  Login  Get Started  |
-+------------------------------------------------------------------+
-      h-20 (desktop) / h-16 (mobile) - spacious padding
+[NAV BAR]
+[TAG BADGE - overlapped]
 ```
 
-**After (compact):**
+**After**:
 ```text
-+----------------------------------------------------------+
-| [Logo] SiteName   Home Services About Careers More | Login Get Started |
-+----------------------------------------------------------+
-      h-16 (desktop) / h-14 (mobile) - tighter padding
+[NAV BAR]
+    ↕ breathing room (pt-20 + mt-4)
+[TAG BADGE - clear]
 ```
 
----
-
-### Changes Required
-
-#### File 1: `src/components/layout/Header.tsx`
-
-**1. Reduce header heights:**
-- Default: `h-16 lg:h-20` → `h-14 lg:h-16`
-- Scrolled: `h-14 lg:h-16` → `h-12 lg:h-14`
-
-**2. Compact logo section:**
-- Image: `w-15 h-12` → `w-12 h-10`
-- Fallback container: `w-10 h-10` → `w-8 h-8`
-- Fallback text: `text-xl` → `text-lg`
-- Site name: `text-xl` → `text-lg`
-- Logo gap: `gap-2` → `gap-1.5`
-
-**3. Compact navigation links:**
-- Padding: `px-4 py-2` → `px-3 py-1.5`
-- Font size: `text-sm` → `text-xs`
-- Underline: `h-0.5` → `h-[1.5px]`
-
-**4. Compact More dropdown:**
-- Trigger padding: `px-4 py-2` → `px-3 py-1.5`
-- Trigger font: `text-sm` → `text-xs`
-- Icon: `h-4 w-4` → `h-3.5 w-3.5`
-- Content min-width: `min-w-[160px]` → `min-w-[140px]`
-
-**5. Compact CTA section:**
-- Gap: `gap-3` → `gap-2`
-- Button icons: `h-4 w-4` → `h-3.5 w-3.5`
-
-**6. Compact mobile menu:**
-- Button padding: `p-2` → `p-1.5`
-- Icon size: `size={24}` → `size={20}`
-- Container padding: `py-4` → `py-3`
-- Link padding: `px-4 py-3` → `px-3 py-2.5`
-- Gap: `gap-2` → `gap-1.5`
-- Border margin: `mt-4 pt-4` → `mt-3 pt-3`
-
----
-
-#### File 2: `src/components/ui/button.tsx`
-
-**Add extra-small size variant:**
-```typescript
-size: {
-  // ... existing sizes
-  xs: "h-7 rounded-md px-3 text-xs",
-}
+**Stats Section**:
+```text
+Before: 500+ (faded labels due to white gradient)
+After:  500+ Projects Delivered (clear, bold labels with dark gradient)
 ```
 
 ---
@@ -104,18 +93,4 @@ size: {
 
 | File | Changes |
 |------|---------|
-| `src/components/layout/Header.tsx` | Reduce heights, padding, font sizes, icon sizes |
-| `src/components/ui/button.tsx` | Add `xs` size variant for compact CTA buttons |
-
----
-
-### Preserved Features
-
-- Glassmorphism effect (glass-nav, glass-nav-scrolled)
-- Scroll-triggered height transition
-- Smooth scroll navigation
-- Dropdown menu functionality
-- Authentication-aware buttons
-- Mobile menu with slide animation
-- Admin link visibility for admins
-
+| `src/components/sections/HeroSection.tsx` | Increase top padding, add tag margin, improve stats visibility, fix bottom gradient |
