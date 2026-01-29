@@ -1,5 +1,5 @@
 import { Header } from "@/components/layout/Header";
-import { HeroSection } from "@/components/sections/HeroSection";
+import GlassmorphismTrustHero from "@/components/ui/glassmorphism-trust-hero";
 import { ServicesSection } from "@/components/sections/ServicesSection";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
@@ -15,7 +15,7 @@ const Index = () => {
       <Header />
       <main>
         <section id="home">
-          <HeroSection />
+          <GlassmorphismTrustHero />
         </section>
         <section id="services">
           <ServicesSection limit={4} showSeeMore />
