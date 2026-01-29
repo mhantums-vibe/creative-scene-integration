@@ -153,7 +153,7 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
 
                     {/* CTA */}
                     <Link to={`/services/${getServiceSlug(service)}`}>
-                      <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80 text-sm">
+                      <Button variant="link" className="group/btn p-0 h-auto text-sm hover:no-underline">
                         Learn More
                         <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover/btn:translate-x-1 transition-transform" />
                       </Button>
