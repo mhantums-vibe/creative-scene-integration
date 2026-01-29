@@ -123,7 +123,7 @@ export function HeroSection() {
           </motion.div>
 
           {/* Right content - 3D Scene */}
-          <motion.div className="flex-1 relative h-[400px] lg:h-[600px] w-full" initial={{
+          <motion.div className="flex-1 relative h-[400px] lg:h-[600px] w-full mt-8 lg:mt-12" initial={{
           opacity: 0,
           scale: 0.8
         }} animate={{
