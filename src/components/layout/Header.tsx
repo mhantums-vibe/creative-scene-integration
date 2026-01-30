@@ -169,6 +169,19 @@ export function Header() {
                         </Link>
                       </DropdownMenuItem>
                     </>}
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  {user ? (
+                    <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer hover:bg-accent/50 focus:bg-accent/50 rounded-lg transition-colors">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem asChild className="cursor-pointer hover:bg-accent/50 focus:bg-accent/50 rounded-lg transition-colors">
+                      <Link to="/login" className="w-full">
+                        Login
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </motion.div>
@@ -185,22 +198,15 @@ export function Header() {
           duration: 0.5,
           delay: 0.3
         }}>
-            {user ? <>
-                <Button variant="heroOutline" size="sm" asChild>
-                  <Link to="/dashboard">Dashboard</Link>
-                </Button>
-                <Button variant="hero" size="sm" onClick={handleSignOut}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
-              </> : <>
-                <Button variant="heroOutline" size="sm" asChild>
-                  <Link to="/login">Login</Link>
-                </Button>
-                <Button variant="hero" size="sm" asChild>
-                  <Link to="/signup">Get Started</Link>
-                </Button>
-              </>}
+            {user ? (
+              <Button variant="hero" size="sm" asChild>
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+            ) : (
+              <Button variant="hero" size="sm" asChild>
+                <Link to="/signup">Get Started</Link>
+              </Button>
+            )}
           </motion.div>
 
           {/* Mobile Menu Button */}
@@ -236,25 +242,29 @@ export function Header() {
                     Admin
                   </Link>}
                 <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/10">
-                  {user ? <>
-                      <Button variant="heroOutline" className="w-full" asChild>
+                  {user ? (
+                    <>
+                      <Button variant="hero" className="w-full" asChild>
                         <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
                       </Button>
-                      <Button variant="hero" className="w-full" onClick={() => {
-                  handleSignOut();
-                  setIsMenuOpen(false);
-                }}>
+                      <Button variant="heroOutline" className="w-full" onClick={() => {
+                        handleSignOut();
+                        setIsMenuOpen(false);
+                      }}>
                         <LogOut className="h-4 w-4 mr-2" />
                         Sign Out
                       </Button>
-                    </> : <>
-                      <Button variant="heroOutline" className="w-full" asChild>
-                        <Link to="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
-                      </Button>
+                    </>
+                  ) : (
+                    <>
                       <Button variant="hero" className="w-full" asChild>
                         <Link to="/signup" onClick={() => setIsMenuOpen(false)}>Get Started</Link>
                       </Button>
-                    </>}
+                      <Button variant="heroOutline" className="w-full" asChild>
+                        <Link to="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </nav>
             </div>
