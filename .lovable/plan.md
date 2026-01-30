@@ -1,133 +1,112 @@
 
 
-## Show Category-wise Demo Projects on Service Detail Pages
+## Compact Portfolio Project Cards
 
-This plan adds a "Related Projects" section to individual service detail/booking pages, showing portfolio items filtered by category that matches the service.
+This plan updates the project cards in the PortfolioSection to use a more compact design, matching the existing pattern used for Service and Testimonial cards.
 
 ---
 
 ### What You'll Get
 
-- A "Related Projects" section on each service detail page (e.g., `/services/website-development`)
-- Projects filtered to show only those relevant to that specific service
-- Smart category mapping to handle differences between service names and portfolio categories
-- Falls back to showing all projects if no category matches
+- Reduced card padding for higher information density
+- Smaller image aspect ratio
+- Truncated descriptions with line-clamp
+- Limited technology tags (max 3 with +N indicator)
+- Consistent compact styling matching other cards in the site
 
 ---
 
-### Current Data Analysis
+### Current vs. Compact Design
 
-| Service Name | Portfolio Category | Mapping |
-|--------------|-------------------|---------|
-| Website Development | Web Development | Match |
-| App Development | Mobile App | Match |
-| Graphic Design | UI/UX Design, Branding | Match |
-| Video Editing | (none yet) | Show all |
-| Hosting & Domain | (none yet) | Show all |
-| IT Security | (none yet) | Show all |
-| AI Automation | (none yet) | Show all |
-
----
-
-### Implementation Approach
-
-| Step | Description |
-|------|-------------|
-| 1 | Add `category` prop to `PortfolioSection` component for filtering |
-| 2 | Create category mapping function to match services to portfolio categories |
-| 3 | Add `PortfolioSection` to `ServiceDetail.tsx` before the booking form |
-| 4 | Pass the mapped category based on the current service title |
+| Element | Current | Compact |
+|---------|---------|---------|
+| Image aspect ratio | `aspect-video` (16:9) | `aspect-[4/3]` (shorter) |
+| Content padding | `p-5` | `p-4` |
+| Title size | `text-lg` | `text-base` |
+| Description | `line-clamp-2` | `line-clamp-2` (keep) |
+| Tech tags shown | 4 | 3 |
+| Tag size | `text-xs` | `text-[10px]` |
+| Category badge | Normal | Smaller |
 
 ---
 
 ### Technical Details
 
-**File Modifications:**
+**File to Modify:**
 
 | File | Changes |
 |------|---------|
-| `src/components/sections/PortfolioSection.tsx` | Add optional `category` prop for filtering projects |
-| `src/pages/services/ServiceDetail.tsx` | Import and add PortfolioSection with category filtering |
+| `src/components/sections/PortfolioSection.tsx` | Reduce padding, shrink image ratio, limit tech tags, smaller typography |
 
 ---
 
-### Updated Component Interface
-
-```tsx
-interface PortfolioSectionProps {
-  limit?: number;
-  showSeeMore?: boolean;
-  title?: string;
-  subtitle?: string;
-  category?: string;  // NEW: Filter by category
-}
-```
-
----
-
-### Category Mapping Logic
-
-```tsx
-const getCategoryForService = (serviceTitle: string): string | undefined => {
-  const mapping: Record<string, string> = {
-    "Website Development": "Web Development",
-    "App Development": "Mobile App",
-    "Graphic Design": "Branding",
-    "UI/UX Design": "UI/UX Design",
-  };
-  return mapping[serviceTitle];
-};
-```
-
----
-
-### Page Structure After Changes
+### Visual Comparison
 
 ```text
-Service Detail Page
-+-----------------------------+
-|  Hero Section               |
-+-----------------------------+
-|  Features                   |
-+-----------------------------+
-|  Extended Description       |
-+-----------------------------+
-|  Sub-Services               |
-+-----------------------------+
-|  Process Steps              |
-+-----------------------------+
-|  Related Projects (NEW)     |  <-- Filtered by category
-+-----------------------------+
-|  Booking Form               |
-+-----------------------------+
-|  Footer                     |
-+-----------------------------+
+CURRENT CARD                    COMPACT CARD
++------------------+            +------------------+
+|                  |            |   [Image 4:3]    |
+|  [Image 16:9]    |            |                  |
+|                  |            +------------------+
++------------------+            | Title            |
+|  Title           |            | Description...   |
+|                  |            | [tag][tag][+2]   |
+|  Description     |            +------------------+
+|  text here...    |
+|                  |
+| [tag][tag][tag]  |
+| [tag]            |
++------------------+
 ```
 
 ---
 
-### Key Code Snippets
+### Key Code Changes
 
-**ServiceDetail.tsx usage:**
+**Image section:**
 ```tsx
-import { PortfolioSection } from "@/components/sections/PortfolioSection";
+// Change from aspect-video to aspect-[4/3]
+<div className="relative aspect-[4/3] overflow-hidden">
+```
 
-// Before the booking form section
-<PortfolioSection
-  category={getCategoryForService(service.title)}
-  limit={3}
-  showSeeMore={true}
-  title={`${service.title} Projects`}
-  subtitle={`See examples of our ${service.title.toLowerCase()} work`}
-/>
+**Content padding:**
+```tsx
+// Change from p-5 to p-4
+<div className="p-4">
+```
+
+**Title styling:**
+```tsx
+// Change from text-lg to text-base
+<h3 className="text-base font-bold ...">
+```
+
+**Technology tags:**
+```tsx
+// Show max 3 instead of 4, smaller text
+{project.technologies.slice(0, 3).map((tech) => (
+  <span className="px-1.5 py-0.5 ... text-[10px] ...">
+    {tech}
+  </span>
+))}
+{project.technologies.length > 3 && (
+  <span className="... text-[10px] ...">
+    +{project.technologies.length - 3}
+  </span>
+)}
+```
+
+**Category badge:**
+```tsx
+<Badge className="absolute top-2 left-2 text-[10px] px-2 py-0.5 ...">
 ```
 
 ---
 
 ### Notes
 
-- If a service has no matching projects, the section will be hidden
-- The "See All Projects" button links to the full portfolio page
-- Category matching is case-insensitive for flexibility
-- Services without matching categories will show no projects (section hidden)
+- Follows existing compact card pattern from Services and Testimonials
+- Maintains all functionality (links, hover effects, animations)
+- Cards will fit better in grids with more items visible
+- Description remains at 2 lines for readability
 
