@@ -1,11 +1,14 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ServicesSection } from "@/components/sections/ServicesSection";
+import { PortfolioSection } from "@/components/sections/PortfolioSection";
 import { motion } from "framer-motion";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Link } from "react-router-dom";
+
 const Services = () => {
-  return <div className="min-h-screen bg-background">
+  return (
+    <div className="min-h-screen bg-background">
       <Header />
       <main className="pt-20">
         {/* Hero Banner */}
@@ -26,15 +29,12 @@ const Services = () => {
               </BreadcrumbList>
             </Breadcrumb>
             
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.6
-          }} className="max-w-3xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="max-w-3xl"
+            >
               <h1 className="text-4xl lg:text-5xl font-bold mb-6 text-accent-foreground">
                 Our <span className="text-primary">Services</span>
               </h1>
@@ -48,8 +48,18 @@ const Services = () => {
 
         {/* Services Grid */}
         <ServicesSection />
+
+        {/* Demo Projects */}
+        <PortfolioSection
+          limit={6}
+          showSeeMore={true}
+          title="Demo Projects"
+          subtitle="Explore our recent work and see what we can do for you"
+        />
       </main>
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default Services;
