@@ -115,7 +115,6 @@ export function Header() {
               {settings.logo_url ? <img src={settings.logo_url} alt="Logo" className="w-15 h-12 rounded-lg object-contain" /> : <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
                   <span className="text-primary-foreground font-bold text-xl">{settings.site_name.charAt(0)}</span>
                 </div>}
-              <span className="text-white text-sm font-semibold">{settings.site_name}</span>
             </motion.div>
           </Link>
 
