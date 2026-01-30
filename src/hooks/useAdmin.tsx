@@ -54,6 +54,18 @@ export function useAdmin(): AdminState {
             }
           );
 
+          // Handle "Not authenticated" - session is stale, clear state
+          if (verifyData?.error === "Not authenticated" || verifyData?.error === "No authorization header") {
+            setState({
+              isAdmin: false,
+              isManager: false,
+              isStaff: false,
+              userRole: null,
+              isLoading: false,
+            });
+            return;
+          }
+
           if (!verifyError && verifyData?.isAdmin === true) {
             setState({
               isAdmin: true,
