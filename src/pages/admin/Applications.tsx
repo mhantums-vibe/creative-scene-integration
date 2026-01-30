@@ -56,7 +56,18 @@ export default function AdminApplications() {
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
 
   // Get signed URL for a resume (admins only via RLS policy)
-  const getSignedUrl = async (resumePath: string): Promise<string | null> => {
+  const getSignedUrl = async (resumeUrl: string): Promise<string | null> => {
+    // Extract file path from URL if it's a full URL
+    let resumePath = resumeUrl;
+    
+    // Check if it's a full URL and extract just the filename
+    if (resumeUrl.includes('/storage/v1/object/')) {
+      const match = resumeUrl.match(/\/resumes\/(.+)$/);
+      if (match) {
+        resumePath = match[1];
+      }
+    }
+    
     // Check if we already have a cached signed URL
     if (signedUrls[resumePath]) {
       return signedUrls[resumePath];
