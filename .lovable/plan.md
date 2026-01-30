@@ -1,58 +1,107 @@
 
 
-## Fix: Make Edit Service Dialog Scrollable
+## Fix: Display Background Images in Service Cards
 
-The Cancel/Update buttons are hidden because the dialog content is taller than the screen when an image is uploaded. The fix is to make the dialog content scrollable.
-
----
-
-### The Problem
-
-From your screenshot, I can see:
-- The dialog has a large background image preview
-- The Display Order and Features fields are visible
-- But the Cancel/Update buttons at the bottom are cut off
+The uploaded background images are stored correctly in the database, but the `ServicesSection` component isn't fetching or displaying them.
 
 ---
 
-### The Solution
+### Root Cause
 
-Add a scrollable container with a maximum height to the form, keeping the footer buttons always visible.
+| Component | Issue |
+|-----------|-------|
+| Database | Background images are stored correctly (URLs exist) |
+| ServicesSection query | Missing `background_image` field in SELECT |
+| Service interface | Missing `background_image` property |
+| Card rendering | Not displaying the background image |
 
 ---
 
-### Changes
+### Evidence from Database
+
+```
+Website Development: https://zcimdsqvruzzorsdxxzs.supabase.co/.../db32c112-....png
+App Development:     https://zcimdsqvruzzorsdxxzs.supabase.co/.../87ae3c15-....png
+```
+
+---
+
+### Changes Required
 
 | File | Change |
 |------|--------|
-| `src/pages/admin/Services.tsx` | Wrap form content in a scrollable container with `max-h-[60vh] overflow-y-auto` |
+| `src/components/sections/ServicesSection.tsx` | Add `background_image` to interface, query, and render it on cards |
 
 ---
 
 ### Technical Details
 
+**1. Update the Service interface (line 10-19):**
 ```tsx
-// Before (line 398)
-<form onSubmit={handleSubmit} className="space-y-3">
-  {/* all form fields + DialogFooter inside */}
-</form>
+interface Service {
+  // ... existing fields
+  background_image: string | null;  // ADD this field
+}
+```
 
-// After
-<form onSubmit={handleSubmit} className="flex flex-col">
-  <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
-    {/* form fields only */}
+**2. Update the Supabase query (line 65):**
+```tsx
+.select("id, title, description, icon, icon_url, background_image, features, display_order, slug")
+```
+
+**3. Update the Card rendering (around line 122):**
+```tsx
+<Card 
+  className="group h-full p-4 lg:p-5 card-hover glass-card-light backdrop-blur-md transition-all duration-300 relative overflow-hidden"
+>
+  {/* Background Image */}
+  {service.background_image && (
+    <div className="absolute inset-0">
+      <img 
+        src={service.background_image} 
+        alt="" 
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+    </div>
+  )}
+  
+  {/* Content with z-10 to appear above background */}
+  <div className="relative z-10 backdrop-blur-lg">
+    {/* existing icon, title, description, features, CTA */}
   </div>
-  <DialogFooter className="mt-4 pt-4 border-t">
-    {/* Cancel and Update buttons - always visible */}
-  </DialogFooter>
-</form>
+</Card>
+```
+
+**4. Adjust text colors for cards with background:**
+```tsx
+// Title
+<h3 className="text-lg font-bold mb-2">
+
+// Description  
+<p className="mb-3 leading-relaxed text-sm line-clamp-2">
 ```
 
 ---
 
-### Result
+### Visual Result
 
-- Form fields scroll when content is tall
-- Cancel and Update buttons are **always visible** at the bottom
-- Works on all screen sizes
+```text
+BEFORE:                          AFTER (with bg image):
+┌─────────────────┐              ┌─────────────────┐
+│ 🌐              │              │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ ← Image
+│                 │              │▓▓ 🌐           ▓│
+│ Website Dev     │              │▓▓              ▓│
+│ Description...  │              │▓▓ Website Dev  ▓│ ← White text
+│                 │              │▓▓ Description  ▓│
+│ [tags]          │              │▓▓ [tags]       ▓│
+│ Learn More →    │              │▓▓ Learn More → ▓│
+└─────────────────┘              └─────────────────┘
+```
+
+---
+
+### Also: Remove console.log
+
+Line 74 has a debug `console.log(services)` that should be removed.
 
