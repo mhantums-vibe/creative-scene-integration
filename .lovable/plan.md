@@ -1,95 +1,58 @@
 
 
-## Compact the Edit Service Dialog
+## Fix: Make Edit Service Dialog Scrollable
 
-This plan reduces the vertical space in the Edit Service dialog to make it more compact and easier to work with.
-
----
-
-### Changes Overview
-
-| Element | Current | Compact |
-|---------|---------|---------|
-| Form spacing | `space-y-4` | `space-y-3` |
-| Field label spacing | `space-y-2` | `space-y-1` |
-| Description rows | 3 rows | 2 rows |
-| ImageUpload height | `h-48` (preview), `p-8` (dropzone) | `h-32` (preview), `p-4` (dropzone) |
-| ImageUpload icon | `h-8 w-8` | `h-5 w-5` |
-| Tabs content margin | `mt-3` | `mt-2` |
-| DialogContent | `max-w-lg` | `max-w-md` |
+The Cancel/Update buttons are hidden because the dialog content is taller than the screen when an image is uploaded. The fix is to make the dialog content scrollable.
 
 ---
 
-### Visual Comparison
+### The Problem
 
-```text
-BEFORE (Current):                    AFTER (Compact):
-┌────────────────────────┐           ┌──────────────────┐
-│ Edit Service           │           │ Edit Service     │
-│                        │           │                  │
-│ Title                  │           │ Title            │
-│ [                    ] │           │ [              ] │
-│                        │           │ Description      │
-│ Description            │           │ [    2 rows    ] │
-│ [                    ] │           │ Icon [Preset|Custom]
-│ [    3 rows          ] │           │ [Globe ▼      ]  │
-│ [                    ] │           │                  │
-│                        │           │ Background Image │
-│ Icon                   │           │ ┌──────────────┐ │
-│ ┌────────┬───────────┐ │           │ │  p-4 drop   │ │
-│ │ Preset │ Custom    │ │           │ └──────────────┘ │
-│ └────────┴───────────┘ │           │ Order [1] Active☑│
-│ [Globe (Web) ▼      ]  │           │ Features [     ] │
-│                        │           │   [Cancel][Save] │
-│ Background Image       │           └──────────────────┘
-│ ┌────────────────────┐ │
-│ │   p-8 dropzone     │ │
-│ │                    │ │
-│ └────────────────────┘ │
-│                        │
-│ Display Order          │
-│ [1                   ] │
-│                        │
-│ Features               │
-│ [Custom, SEO, Mobile ] │
-│                        │
-│ ☑ Active              │
-│                        │
-│        [Cancel][Update]│
-└────────────────────────┘
-```
+From your screenshot, I can see:
+- The dialog has a large background image preview
+- The Display Order and Features fields are visible
+- But the Cancel/Update buttons at the bottom are cut off
 
 ---
 
-### Files to Modify
+### The Solution
 
-| File | Changes |
-|------|---------|
-| `src/pages/admin/Services.tsx` | Reduce spacing, description rows, dialog width |
-| `src/components/admin/ImageUpload.tsx` | Smaller preview height, compact dropzone |
+Add a scrollable container with a maximum height to the form, keeping the footer buttons always visible.
+
+---
+
+### Changes
+
+| File | Change |
+|------|--------|
+| `src/pages/admin/Services.tsx` | Wrap form content in a scrollable container with `max-h-[60vh] overflow-y-auto` |
 
 ---
 
 ### Technical Details
 
-**1. Services.tsx Changes:**
-- Line 392: `max-w-lg` → `max-w-md`
-- Line 398: `space-y-4` → `space-y-3`
-- Lines 399, 412, 426, 478, 491, 508: `space-y-2` → `space-y-1`
-- Line 421: `rows={3}` → `rows={2}`
-- Lines 442, 464: `mt-3` → `mt-2`
+```tsx
+// Before (line 398)
+<form onSubmit={handleSubmit} className="space-y-3">
+  {/* all form fields + DialogFooter inside */}
+</form>
 
-**2. ImageUpload.tsx Changes:**
-- Line 63: `h-48` → `h-32`
-- Line 77: `p-8` → `p-4`
-- Lines 101, 106: `h-8 w-8` → `h-5 w-5`
+// After
+<form onSubmit={handleSubmit} className="flex flex-col">
+  <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+    {/* form fields only */}
+  </div>
+  <DialogFooter className="mt-4 pt-4 border-t">
+    {/* Cancel and Update buttons - always visible */}
+  </DialogFooter>
+</form>
+```
 
 ---
 
 ### Result
 
-- Dialog is ~30% more compact vertically
-- All fields remain visible without scrolling
-- Maintains readability and usability
-- Consistent compact styling throughout
+- Form fields scroll when content is tall
+- Cancel and Update buttons are **always visible** at the bottom
+- Works on all screen sizes
 
