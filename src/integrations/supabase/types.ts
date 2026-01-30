@@ -276,6 +276,7 @@ export type Database = {
       }
       services: {
         Row: {
+          background_image: string | null
           created_at: string
           description: string
           display_order: number
@@ -291,6 +292,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          background_image?: string | null
           created_at?: string
           description: string
           display_order?: number
@@ -306,6 +308,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          background_image?: string | null
           created_at?: string
           description?: string
           display_order?: number

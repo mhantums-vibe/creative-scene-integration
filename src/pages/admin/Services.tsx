@@ -41,6 +41,7 @@ interface Service {
   description: string;
   icon: string;
   icon_url: string | null;
+  background_image: string | null;
   features: string[];
   display_order: number;
   is_active: boolean;
@@ -70,6 +71,7 @@ const initialFormData = {
   description: "",
   icon: "Globe",
   icon_url: null as string | null,
+  background_image: null as string | null,
   features: "",
   display_order: 0,
   is_active: true,
@@ -125,6 +127,7 @@ export default function AdminServices() {
       description: service.description,
       icon: service.icon,
       icon_url: service.icon_url,
+      background_image: service.background_image,
       features: service.features.join(", "),
       display_order: service.display_order,
       is_active: service.is_active,
@@ -147,6 +150,7 @@ export default function AdminServices() {
         description: formData.description,
         icon: formData.icon,
         icon_url: formData.icon_url,
+        background_image: formData.background_image,
         features: featuresArray,
         display_order: formData.display_order,
         is_active: formData.is_active,
@@ -244,6 +248,24 @@ export default function AdminServices() {
     const fileExt = file.name.split(".").pop();
     const fileName = `${crypto.randomUUID()}.${fileExt}`;
     const filePath = `service-icons/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("site_assets")
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from("site_assets")
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
+  const handleBackgroundUpload = async (file: File): Promise<string> => {
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
+    const filePath = `service-backgrounds/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("site_assets")
@@ -451,6 +473,19 @@ export default function AdminServices() {
                   </p>
                 </TabsContent>
               </Tabs>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Background Image (Optional)</Label>
+              <ImageUpload
+                value={formData.background_image}
+                onChange={(url) => setFormData({ ...formData, background_image: url })}
+                onUpload={handleBackgroundUpload}
+                label=""
+              />
+              <p className="text-xs text-muted-foreground">
+                Card background image. Recommended: 400x300px or larger.
+              </p>
             </div>
 
             <div className="space-y-2">
