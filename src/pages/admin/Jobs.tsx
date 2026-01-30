@@ -260,11 +260,12 @@ export default function AdminJobs() {
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{selectedJob ? "Edit Job Posting" : "Create Job Posting"}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="title">Job Title</Label>
@@ -352,7 +353,8 @@ export default function AdminJobs() {
               />
               <Label htmlFor="is_active">Active</Label>
             </div>
-            <div className="flex justify-end gap-2">
+            </div>
+            <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
               <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Cancel
               </Button>
