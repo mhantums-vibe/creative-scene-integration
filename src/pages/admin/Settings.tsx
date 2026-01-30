@@ -24,6 +24,11 @@ interface SiteSettings {
   contact_address_line_2: string;
   business_hours_1: string;
   business_hours_2: string;
+  social_facebook: string;
+  social_twitter: string;
+  social_instagram: string;
+  social_linkedin: string;
+  social_youtube: string;
 }
 
 export default function AdminSettings() {
@@ -42,6 +47,11 @@ export default function AdminSettings() {
     contact_address_line_2: "",
     business_hours_1: "",
     business_hours_2: "",
+    social_facebook: "",
+    social_twitter: "",
+    social_instagram: "",
+    social_linkedin: "",
+    social_youtube: "",
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -73,6 +83,11 @@ export default function AdminSettings() {
         contact_address_line_2: settingsMap.contact_address_line_2 || "Mirpur, Dhaka – 1216",
         business_hours_1: settingsMap.business_hours_1 || "Sat - Thu: 9AM - 6PM",
         business_hours_2: settingsMap.business_hours_2 || "Friday: Closed",
+        social_facebook: settingsMap.social_facebook || "",
+        social_twitter: settingsMap.social_twitter || "",
+        social_instagram: settingsMap.social_instagram || "",
+        social_linkedin: settingsMap.social_linkedin || "",
+        social_youtube: settingsMap.social_youtube || "",
       });
     } catch (error) {
       logger.error("Error fetching settings", error);
@@ -121,6 +136,11 @@ export default function AdminSettings() {
         { key: "contact_address_line_2", value: settings.contact_address_line_2 },
         { key: "business_hours_1", value: settings.business_hours_1 },
         { key: "business_hours_2", value: settings.business_hours_2 },
+        { key: "social_facebook", value: settings.social_facebook },
+        { key: "social_twitter", value: settings.social_twitter },
+        { key: "social_instagram", value: settings.social_instagram },
+        { key: "social_linkedin", value: settings.social_linkedin },
+        { key: "social_youtube", value: settings.social_youtube },
       ];
 
       for (const update of updates) {
@@ -313,6 +333,63 @@ export default function AdminSettings() {
                 placeholder="Friday: Closed"
               />
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Social Media Links</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="social_facebook">Facebook URL</Label>
+              <Input
+                id="social_facebook"
+                value={settings.social_facebook}
+                onChange={(e) => setSettings({ ...settings, social_facebook: e.target.value })}
+                placeholder="https://facebook.com/yourpage"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="social_twitter">Twitter URL</Label>
+              <Input
+                id="social_twitter"
+                value={settings.social_twitter}
+                onChange={(e) => setSettings({ ...settings, social_twitter: e.target.value })}
+                placeholder="https://twitter.com/yourhandle"
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="social_instagram">Instagram URL</Label>
+              <Input
+                id="social_instagram"
+                value={settings.social_instagram}
+                onChange={(e) => setSettings({ ...settings, social_instagram: e.target.value })}
+                placeholder="https://instagram.com/yourprofile"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="social_linkedin">LinkedIn URL</Label>
+              <Input
+                id="social_linkedin"
+                value={settings.social_linkedin}
+                onChange={(e) => setSettings({ ...settings, social_linkedin: e.target.value })}
+                placeholder="https://linkedin.com/company/yourcompany"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="social_youtube">YouTube URL</Label>
+            <Input
+              id="social_youtube"
+              value={settings.social_youtube}
+              onChange={(e) => setSettings({ ...settings, social_youtube: e.target.value })}
+              placeholder="https://youtube.com/@yourchannel"
+            />
           </div>
         </CardContent>
       </Card>

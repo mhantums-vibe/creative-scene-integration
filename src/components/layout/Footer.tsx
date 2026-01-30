@@ -55,29 +55,16 @@ const footerLinks = {
     href: "#"
   }]
 };
-const socialLinks = [{
-  icon: Facebook,
-  href: "#",
-  label: "Facebook"
-}, {
-  icon: Twitter,
-  href: "#",
-  label: "Twitter"
-}, {
-  icon: Instagram,
-  href: "#",
-  label: "Instagram"
-}, {
-  icon: Linkedin,
-  href: "#",
-  label: "LinkedIn"
-}, {
-  icon: Youtube,
-  href: "#",
-  label: "YouTube"
-}];
 export function Footer() {
   const { settings } = useSiteSettings();
+  
+  const socialLinks = [
+    { icon: Facebook, href: settings.social_facebook, label: "Facebook" },
+    { icon: Twitter, href: settings.social_twitter, label: "Twitter" },
+    { icon: Instagram, href: settings.social_instagram, label: "Instagram" },
+    { icon: Linkedin, href: settings.social_linkedin, label: "LinkedIn" },
+    { icon: Youtube, href: settings.social_youtube, label: "YouTube" },
+  ].filter(link => link.href);
   
   return <footer className="relative text-white backdrop-blur-2xl bg-black/60 border-t border-white/10">
       {/* Main Footer */}
