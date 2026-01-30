@@ -1,101 +1,113 @@
 
 
-## Fix Resume Viewing in Admin Panel
+## Show Demo Projects on Services Page
 
-### Problem Identified
-The resume download fails because of a mismatch between how files are stored and retrieved:
-
-| Component | Current Behavior | Expected Behavior |
-|-----------|-----------------|-------------------|
-| `JobApplicationForm` | Stores full public URL in `resume_url` | Should store only file path |
-| `AdminApplications` | Passes full URL to `createSignedUrl()` | Needs just the file path |
-
-**Example of current stored value:**
-```
-https://zcimdsqvruzzorsdxxzs.supabase.co/storage/v1/object/public/resumes/1769738247403-u9omyg.pdf
-```
-
-**What `createSignedUrl()` expects:**
-```
-1769738247403-u9omyg.pdf
-```
+This plan adds a "Demo Projects" section to the Services page that displays all active portfolio items, allowing visitors to see examples of your work.
 
 ---
 
-### Solution
+### What You'll Get
 
-#### Option A: Fix the Admin Panel (Recommended)
-Extract the file path from the stored URL before calling `createSignedUrl()`. This approach:
-- Works with existing data in the database
-- No migration needed for existing applications
-- Handles both formats (path-only or full URL)
-
-#### Option B: Fix the Application Form
-Store only the file path instead of the full URL. This approach:
-- Requires updating existing records in the database
-- Cleaner long-term but needs data migration
-
-**I recommend Option A** since it's backward-compatible and doesn't require data migration.
+- A new "Demo Projects" section on the `/services` page below the services grid
+- Displays all active portfolio items with images, titles, descriptions, and technologies
+- Links to individual project detail pages
+- Clean, consistent design matching the rest of the site
 
 ---
 
-### Implementation (Option A)
+### Implementation Approach
 
-**File: `src/pages/admin/Applications.tsx`**
-
-Update the `getSignedUrl` function to extract the file path from either a full URL or just a path:
-
-```tsx
-const getSignedUrl = async (resumeUrl: string): Promise<string | null> => {
-  // Extract file path from URL if it's a full URL
-  let resumePath = resumeUrl;
-  
-  // Check if it's a full URL and extract just the filename
-  if (resumeUrl.includes('/storage/v1/object/')) {
-    // Extract path after bucket name
-    const match = resumeUrl.match(/\/resumes\/(.+)$/);
-    if (match) {
-      resumePath = match[1];
-    }
-  }
-  
-  // Check if we already have a cached signed URL
-  if (signedUrls[resumePath]) {
-    return signedUrls[resumePath];
-  }
-  
-  try {
-    const { data, error } = await supabase.storage
-      .from("resumes")
-      .createSignedUrl(resumePath, 3600);
-    
-    if (error) {
-      logger.error("Error creating signed URL", error);
-      toast.error("Failed to access resume");
-      return null;
-    }
-    
-    setSignedUrls(prev => ({ ...prev, [resumePath]: data.signedUrl }));
-    return data.signedUrl;
-  } catch (error) {
-    logger.error("Error getting signed URL", error);
-    return null;
-  }
-};
-```
+| Step | Description |
+|------|-------------|
+| 1 | Create a reusable `PortfolioGrid` component that fetches and displays portfolio items |
+| 2 | Add the component to the Services page after the ServicesSection |
+| 3 | Style it consistently with the existing Portfolio page design |
 
 ---
 
-### Files to Modify
+### Technical Details
+
+**New Component: `src/components/sections/PortfolioSection.tsx`**
+
+A reusable portfolio display component that:
+- Fetches active portfolio items from Supabase
+- Displays them in a responsive 3-column grid
+- Shows project image, title, description, category badge, and technologies
+- Links each card to `/portfolio/{slug}` for details
+- Includes optional `limit` prop to control how many projects to show
+- Includes optional `showSeeMore` prop to add a "See All Projects" button
+
+**File Modifications:**
 
 | File | Changes |
 |------|---------|
-| `src/pages/admin/Applications.tsx` | Update `getSignedUrl` to extract file path from full URL |
+| `src/components/sections/PortfolioSection.tsx` | New file - reusable portfolio grid component |
+| `src/pages/Services.tsx` | Import and add `PortfolioSection` after `ServicesSection` |
 
 ---
 
-### Result
-- Resume download button will work correctly for admins
-- Existing application data remains compatible
-- Private bucket security is maintained - only admins can access resumes via signed URLs
+### Component Structure
+
+```text
+Services Page
++-----------------------------+
+|  Hero Banner               |
++-----------------------------+
+|  ServicesSection (existing) |
++-----------------------------+
+|  PortfolioSection (new)     |
+|  - Section header           |
+|  - 3-column project grid    |
+|  - "See All Projects" button|
++-----------------------------+
+|  Footer                     |
++-----------------------------+
+```
+
+---
+
+### Key Code Snippets
+
+**PortfolioSection Component (new):**
+```tsx
+interface PortfolioSectionProps {
+  limit?: number;
+  showSeeMore?: boolean;
+  title?: string;
+  subtitle?: string;
+}
+
+export function PortfolioSection({ 
+  limit, 
+  showSeeMore = false,
+  title = "Our Projects",
+  subtitle = "See examples of our work"
+}: PortfolioSectionProps) {
+  // Fetch portfolio_items from Supabase
+  // Render in 3-column grid with animations
+  // Optionally show "See All Projects" button
+}
+```
+
+**Services Page Update:**
+```tsx
+import { PortfolioSection } from "@/components/sections/PortfolioSection";
+
+// After ServicesSection
+<PortfolioSection 
+  limit={6} 
+  showSeeMore={true}
+  title="Demo Projects"
+  subtitle="Explore our recent work and see what we can do for you"
+/>
+```
+
+---
+
+### Notes
+
+- No database changes required - uses existing `portfolio_items` table
+- The section will show a friendly message if no projects exist yet
+- Projects are ordered by `display_order` for admin control
+- The component is reusable and can be added to other pages (like homepage) if desired
 
