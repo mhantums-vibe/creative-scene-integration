@@ -5,6 +5,7 @@ import * as Icons from "lucide-react";
 import { Loader2, ArrowLeft, CheckCircle } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { PortfolioSection } from "@/components/sections/PortfolioSection";
 import { InlineBookingForm } from "@/components/booking/InlineBookingForm";
 import { Card } from "@/components/ui/card";
 import {
@@ -39,6 +40,17 @@ interface SubService {
 const DynamicIcon = ({ name, className }: { name: string; className?: string }) => {
   const IconComponent = (Icons as any)[name];
   return IconComponent ? <IconComponent className={className} /> : null;
+};
+
+// Map service titles to portfolio categories
+const getCategoryForService = (serviceTitle: string): string | undefined => {
+  const mapping: Record<string, string> = {
+    "Website Development": "Web Development",
+    "App Development": "Mobile App",
+    "Graphic Design": "Branding",
+    "UI/UX Design": "UI/UX Design",
+  };
+  return mapping[serviceTitle];
 };
 
 export default function ServiceDetail() {
@@ -279,6 +291,15 @@ export default function ServiceDetail() {
             </div>
           </section>
         )}
+
+        {/* Related Projects */}
+        <PortfolioSection
+          category={getCategoryForService(service.title)}
+          limit={3}
+          showSeeMore={true}
+          title={`${service.title} Projects`}
+          subtitle={`See examples of our ${service.title.toLowerCase()} work`}
+        />
 
         {/* Booking Form */}
         <section className="py-16 bg-muted/30">

@@ -22,6 +22,7 @@ interface PortfolioSectionProps {
   showSeeMore?: boolean;
   title?: string;
   subtitle?: string;
+  category?: string;
 }
 
 const containerVariants = {
@@ -48,22 +49,28 @@ export function PortfolioSection({
   showSeeMore = false,
   title = "Our Projects",
   subtitle = "See examples of our work",
+  category,
 }: PortfolioSectionProps) {
   const [projects, setProjects] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const { data } = await supabase
+      let query = supabase
         .from("portfolio_items")
         .select("id, title, description, image_url, category, technologies, slug")
-        .eq("is_active", true)
-        .order("display_order", { ascending: true });
+        .eq("is_active", true);
+      
+      if (category) {
+        query = query.eq("category", category);
+      }
+      
+      const { data } = await query.order("display_order", { ascending: true });
       setProjects(data || []);
       setLoading(false);
     };
     fetchProjects();
-  }, []);
+  }, [category]);
 
   const displayedProjects = limit ? projects.slice(0, limit) : projects;
 
