@@ -60,7 +60,7 @@ export function ImageUpload({
           <img
             src={value}
             alt="Uploaded"
-            className="w-full h-48 object-cover"
+            className="w-full h-32 object-cover"
           />
           <Button
             variant="destructive"
@@ -74,7 +74,7 @@ export function ImageUpload({
       ) : (
         <div
           className={cn(
-            "border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer",
+            "border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer",
             dragActive
               ? "border-primary bg-primary/5"
               : "border-border hover:border-primary/50",
@@ -97,14 +97,14 @@ export function ImageUpload({
           />
           
           {isUploading ? (
-            <div className="flex flex-col items-center gap-2">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Uploading...</p>
+            <div className="flex flex-col items-center gap-1">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <p className="text-xs text-muted-foreground">Uploading...</p>
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-2">
-              <Upload className="h-8 w-8 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-center gap-1">
+              <Upload className="h-5 w-5 text-muted-foreground" />
+              <p className="text-xs text-muted-foreground">
                 Drag and drop or click to upload
               </p>
             </div>
