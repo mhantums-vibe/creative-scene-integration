@@ -395,7 +395,8 @@ export default function AdminServices() {
               {selectedService ? "Edit Service" : "Create Service"}
             </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
             <div className="space-y-1">
               <Label htmlFor="title">Title</Label>
               <Input
@@ -527,8 +528,9 @@ export default function AdminServices() {
               />
               <Label htmlFor="is_active">Active (visible on homepage)</Label>
             </div>
+            </div>
 
-            <DialogFooter>
+            <DialogFooter className="mt-4 pt-4 border-t">
               <Button
                 type="button"
                 variant="outline"
