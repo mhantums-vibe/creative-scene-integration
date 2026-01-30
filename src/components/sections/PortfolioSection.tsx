@@ -117,7 +117,7 @@ export function PortfolioSection({
                 <Link to={`/portfolio/${project.slug}`}>
                   <Card className="group h-full overflow-hidden card-hover glass-card-light transition-all duration-300">
                     {/* Image */}
-                    <div className="relative aspect-video overflow-hidden">
+                    <div className="relative aspect-[4/3] overflow-hidden">
                       {project.image_url ? (
                         <img
                           src={project.image_url}
@@ -130,7 +130,7 @@ export function PortfolioSection({
                         </div>
                       )}
                       {project.category && (
-                        <Badge className="absolute top-3 left-3 bg-primary/90 hover:bg-primary">
+                        <Badge className="absolute top-2 left-2 text-[10px] px-2 py-0.5 bg-primary/90 hover:bg-primary">
                           {project.category}
                         </Badge>
                       )}
@@ -143,30 +143,30 @@ export function PortfolioSection({
                     </div>
 
                     {/* Content */}
-                    <div className="p-5">
-                      <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    <div className="p-4">
+                      <h3 className="text-base font-bold text-foreground mb-1.5 group-hover:text-primary transition-colors line-clamp-1">
                         {project.title}
                       </h3>
                       {project.description && (
-                        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                        <p className="text-muted-foreground text-xs mb-3 line-clamp-2">
                           {project.description}
                         </p>
                       )}
 
                       {/* Technologies */}
                       {project.technologies && project.technologies.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5">
-                          {project.technologies.slice(0, 4).map((tech) => (
+                        <div className="flex flex-wrap gap-1">
+                          {project.technologies.slice(0, 3).map((tech) => (
                             <span
                               key={tech}
-                              className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-medium"
+                              className="px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground text-[10px] font-medium"
                             >
                               {tech}
                             </span>
                           ))}
-                          {project.technologies.length > 4 && (
-                            <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                              +{project.technologies.length - 4}
+                          {project.technologies.length > 3 && (
+                            <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
+                              +{project.technologies.length - 3}
                             </span>
                           )}
                         </div>
