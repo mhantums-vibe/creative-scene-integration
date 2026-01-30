@@ -389,14 +389,14 @@ export default function AdminServices() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
               {selectedService ? "Edit Service" : "Create Service"}
             </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="space-y-1">
               <Label htmlFor="title">Title</Label>
               <Input
                 id="title"
@@ -409,7 +409,7 @@ export default function AdminServices() {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
@@ -418,12 +418,12 @@ export default function AdminServices() {
                   setFormData({ ...formData, description: e.target.value })
                 }
                 placeholder="Describe the service..."
-                rows={3}
+                rows={2}
                 required
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label>Icon</Label>
               <Tabs 
                 defaultValue={formData.icon_url ? "upload" : "preset"} 
@@ -439,7 +439,7 @@ export default function AdminServices() {
                     Custom Image
                   </TabsTrigger>
                 </TabsList>
-                <TabsContent value="preset" className="mt-3">
+                <TabsContent value="preset" className="mt-2">
                   <Select
                     value={formData.icon}
                     onValueChange={(value) =>
@@ -461,7 +461,7 @@ export default function AdminServices() {
                     </SelectContent>
                   </Select>
                 </TabsContent>
-                <TabsContent value="upload" className="mt-3">
+                <TabsContent value="upload" className="mt-2">
                   <ImageUpload
                     value={formData.icon_url}
                     onChange={(url) => setFormData({ ...formData, icon_url: url })}
@@ -475,7 +475,7 @@ export default function AdminServices() {
               </Tabs>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label>Background Image (Optional)</Label>
               <ImageUpload
                 value={formData.background_image}
@@ -488,7 +488,7 @@ export default function AdminServices() {
               </p>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="display_order">Display Order</Label>
               <Input
                 id="display_order"
@@ -505,7 +505,7 @@ export default function AdminServices() {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="features">Features (comma-separated)</Label>
               <Input
                 id="features"
