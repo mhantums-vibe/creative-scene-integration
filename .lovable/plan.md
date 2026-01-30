@@ -1,38 +1,46 @@
 
-## Fix "Learn More" Button Hover Color and Padding
+## Apply Custom Logo to Footer
 
-### Problem
-The "Learn More" button in the services section has these issues:
-1. **Hover color conflict**: The `ghost` variant applies `hover:bg-accent` (dark grey background) which clashes with the intended transparent/link-style behavior
-2. **Padding override issues**: The button has `p-0` but is fighting against the variant's default padding expectations
+### Overview
+Replace the hardcoded "Y" placeholder in the Footer with your custom YessBangal logo image.
 
-### Current Code (Line 156 in ServicesSection.tsx)
+### Changes Required
+
+**1. Copy Logo to Project**
+Copy the uploaded logo image to the `src/assets` folder for proper bundling and optimization:
+- Source: `user-uploads://WhatsApp_Image_2026-01-29_at_11.29.37_AM-removebg-preview.png`
+- Destination: `src/assets/yessbangal-logo.png`
+
+**2. Update Footer Component**
+Modify `src/components/layout/Footer.tsx` to:
+- Import the logo image
+- Replace the fallback "Y" div with an `<img>` tag using the imported logo
+
+### Code Changes
+
+**File: `src/components/layout/Footer.tsx`**
+
+Add import at top:
 ```tsx
-<Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80 text-sm">
+import yessbangalLogo from "@/assets/yessbangal-logo.png";
 ```
 
-### Solution
-Change the button to use the `link` variant instead of `ghost`, which is better suited for this use case - it's designed for text-only buttons with hover underline instead of background color change.
+Replace the logo div (lines 97-99):
+```tsx
+// Before
+<div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+  <span className="text-primary-foreground font-bold text-xl">Y</span>
+</div>
 
-### Changes
-
-#### File: `src/components/sections/ServicesSection.tsx`
-
-**Line 156** - Update button styling:
-
-| Current | Fixed |
-|---------|-------|
-| `variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80 text-sm"` | `variant="link" className="group/btn p-0 h-auto text-sm hover:no-underline"` |
-
-The `link` variant already includes:
-- `text-primary` - green text color
-- `underline-offset-4 hover:underline` - subtle hover effect
-- No background color change on hover
-
-Adding `hover:no-underline` keeps it clean while relying on the arrow animation for feedback.
+// After
+<img 
+  src={yessbangalLogo} 
+  alt="YessBangal Logo" 
+  className="w-10 h-10 rounded-lg object-contain"
+/>
+```
 
 ### Result
-- Clean hover state without dark background appearing
-- Maintains the primary green color
-- Arrow animation still provides visual feedback on hover
-- Proper padding with `p-0 h-auto` for compact link-style appearance
+- Footer displays your custom YessBangal logo instead of the "Y" placeholder
+- Logo is properly optimized through Vite's asset bundling
+- Maintains consistent sizing with the rest of the footer layout
