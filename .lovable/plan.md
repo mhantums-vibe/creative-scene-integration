@@ -1,136 +1,139 @@
 
 
-## Move Auth Buttons to More Dropdown
+## Add Background Image Option to Service Cards
 
-This plan reorganizes the authentication buttons to create a cleaner navigation bar by moving them into the "More" dropdown menu.
+This plan adds the ability to upload and display background images for service cards, manageable from the admin panel.
 
 ---
 
 ### What You'll Get
 
-- Cleaner navigation bar without prominent auth buttons
-- Login option inside the "More" dropdown when logged out
-- Sign Out option inside the "More" dropdown when logged in
-- Dashboard link remains visible in the main CTA area when logged in
-- "Get Started" button remains visible as the main call-to-action
+- New "Background Image" upload field in the admin service form
+- Service cards will display the uploaded image as a background with an overlay
+- Cards without a background image will continue to use the current solid style
+- Background images stored in Supabase storage (`site_assets` bucket)
 
 ---
 
-### Current vs. New Layout
-
-| State | Current | New |
-|-------|---------|-----|
-| **Logged Out** | Login button + Get Started button in nav bar | Get Started button only, Login in More dropdown |
-| **Logged In** | Dashboard button + Sign Out button in nav bar | Dashboard button only, Sign Out in More dropdown |
-
----
-
-### Visual Comparison
+### Visual Preview
 
 ```text
-CURRENT (Logged Out):
-[Home] [Services] [About] [Careers] [More ▼]    [Login] [Get Started]
+SERVICE CARD (With Background Image):
+┌─────────────────────────────────┐
+│  [Background Image]             │
+│  ┌─────────────────────────┐    │
+│  │ glassmorphism overlay   │    │
+│  │                         │    │
+│  │  🌐 Icon                │    │
+│  │  Website Development    │    │
+│  │  We create stunning...  │    │
+│  │  [Custom] [SEO] [+2]    │    │
+│  │  Learn More →           │    │
+│  └─────────────────────────┘    │
+└─────────────────────────────────┘
 
-NEW (Logged Out):
-[Home] [Services] [About] [Careers] [More ▼]    [Get Started]
-                                      └── Portfolio
-                                      └── Testimonials
-                                      └── Contact
-                                      └── ─────────
-                                      └── Login (NEW)
-
-CURRENT (Logged In):
-[Home] [Services] [About] [Careers] [More ▼]    [Dashboard] [Sign Out]
-
-NEW (Logged In):
-[Home] [Services] [About] [Careers] [More ▼]    [Dashboard]
-                                      └── Portfolio
-                                      └── Testimonials
-                                      └── Contact
-                                      └── Admin (if admin)
-                                      └── ─────────
-                                      └── Sign Out (NEW)
+SERVICE CARD (No Background - Current Style):
+┌─────────────────────────────────┐
+│  Glass Card Background          │
+│  🌐 Icon                        │
+│  Website Development            │
+│  We create stunning websites... │
+│  [Custom] [SEO] [Mobile] [+2]   │
+│  Learn More →                   │
+└─────────────────────────────────┘
 ```
+
+---
+
+### Changes Required
+
+| Area | Change |
+|------|--------|
+| **Database** | Add `background_image` column to `services` table |
+| **Admin Panel** | Add background image upload field in service form |
+| **Frontend** | Update service cards to display background image |
 
 ---
 
 ### Technical Details
 
-**File to Modify:**
+**1. Database Migration:**
+```sql
+ALTER TABLE services 
+ADD COLUMN background_image TEXT DEFAULT NULL;
+```
+
+**2. Admin Services Page Updates:**
+- Add `background_image` to the Service interface
+- Add `background_image: null` to initial form data
+- Add ImageUpload component for background image in the form dialog
+- Include `background_image` in the submit data
+- Add upload handler for background images (stored in `service-backgrounds/` folder)
+
+**3. ServicesSection Component Updates:**
+- Add `background_image` to the Service interface
+- Fetch `background_image` column in the query
+- Conditionally render background image with dark overlay on cards
+- Adjust text colors for better readability on image backgrounds
+
+---
+
+### Admin Form Layout (After Changes)
+
+```text
+┌──────────────────────────────────────┐
+│ Edit Service                         │
+├──────────────────────────────────────┤
+│ Title: [Website Development      ]   │
+│                                      │
+│ Description:                         │
+│ [We create stunning websites...  ]   │
+│                                      │
+│ Icon:                                │
+│ ┌────────────┬────────────┐          │
+│ │ Preset Icon│Custom Image│          │
+│ └────────────┴────────────┘          │
+│ [Globe ▼]                            │
+│                                      │
+│ Background Image (Optional):         │  ← NEW
+│ ┌────────────────────────────┐       │
+│ │  Drag and drop or click    │       │
+│ │  to upload                 │       │
+│ └────────────────────────────┘       │
+│                                      │
+│ Display Order: [1     ]              │
+│ Features: [Custom, SEO, Mobile]      │
+│ ☑ Active (visible on homepage)      │
+│                                      │
+│           [Cancel] [Update]          │
+└──────────────────────────────────────┘
+```
+
+---
+
+### Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/components/layout/Header.tsx` | Move Login/Sign Out to More dropdown, simplify CTA area |
+| `src/pages/admin/Services.tsx` | Add background_image field to form and upload handler |
+| `src/components/sections/ServicesSection.tsx` | Display background image on cards with overlay |
 
 ---
 
-### Key Changes
+### Card Styling With Background Image
 
-**1. Update More Dropdown (Desktop):**
-```tsx
-<DropdownMenuContent>
-  {moreNavItems.map(item => (...))}
-  
-  {isAdmin && (
-    <>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem>Admin</DropdownMenuItem>
-    </>
-  )}
-  
-  {/* NEW: Auth options in dropdown */}
-  <DropdownMenuSeparator />
-  {user ? (
-    <DropdownMenuItem onClick={handleSignOut}>
-      <LogOut className="h-4 w-4 mr-2" />
-      Sign Out
-    </DropdownMenuItem>
-  ) : (
-    <DropdownMenuItem asChild>
-      <Link to="/login">Login</Link>
-    </DropdownMenuItem>
-  )}
-</DropdownMenuContent>
-```
-
-**2. Simplify Desktop CTA Area:**
-```tsx
-{/* Desktop CTA - Simplified */}
-{user ? (
-  <Button asChild>
-    <Link to="/dashboard">Dashboard</Link>
-  </Button>
-) : (
-  <Button asChild>
-    <Link to="/signup">Get Started</Link>
-  </Button>
-)}
-```
-
-**3. Update Mobile Menu:**
-- Keep Dashboard visible when logged in
-- Move Sign Out after the separator
-- Keep Get Started visible when logged out
-- Move Login after the separator
+When a service has a background image:
+- Image covers the entire card background
+- Semi-transparent dark overlay for text readability
+- White/light text colors
+- Subtle blur effect on hover
 
 ---
 
-### Summary of Changes
+### Summary
 
-| Section | Logged Out | Logged In |
-|---------|------------|-----------|
-| Main CTA button | Get Started | Dashboard |
-| More dropdown | + Login | + Sign Out |
-| Mobile visible | Get Started | Dashboard |
-| Mobile in list | + Login | + Sign Out |
-
----
-
-### Notes
-
-- Keeps the navigation clean and focused
-- Important actions (Dashboard, Get Started) remain prominent
-- Secondary actions (Login, Sign Out) are accessible but less prominent
-- Admin link remains in dropdown for admin users
-- Mobile menu follows the same pattern
+- Adds optional background image upload per service
+- Non-breaking change: services without images keep current style
+- Images stored securely in Supabase storage
+- Admin can easily add/remove background images
 
