@@ -1,115 +1,87 @@
 
 
-## Add Contact Information Management to Admin Panel
+## Fix Resume Viewing in Admin Panel
 
-### Overview
-Enable administrators to manage contact details (phone numbers, email addresses, address, and business hours) from the admin settings panel. These values are currently hardcoded and will be moved to the database.
+### Problem Identified
+The resume download fails because of a mismatch between how files are stored and retrieved:
 
----
+| Component | Current Behavior | Expected Behavior |
+|-----------|-----------------|-------------------|
+| `JobApplicationForm` | Stores full public URL in `resume_url` | Should store only file path |
+| `AdminApplications` | Passes full URL to `createSignedUrl()` | Needs just the file path |
 
-### Current State
-
-**Hardcoded in `ContactSection.tsx` (lines 10-31):**
-```tsx
-const contactInfo = [
-  { icon: Phone, title: "Phone", details: ["+880 1XXX-XXXXXX", "+880 1XXX-XXXXXX"] },
-  { icon: Mail, title: "Email", details: ["info@yessbangal.com", "support@yessbangal.com"] },
-  { icon: MapPin, title: "Address", details: ["123 Tech Street, Dhaka", "Bangladesh"] },
-  { icon: Clock, title: "Business Hours", details: ["Sat - Thu: 9AM - 6PM", "Friday: Closed"] },
-];
+**Example of current stored value:**
+```
+https://zcimdsqvruzzorsdxxzs.supabase.co/storage/v1/object/public/resumes/1769738247403-u9omyg.pdf
 ```
 
-**Hardcoded in `Footer.tsx` (lines 112-122):**
-```tsx
-<Mail /> yessbangla.bd@gmail.com
-<Phone /> +88 019 162 11111
-<MapPin /> 11/A, Main Road # 3, Plot # 10, Mirpur, Dhaka – 1216
+**What `createSignedUrl()` expects:**
+```
+1769738247403-u9omyg.pdf
 ```
 
 ---
 
 ### Solution
 
-#### 1. Database: Add New Settings Keys
-Insert new rows into the `site_settings` table for contact information:
+#### Option A: Fix the Admin Panel (Recommended)
+Extract the file path from the stored URL before calling `createSignedUrl()`. This approach:
+- Works with existing data in the database
+- No migration needed for existing applications
+- Handles both formats (path-only or full URL)
 
-| Key | Default Value |
-|-----|---------------|
-| `contact_phone_1` | `+88 019 162 11111` |
-| `contact_phone_2` | `+880 1XXX-XXXXXX` |
-| `contact_email_1` | `yessbangla.bd@gmail.com` |
-| `contact_email_2` | `support@yessbangal.com` |
-| `contact_address_line_1` | `11/A, Main Road # 3, Plot # 10` |
-| `contact_address_line_2` | `Mirpur, Dhaka – 1216` |
-| `business_hours_1` | `Sat - Thu: 9AM - 6PM` |
-| `business_hours_2` | `Friday: Closed` |
+#### Option B: Fix the Application Form
+Store only the file path instead of the full URL. This approach:
+- Requires updating existing records in the database
+- Cleaner long-term but needs data migration
+
+**I recommend Option A** since it's backward-compatible and doesn't require data migration.
 
 ---
 
-#### 2. Update `useSiteSettings` Hook
-Add new fields to the interface and fetch logic:
+### Implementation (Option A)
+
+**File: `src/pages/admin/Applications.tsx`**
+
+Update the `getSignedUrl` function to extract the file path from either a full URL or just a path:
 
 ```tsx
-interface SiteSettings {
-  // Existing fields...
-  contact_phone_1: string;
-  contact_phone_2: string;
-  contact_email_1: string;
-  contact_email_2: string;
-  contact_address_line_1: string;
-  contact_address_line_2: string;
-  business_hours_1: string;
-  business_hours_2: string;
-}
-```
-
----
-
-#### 3. Update Admin Settings Page
-Add a new "Contact Information" card with input fields:
-
-```text
-+--------------------------------------------------+
-|  Contact Information                              |
-|  ------------------------------------------------ |
-|  Phone 1:    [+88 019 162 11111              ]   |
-|  Phone 2:    [+880 1XXX-XXXXXX               ]   |
-|  Email 1:    [yessbangla.bd@gmail.com        ]   |
-|  Email 2:    [support@yessbangal.com         ]   |
-|  Address 1:  [11/A, Main Road # 3, Plot # 10 ]   |
-|  Address 2:  [Mirpur, Dhaka – 1216           ]   |
-|  Hours 1:    [Sat - Thu: 9AM - 6PM           ]   |
-|  Hours 2:    [Friday: Closed                 ]   |
-+--------------------------------------------------+
-```
-
----
-
-#### 4. Update ContactSection Component
-Replace hardcoded array with dynamic data from `useSiteSettings`:
-
-```tsx
-const { settings } = useSiteSettings();
-
-const contactInfo = [
-  { icon: Phone, title: "Phone", details: [settings.contact_phone_1, settings.contact_phone_2] },
-  { icon: Mail, title: "Email", details: [settings.contact_email_1, settings.contact_email_2] },
-  { icon: MapPin, title: "Address", details: [settings.contact_address_line_1, settings.contact_address_line_2] },
-  { icon: Clock, title: "Business Hours", details: [settings.business_hours_1, settings.business_hours_2] },
-];
-```
-
----
-
-#### 5. Update Footer Component
-Replace hardcoded contact info with settings:
-
-```tsx
-const { settings } = useSiteSettings();
-
-<Mail /> {settings.contact_email_1}
-<Phone /> {settings.contact_phone_1}
-<MapPin /> {settings.contact_address_line_1}, {settings.contact_address_line_2}
+const getSignedUrl = async (resumeUrl: string): Promise<string | null> => {
+  // Extract file path from URL if it's a full URL
+  let resumePath = resumeUrl;
+  
+  // Check if it's a full URL and extract just the filename
+  if (resumeUrl.includes('/storage/v1/object/')) {
+    // Extract path after bucket name
+    const match = resumeUrl.match(/\/resumes\/(.+)$/);
+    if (match) {
+      resumePath = match[1];
+    }
+  }
+  
+  // Check if we already have a cached signed URL
+  if (signedUrls[resumePath]) {
+    return signedUrls[resumePath];
+  }
+  
+  try {
+    const { data, error } = await supabase.storage
+      .from("resumes")
+      .createSignedUrl(resumePath, 3600);
+    
+    if (error) {
+      logger.error("Error creating signed URL", error);
+      toast.error("Failed to access resume");
+      return null;
+    }
+    
+    setSignedUrls(prev => ({ ...prev, [resumePath]: data.signedUrl }));
+    return data.signedUrl;
+  } catch (error) {
+    logger.error("Error getting signed URL", error);
+    return null;
+  }
+};
 ```
 
 ---
@@ -118,18 +90,12 @@ const { settings } = useSiteSettings();
 
 | File | Changes |
 |------|---------|
-| `src/hooks/useSiteSettings.tsx` | Add contact fields to interface and defaults |
-| `src/pages/admin/Settings.tsx` | Add Contact Information card with 8 input fields |
-| `src/components/sections/ContactSection.tsx` | Use `useSiteSettings` hook instead of hardcoded array |
-| `src/components/layout/Footer.tsx` | Use `useSiteSettings` hook for contact details |
-
-### Database Migration
-Insert 8 new key-value rows into the `site_settings` table with default contact information.
+| `src/pages/admin/Applications.tsx` | Update `getSignedUrl` to extract file path from full URL |
 
 ---
 
 ### Result
-- Administrators can edit phone numbers, emails, address, and business hours from the Settings page
-- Changes automatically reflect on the Contact section and Footer
-- No code changes needed for future contact info updates
+- Resume download button will work correctly for admins
+- Existing application data remains compatible
+- Private bucket security is maintained - only admins can access resumes via signed URLs
 
