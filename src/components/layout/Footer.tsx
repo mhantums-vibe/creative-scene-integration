@@ -4,6 +4,7 @@ import yessbangalLogo from "@/assets/yessbangal-logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 const footerLinks = {
   services: [{
     name: "Website Development",
@@ -76,6 +77,8 @@ const socialLinks = [{
   label: "YouTube"
 }];
 export function Footer() {
+  const { settings } = useSiteSettings();
+  
   return <footer className="relative text-white backdrop-blur-2xl bg-black/60 border-t border-white/10">
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-16">
@@ -110,18 +113,15 @@ export function Footer() {
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-sm text-white/70">
                   <Mail className="w-4 h-4 text-primary" />
-                  yessbangla.bd@gmail.com
-
+                  {settings.contact_email_1}
                 </div>
                 <div className="flex items-center gap-3 text-sm text-white/70">
                   <Phone className="w-4 h-4 text-primary" />
-                  +88 019 162 11111
-
+                  {settings.contact_phone_1}
                 </div>
                 <div className="flex items-center gap-3 text-sm text-white/70">
                   <MapPin className="w-4 h-4 text-primary" />
-                  11/A, Main Road # 3, Plot # 10, Mirpur, Dhaka – 1216
-
+                  {settings.contact_address_line_1}, {settings.contact_address_line_2}
                 </div>
               </div>
             </motion.div>

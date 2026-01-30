@@ -16,6 +16,14 @@ interface SiteSettings {
   logo_url: string | null;
   banner_url: string | null;
   hero_banner_url: string | null;
+  contact_phone_1: string;
+  contact_phone_2: string;
+  contact_email_1: string;
+  contact_email_2: string;
+  contact_address_line_1: string;
+  contact_address_line_2: string;
+  business_hours_1: string;
+  business_hours_2: string;
 }
 
 export default function AdminSettings() {
@@ -26,6 +34,14 @@ export default function AdminSettings() {
     logo_url: null,
     banner_url: null,
     hero_banner_url: null,
+    contact_phone_1: "",
+    contact_phone_2: "",
+    contact_email_1: "",
+    contact_email_2: "",
+    contact_address_line_1: "",
+    contact_address_line_2: "",
+    business_hours_1: "",
+    business_hours_2: "",
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -49,6 +65,14 @@ export default function AdminSettings() {
         logo_url: settingsMap.logo_url || null,
         banner_url: settingsMap.banner_url || null,
         hero_banner_url: settingsMap.hero_banner_url || null,
+        contact_phone_1: settingsMap.contact_phone_1 || "+88 019 162 11111",
+        contact_phone_2: settingsMap.contact_phone_2 || "+880 1XXX-XXXXXX",
+        contact_email_1: settingsMap.contact_email_1 || "yessbangla.bd@gmail.com",
+        contact_email_2: settingsMap.contact_email_2 || "support@yessbangal.com",
+        contact_address_line_1: settingsMap.contact_address_line_1 || "11/A, Main Road # 3, Plot # 10",
+        contact_address_line_2: settingsMap.contact_address_line_2 || "Mirpur, Dhaka – 1216",
+        business_hours_1: settingsMap.business_hours_1 || "Sat - Thu: 9AM - 6PM",
+        business_hours_2: settingsMap.business_hours_2 || "Friday: Closed",
       });
     } catch (error) {
       logger.error("Error fetching settings", error);
@@ -89,6 +113,14 @@ export default function AdminSettings() {
         { key: "logo_url", value: settings.logo_url },
         { key: "banner_url", value: settings.banner_url },
         { key: "hero_banner_url", value: settings.hero_banner_url },
+        { key: "contact_phone_1", value: settings.contact_phone_1 },
+        { key: "contact_phone_2", value: settings.contact_phone_2 },
+        { key: "contact_email_1", value: settings.contact_email_1 },
+        { key: "contact_email_2", value: settings.contact_email_2 },
+        { key: "contact_address_line_1", value: settings.contact_address_line_1 },
+        { key: "contact_address_line_2", value: settings.contact_address_line_2 },
+        { key: "business_hours_1", value: settings.business_hours_1 },
+        { key: "business_hours_2", value: settings.business_hours_2 },
       ];
 
       for (const update of updates) {
@@ -194,6 +226,96 @@ export default function AdminSettings() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Contact Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="contact_phone_1">Phone Number 1</Label>
+              <Input
+                id="contact_phone_1"
+                value={settings.contact_phone_1}
+                onChange={(e) => setSettings({ ...settings, contact_phone_1: e.target.value })}
+                placeholder="+88 019 162 11111"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="contact_phone_2">Phone Number 2</Label>
+              <Input
+                id="contact_phone_2"
+                value={settings.contact_phone_2}
+                onChange={(e) => setSettings({ ...settings, contact_phone_2: e.target.value })}
+                placeholder="+880 1XXX-XXXXXX"
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="contact_email_1">Email Address 1</Label>
+              <Input
+                id="contact_email_1"
+                type="email"
+                value={settings.contact_email_1}
+                onChange={(e) => setSettings({ ...settings, contact_email_1: e.target.value })}
+                placeholder="yessbangla.bd@gmail.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="contact_email_2">Email Address 2</Label>
+              <Input
+                id="contact_email_2"
+                type="email"
+                value={settings.contact_email_2}
+                onChange={(e) => setSettings({ ...settings, contact_email_2: e.target.value })}
+                placeholder="support@yessbangal.com"
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="contact_address_line_1">Address Line 1</Label>
+              <Input
+                id="contact_address_line_1"
+                value={settings.contact_address_line_1}
+                onChange={(e) => setSettings({ ...settings, contact_address_line_1: e.target.value })}
+                placeholder="11/A, Main Road # 3, Plot # 10"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="contact_address_line_2">Address Line 2</Label>
+              <Input
+                id="contact_address_line_2"
+                value={settings.contact_address_line_2}
+                onChange={(e) => setSettings({ ...settings, contact_address_line_2: e.target.value })}
+                placeholder="Mirpur, Dhaka – 1216"
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="business_hours_1">Business Hours 1</Label>
+              <Input
+                id="business_hours_1"
+                value={settings.business_hours_1}
+                onChange={(e) => setSettings({ ...settings, business_hours_1: e.target.value })}
+                placeholder="Sat - Thu: 9AM - 6PM"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="business_hours_2">Business Hours 2</Label>
+              <Input
+                id="business_hours_2"
+                value={settings.business_hours_2}
+                onChange={(e) => setSettings({ ...settings, business_hours_2: e.target.value })}
+                placeholder="Friday: Closed"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
