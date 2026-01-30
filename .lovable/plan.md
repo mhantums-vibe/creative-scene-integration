@@ -1,17 +1,31 @@
 
 
-## Show Demo Projects on Services Page
+## Show Category-wise Demo Projects on Service Detail Pages
 
-This plan adds a "Demo Projects" section to the Services page that displays all active portfolio items, allowing visitors to see examples of your work.
+This plan adds a "Related Projects" section to individual service detail/booking pages, showing portfolio items filtered by category that matches the service.
 
 ---
 
 ### What You'll Get
 
-- A new "Demo Projects" section on the `/services` page below the services grid
-- Displays all active portfolio items with images, titles, descriptions, and technologies
-- Links to individual project detail pages
-- Clean, consistent design matching the rest of the site
+- A "Related Projects" section on each service detail page (e.g., `/services/website-development`)
+- Projects filtered to show only those relevant to that specific service
+- Smart category mapping to handle differences between service names and portfolio categories
+- Falls back to showing all projects if no category matches
+
+---
+
+### Current Data Analysis
+
+| Service Name | Portfolio Category | Mapping |
+|--------------|-------------------|---------|
+| Website Development | Web Development | Match |
+| App Development | Mobile App | Match |
+| Graphic Design | UI/UX Design, Branding | Match |
+| Video Editing | (none yet) | Show all |
+| Hosting & Domain | (none yet) | Show all |
+| IT Security | (none yet) | Show all |
+| AI Automation | (none yet) | Show all |
 
 ---
 
@@ -19,46 +33,72 @@ This plan adds a "Demo Projects" section to the Services page that displays all 
 
 | Step | Description |
 |------|-------------|
-| 1 | Create a reusable `PortfolioGrid` component that fetches and displays portfolio items |
-| 2 | Add the component to the Services page after the ServicesSection |
-| 3 | Style it consistently with the existing Portfolio page design |
+| 1 | Add `category` prop to `PortfolioSection` component for filtering |
+| 2 | Create category mapping function to match services to portfolio categories |
+| 3 | Add `PortfolioSection` to `ServiceDetail.tsx` before the booking form |
+| 4 | Pass the mapped category based on the current service title |
 
 ---
 
 ### Technical Details
 
-**New Component: `src/components/sections/PortfolioSection.tsx`**
-
-A reusable portfolio display component that:
-- Fetches active portfolio items from Supabase
-- Displays them in a responsive 3-column grid
-- Shows project image, title, description, category badge, and technologies
-- Links each card to `/portfolio/{slug}` for details
-- Includes optional `limit` prop to control how many projects to show
-- Includes optional `showSeeMore` prop to add a "See All Projects" button
-
 **File Modifications:**
 
 | File | Changes |
 |------|---------|
-| `src/components/sections/PortfolioSection.tsx` | New file - reusable portfolio grid component |
-| `src/pages/Services.tsx` | Import and add `PortfolioSection` after `ServicesSection` |
+| `src/components/sections/PortfolioSection.tsx` | Add optional `category` prop for filtering projects |
+| `src/pages/services/ServiceDetail.tsx` | Import and add PortfolioSection with category filtering |
 
 ---
 
-### Component Structure
+### Updated Component Interface
+
+```tsx
+interface PortfolioSectionProps {
+  limit?: number;
+  showSeeMore?: boolean;
+  title?: string;
+  subtitle?: string;
+  category?: string;  // NEW: Filter by category
+}
+```
+
+---
+
+### Category Mapping Logic
+
+```tsx
+const getCategoryForService = (serviceTitle: string): string | undefined => {
+  const mapping: Record<string, string> = {
+    "Website Development": "Web Development",
+    "App Development": "Mobile App",
+    "Graphic Design": "Branding",
+    "UI/UX Design": "UI/UX Design",
+  };
+  return mapping[serviceTitle];
+};
+```
+
+---
+
+### Page Structure After Changes
 
 ```text
-Services Page
+Service Detail Page
 +-----------------------------+
-|  Hero Banner               |
+|  Hero Section               |
 +-----------------------------+
-|  ServicesSection (existing) |
+|  Features                   |
 +-----------------------------+
-|  PortfolioSection (new)     |
-|  - Section header           |
-|  - 3-column project grid    |
-|  - "See All Projects" button|
+|  Extended Description       |
++-----------------------------+
+|  Sub-Services               |
++-----------------------------+
+|  Process Steps              |
++-----------------------------+
+|  Related Projects (NEW)     |  <-- Filtered by category
++-----------------------------+
+|  Booking Form               |
 +-----------------------------+
 |  Footer                     |
 +-----------------------------+
@@ -68,37 +108,17 @@ Services Page
 
 ### Key Code Snippets
 
-**PortfolioSection Component (new):**
-```tsx
-interface PortfolioSectionProps {
-  limit?: number;
-  showSeeMore?: boolean;
-  title?: string;
-  subtitle?: string;
-}
-
-export function PortfolioSection({ 
-  limit, 
-  showSeeMore = false,
-  title = "Our Projects",
-  subtitle = "See examples of our work"
-}: PortfolioSectionProps) {
-  // Fetch portfolio_items from Supabase
-  // Render in 3-column grid with animations
-  // Optionally show "See All Projects" button
-}
-```
-
-**Services Page Update:**
+**ServiceDetail.tsx usage:**
 ```tsx
 import { PortfolioSection } from "@/components/sections/PortfolioSection";
 
-// After ServicesSection
-<PortfolioSection 
-  limit={6} 
+// Before the booking form section
+<PortfolioSection
+  category={getCategoryForService(service.title)}
+  limit={3}
   showSeeMore={true}
-  title="Demo Projects"
-  subtitle="Explore our recent work and see what we can do for you"
+  title={`${service.title} Projects`}
+  subtitle={`See examples of our ${service.title.toLowerCase()} work`}
 />
 ```
 
@@ -106,8 +126,8 @@ import { PortfolioSection } from "@/components/sections/PortfolioSection";
 
 ### Notes
 
-- No database changes required - uses existing `portfolio_items` table
-- The section will show a friendly message if no projects exist yet
-- Projects are ordered by `display_order` for admin control
-- The component is reusable and can be added to other pages (like homepage) if desired
+- If a service has no matching projects, the section will be hidden
+- The "See All Projects" button links to the full portfolio page
+- Category matching is case-insensitive for flexibility
+- Services without matching categories will show no projects (section hidden)
 
