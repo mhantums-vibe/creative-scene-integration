@@ -95,13 +95,9 @@ export function Footer() {
           }}>
               {/* Logo */}
               <div className="flex items-center gap-2 mb-6">
-              <img 
-                src={yessbangalLogo} 
-                alt="YessBangal Logo" 
-                className="w-10 h-10 rounded-lg object-contain"
-              />
+              <img src={yessbangalLogo} alt="YessBangal Logo" className="w-10 h-10 rounded-lg object-contain" />
                 <span className="text-xl font-bold">
-                  Yess<span className="text-primary">Bangal</span>
+                  Yess<span className="text-primary">Bangla</span>
                 </span>
               </div>
 
