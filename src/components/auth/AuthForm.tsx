@@ -73,7 +73,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           toast.error(error.message);
         } else {
           toast.success("Logged in successfully!");
-          navigate("/dashboard");
+          navigate("/");
         }
       } else {
         const result = signupPasswordSchema.safeParse({ email, password, confirmPassword, fullName });
