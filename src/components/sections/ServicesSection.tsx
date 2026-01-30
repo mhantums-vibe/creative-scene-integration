@@ -71,6 +71,8 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
     fetchServices();
   }, []);
 
+  console.log(services);
+
   const getServiceSlug = (service: Service) => {
     return service.slug || service.title.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "and");
   };
@@ -117,7 +119,7 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
 
               return (
                 <motion.div key={service.id} variants={itemVariants}>
-                  <Card className="group h-full p-4 lg:p-5 card-hover glass-card-light transition-all duration-300">
+                  <Card className="group h-full p-4 lg:p-5 card-hover glass-card-light backdrop-blur-md transition-all duration-300">
                     {/* Icon */}
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                       <ServiceIcon service={service} />
