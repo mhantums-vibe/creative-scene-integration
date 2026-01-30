@@ -6,31 +6,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-
-const contactInfo = [
-  {
-    icon: Phone,
-    title: "Phone",
-    details: ["+880 1XXX-XXXXXX", "+880 1XXX-XXXXXX"],
-  },
-  {
-    icon: Mail,
-    title: "Email",
-    details: ["info@yessbangal.com", "support@yessbangal.com"],
-  },
-  {
-    icon: MapPin,
-    title: "Address",
-    details: ["123 Tech Street, Dhaka", "Bangladesh"],
-  },
-  {
-    icon: Clock,
-    title: "Business Hours",
-    details: ["Sat - Thu: 9AM - 6PM", "Friday: Closed"],
-  },
-];
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export function ContactSection() {
+  const { settings } = useSiteSettings();
+  
+  const contactInfo = [
+    {
+      icon: Phone,
+      title: "Phone",
+      details: [settings.contact_phone_1, settings.contact_phone_2].filter(Boolean),
+    },
+    {
+      icon: Mail,
+      title: "Email",
+      details: [settings.contact_email_1, settings.contact_email_2].filter(Boolean),
+    },
+    {
+      icon: MapPin,
+      title: "Address",
+      details: [settings.contact_address_line_1, settings.contact_address_line_2].filter(Boolean),
+    },
+    {
+      icon: Clock,
+      title: "Business Hours",
+      details: [settings.business_hours_1, settings.business_hours_2].filter(Boolean),
+    },
+  ];
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
