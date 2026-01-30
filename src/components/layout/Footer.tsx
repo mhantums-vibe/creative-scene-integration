@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
+import yessbangalLogo from "@/assets/yessbangal-logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
@@ -94,9 +95,11 @@ export function Footer() {
           }}>
               {/* Logo */}
               <div className="flex items-center gap-2 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-xl">Y</span>
-                </div>
+              <img 
+                src={yessbangalLogo} 
+                alt="YessBangal Logo" 
+                className="w-10 h-10 rounded-lg object-contain"
+              />
                 <span className="text-xl font-bold">
                   Yess<span className="text-primary">Bangal</span>
                 </span>
