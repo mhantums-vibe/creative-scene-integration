@@ -16,6 +16,11 @@ interface SiteSettings {
   contact_address_line_2: string;
   business_hours_1: string;
   business_hours_2: string;
+  social_facebook: string;
+  social_twitter: string;
+  social_instagram: string;
+  social_linkedin: string;
+  social_youtube: string;
 }
 
 const defaultSettings: SiteSettings = {
@@ -32,6 +37,11 @@ const defaultSettings: SiteSettings = {
   contact_address_line_2: "Mirpur, Dhaka – 1216",
   business_hours_1: "Sat - Thu: 9AM - 6PM",
   business_hours_2: "Friday: Closed",
+  social_facebook: "",
+  social_twitter: "",
+  social_instagram: "",
+  social_linkedin: "",
+  social_youtube: "",
 };
 
 export function useSiteSettings() {
@@ -68,6 +78,11 @@ export function useSiteSettings() {
         contact_address_line_2: settingsMap.contact_address_line_2 || defaultSettings.contact_address_line_2,
         business_hours_1: settingsMap.business_hours_1 || defaultSettings.business_hours_1,
         business_hours_2: settingsMap.business_hours_2 || defaultSettings.business_hours_2,
+        social_facebook: settingsMap.social_facebook || defaultSettings.social_facebook,
+        social_twitter: settingsMap.social_twitter || defaultSettings.social_twitter,
+        social_instagram: settingsMap.social_instagram || defaultSettings.social_instagram,
+        social_linkedin: settingsMap.social_linkedin || defaultSettings.social_linkedin,
+        social_youtube: settingsMap.social_youtube || defaultSettings.social_youtube,
       });
     } catch (err) {
       logger.error("Error in fetchSettings", err);
