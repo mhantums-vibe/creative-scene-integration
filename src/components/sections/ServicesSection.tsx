@@ -13,7 +13,6 @@ interface Service {
   description: string;
   icon: string;
   icon_url: string | null;
-  background_image: string | null;
   features: string[];
   display_order: number;
   slug: string | null;
@@ -45,13 +44,7 @@ const DynamicIcon = ({ name }: { name: string }) => {
 
 const ServiceIcon = ({ service }: { service: Service }) => {
   if (service.icon_url) {
-    return (
-      <img 
-        src={service.icon_url} 
-        alt={service.title}
-        className="w-5 h-5 object-contain"
-      />
-    );
+    return <img src={service.icon_url} alt={service.title} className="w-5 h-5 object-contain" />;
   }
   return <DynamicIcon name={service.icon} />;
 };
@@ -69,7 +62,7 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
     const fetchServices = async () => {
       const { data } = await supabase
         .from("services")
-        .select("id, title, description, icon, icon_url, background_image, features, display_order, slug")
+        .select("id, title, description, icon, icon_url, features, display_order, slug")
         .eq("is_active", true)
         .order("display_order", { ascending: true });
       setServices(data || []);
@@ -101,8 +94,7 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
             <span className="gradient-text-primary">for Every Need</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            We offer a wide range of digital services to help your business thrive 
-            in the modern digital landscape.
+            We offer a wide range of digital services to help your business thrive in the modern digital landscape.
           </p>
         </motion.div>
 
@@ -122,96 +114,55 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
             {(limit ? services.slice(0, limit) : services).map((service) => {
               const visibleFeatures = service.features.slice(0, 3);
               const remainingCount = service.features.length - 3;
-              
-              const hasBackground = !!service.background_image;
-              
+
               return (
                 <motion.div key={service.id} variants={itemVariants}>
-                  <Card className={`group h-full p-4 lg:p-5 card-hover transition-all duration-300 relative overflow-hidden ${
-                    hasBackground ? '' : 'glass-card-light'
-                  }`}>
-                    {/* Background Image */}
-                    {hasBackground && (
-                      <>
-                        <div 
-                          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                          style={{ backgroundImage: `url(${service.background_image})` }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
-                      </>
-                    )}
-                    
-                    {/* Content wrapper */}
-                    <div className={`relative z-10 ${hasBackground ? 'text-white' : ''}`}>
-                      {/* Icon */}
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-colors ${
-                        hasBackground 
-                          ? 'bg-white/20 backdrop-blur-sm group-hover:bg-white/30' 
-                          : 'bg-primary/10 group-hover:bg-primary/20'
-                      }`}>
-                        <div className={hasBackground ? 'text-white' : ''}>
-                          <ServiceIcon service={service} />
-                        </div>
-                      </div>
-
-                      {/* Content */}
-                      <h3 className={`text-lg font-bold mb-2 ${hasBackground ? 'text-white' : 'text-foreground'}`}>
-                        {service.title}
-                      </h3>
-                      <p className={`mb-3 leading-relaxed text-sm line-clamp-2 ${
-                        hasBackground ? 'text-white/80' : 'text-muted-foreground'
-                      }`}>
-                        {service.description}
-                      </p>
-
-                      {/* Features */}
-                      <div className="flex flex-wrap gap-1.5 mb-3">
-                        {visibleFeatures.map((feature) => (
-                          <span
-                            key={feature}
-                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                              hasBackground 
-                                ? 'bg-white/20 text-white backdrop-blur-sm' 
-                                : 'bg-muted text-muted-foreground'
-                            }`}
-                          >
-                            {feature}
-                          </span>
-                        ))}
-                        {remainingCount > 0 && (
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                            hasBackground 
-                              ? 'bg-white/30 text-white' 
-                              : 'bg-primary/10 text-primary'
-                          }`}>
-                            +{remainingCount}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* CTA */}
-                      <Link to={`/services/${getServiceSlug(service)}`}>
-                        <Button 
-                          variant="link" 
-                          className={`group/btn p-0 h-auto text-sm hover:no-underline ${
-                            hasBackground ? 'text-white hover:text-white/80' : ''
-                          }`}
-                        >
-                          Learn More
-                          <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover/btn:translate-x-1 transition-transform" />
-                        </Button>
-                      </Link>
+                  <Card className="group h-full p-4 lg:p-5 card-hover glass-card-light backdrop-blur-md transition-all duration-300">
+                    {/* Icon */}
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      <ServiceIcon service={service} />
                     </div>
+
+                    {/* Content */}
+                    <h3 className="text-lg font-bold text-foreground mb-2">{service.title}</h3>
+                    <p className="text-muted-foreground mb-3 leading-relaxed text-sm line-clamp-2">
+                      {service.description}
+                    </p>
+
+                    {/* Features */}
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                      {visibleFeatures.map((feature) => (
+                        <span
+                          key={feature}
+                          className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-medium"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                      {remainingCount > 0 && (
+                        <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                          +{remainingCount}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* CTA */}
+                    <Link to={`/services/${getServiceSlug(service)}`}>
+                      <Button variant="link" className="group/btn p-0 h-auto text-sm hover:no-underline">
+                        Learn More
+                        <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover/btn:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
                   </Card>
                 </motion.div>
               );
             })}
-        </motion.div>
+          </motion.div>
         )}
 
         {/* See More Button */}
         {showSeeMore && services.length > (limit || 0) && (
-          <motion.div 
+          <motion.div
             className="text-center mt-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
