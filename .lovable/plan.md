@@ -1,8 +1,8 @@
 
 
-## Add Stronger Top Gradient Overlay to Hero Banner
+## Add Left-Side Black Gradient Overlay to Hero Banner
 
-Increase the black gradient overlay at the top of the hero section to provide better contrast behind the text content.
+Add a horizontal gradient overlay from left to right on the hero banner to enhance text readability on the left side where the content is displayed.
 
 ---
 
@@ -10,21 +10,23 @@ Increase the black gradient overlay at the top of the hero section to provide be
 
 | Element | Current | Proposed |
 |---------|---------|----------|
-| Vertical gradient | `from-black/80 via-black/50 to-black/30` (dark bottom, light top) | `from-black/80 via-black/50 to-black/60` (darker at top) |
-| Top area | 30% black opacity | 60% black opacity |
+| Gradient overlay | `bg-gradient-to-t from-black/80 via-black/50 to-black/30` (bottom to top) | Keep existing + add left-to-right gradient |
+| Left side | Same opacity as rest of banner | Darker for better text contrast |
+| Right side (3D scene) | Same opacity | Lighter to show more of the background |
 
 ---
 
 ### Visual Comparison
 
 ```text
-CURRENT:                              PROPOSED:
+CURRENT (vertical gradient only):     WITH LEFT GRADIENT:
 ┌─────────────────────────┐           ┌─────────────────────────┐
-│░░░░░░░░░░░░░░░░░░░░░░░░░│ ← 30%     │███████████████████████│ ← 60%
-│░░░░░░░░░░░░░░░░░░░░░░░░░│           │██████████████████████░│
-│░░ Text Content    ░░░░░░│           │█████ Text Content █████│
-│░░                 ░░░░░░│           │████                ████│
-│████████████████████████│ ← 80%     │████████████████████████│ ← 80%
+│░░░░░░░░░░░░░░░░░░░░░░░░░│ ← Light   │████░░░░░░░░░░░░░░░░░░░░░│ ← Dark left
+│░░ Text Content    ░░░░░░│           │███░ Text Content  ░░░░░░│    fading
+│░░                 ░░░░░░│           │██░                ░░░░░░│    to
+│░░ [Buttons]       ░░░░░░│           │█░░ [Buttons]      ░░░░░░│    right
+│░░                 ░░░░░░│           │░░░                ░░░░░░│
+│████████████████████████│ ← Dark     │████████████████████████│ ← Dark bottom
 └─────────────────────────┘           └─────────────────────────┘
 ```
 
@@ -34,31 +36,40 @@ CURRENT:                              PROPOSED:
 
 | File | Change |
 |------|--------|
-| `src/components/sections/HeroSection.tsx` | Increase top gradient opacity from 30% to 60% |
+| `src/components/sections/HeroSection.tsx` | Add horizontal gradient overlay from left to right |
 
 ---
 
 ### Technical Details
 
-**Update line 59:**
+**Add a new gradient overlay (after line 60):**
 
 ```tsx
-// Before
+{/* Existing vertical gradient */}
 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
 
-// After
-<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/60" />
+{/* NEW: Left-side horizontal gradient */}
+<div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+
+{/* Existing blur overlay */}
+<div 
+  className="absolute inset-0 transition-all duration-300 ease-out"
+  style={{ ... }}
+/>
 ```
 
-The change:
-- `to-black/30` → `to-black/60` - Doubles the darkness at the top of the hero section
+The classes:
+- `bg-gradient-to-r` - Gradient direction from left to right
+- `from-black/70` - Dark black on the left (70% opacity)
+- `via-black/40` - Medium fade in the middle
+- `to-transparent` - Fully transparent on the right side
 
 ---
 
 ### Result
 
-- Top of hero section will have stronger black overlay (60% vs 30%)
-- Better text readability for headline and tagline at the top
-- Bottom remains dark (80%) for stats visibility
-- Combined with the left-side gradient for optimal text contrast
+- Left side (where text content is) has a stronger dark overlay
+- Right side (3D scene area) remains more visible
+- Better text readability without completely obscuring the background
+- Maintains the layered gradient effect (vertical + horizontal)
 
