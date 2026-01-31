@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
@@ -24,6 +25,7 @@ const stats = [{
   label: "Years Experience"
 }];
 export function HeroSection() {
+  const [scrollY, setScrollY] = useState(0);
   const {
     user
   } = useAuth();
@@ -31,6 +33,20 @@ export function HeroSection() {
   const {
     settings
   } = useSiteSettings();
+
+  // Track scroll for backdrop blur animation
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Calculate blur intensity based on scroll (0-20px blur)
+  const blurIntensity = Math.min(scrollY / 30, 20);
+  const overlayOpacity = Math.min(0.1 + (scrollY / 500) * 0.2, 0.3);
+
   const handleBookingClick = () => {
     if (!user) {
       navigate("/login");
@@ -42,7 +58,13 @@ export function HeroSection() {
         <div className="absolute inset-0 z-0">
           <img src={settings.hero_banner_url} alt="Hero Banner" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
-          <div className="absolute inset-0 backdrop-blur-md bg-black/10" />
+          <div 
+            className="absolute inset-0 transition-all duration-300 ease-out"
+            style={{ 
+              backdropFilter: `blur(${blurIntensity}px)`,
+              backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})`
+            }}
+          />
         </div>
       )}
       
