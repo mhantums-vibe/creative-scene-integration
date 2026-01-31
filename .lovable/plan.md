@@ -1,34 +1,28 @@
 
 
-## Fix Category Filter - Projects Not Showing After Click
+## Fix "Learn More About Us" and "Meet Our Team" Buttons
 
-When clicking category buttons, projects don't appear because of Framer Motion animation configuration issue.
+The buttons in the About section are currently non-functional because they lack navigation logic.
 
 ---
 
 ### Root Cause
 
-The projects grid uses `whileInView` with `viewport={{ once: true }}`:
-
-```tsx
-<motion.div
-  variants={containerVariants}
-  initial="hidden"
-  whileInView="visible"
-  viewport={{ once: true }}  // <- Only animates ONCE, ever
-  className="grid..."
->
-```
-
-**Problem**: After the initial animation runs, subsequent state changes (category filter) don't trigger a re-animation. The new filtered items inherit the "hidden" state but never animate to "visible" because the container already ran its one-time animation.
+| Button | Current State | Problem |
+|--------|---------------|---------|
+| Learn More About Us | `<Button variant="default" size="lg">` | No onClick or Link - does nothing |
+| Meet Our Team | `<Button variant="outline" size="lg">` | No onClick or Link - does nothing |
 
 ---
 
 ### Solution
 
-1. Replace `whileInView="visible"` with `animate="visible"` - this makes animation state-driven
-2. Add a `key` prop based on `activeCategory` to force re-mount and re-animate when category changes
-3. Keep `initial="hidden"` for the fade-in effect
+Convert both buttons to navigation links using React Router's `Link` component with `asChild` prop on Button:
+
+| Button | Destination |
+|--------|-------------|
+| Learn More About Us | `/about` - navigates to the About page |
+| Meet Our Team | `/about#team` - navigates to About page, scrolls to Team section |
 
 ---
 
@@ -36,49 +30,56 @@ The projects grid uses `whileInView` with `viewport={{ once: true }}`:
 
 | File | Change |
 |------|--------|
-| `src/pages/Portfolio.tsx` | Update motion.div to use animate instead of whileInView, add key prop |
+| `src/components/sections/AboutSection.tsx` | Import Link from react-router-dom, wrap buttons with Link component |
+| `src/pages/About.tsx` | Add `id="team"` to the Team values card section for anchor navigation |
 
 ---
 
 ### Technical Details
 
-**Update `src/pages/Portfolio.tsx` (lines 129-134):**
+**Update `src/components/sections/AboutSection.tsx`:**
 
 ```tsx
-// Before
-<motion.div
-  variants={containerVariants}
-  initial="hidden"
-  whileInView="visible"
-  viewport={{ once: true }}
-  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
->
+// Add import at top
+import { Link } from "react-router-dom";
 
-// After
-<motion.div
-  key={activeCategory}
-  variants={containerVariants}
-  initial="hidden"
-  animate="visible"
-  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
->
+// Update buttons (lines 120-127)
+<div className="flex flex-col sm:flex-row gap-4">
+  <Button variant="default" size="lg" asChild>
+    <Link to="/about">Learn More About Us</Link>
+  </Button>
+  <Button variant="outline" size="lg" asChild>
+    <Link to="/about#team">Meet Our Team</Link>
+  </Button>
+</div>
+```
+
+**Update `src/pages/About.tsx`:**
+
+Add an `id="team"` to the Values/Team section for scroll targeting:
+
+```tsx
+// Update the Values section (around line 65)
+<section id="team" className="py-20 relative">
 ```
 
 ---
 
-### How The Fix Works
+### How It Works
 
-| Before | After |
-|--------|-------|
-| Animation runs once on page load | Animation runs on every category change |
-| `whileInView` depends on scroll position | `animate` is state-driven |
-| No re-mount on category change | `key={activeCategory}` forces re-mount |
+```text
+Homepage (AboutSection)
+        │
+        ├── [Learn More About Us] ──► /about (full About page)
+        │
+        └── [Meet Our Team] ──► /about#team (About page, scrolls to team section)
+```
 
 ---
 
 ### Result
 
-- Projects will animate in when switching categories
-- Each category change triggers a fresh fade-in animation
-- Filtering will work correctly and visually show the filtered projects
+- "Learn More About Us" button navigates to the dedicated About page
+- "Meet Our Team" button navigates to About page and scrolls to the team/values section
+- Both buttons work correctly from the homepage and any other page using AboutSection
 
