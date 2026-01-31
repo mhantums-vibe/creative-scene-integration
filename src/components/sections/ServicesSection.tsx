@@ -132,11 +132,12 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+                        <div className="absolute inset-0 backdrop-blur-md bg-black/10" />
                       </div>
                     )}
 
                     {/* Content */}
-                    <div className={`relative z-10 ${hasBackground ? 'backdrop-blur-md bg-black/20 rounded-lg p-3 -m-3' : ''}`}>
+                    <div className="relative z-10">
                       {/* Icon */}
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-colors ${hasBackground ? 'bg-white/20 backdrop-blur-sm' : 'bg-primary/10 group-hover:bg-primary/20'}`}>
                         <ServiceIcon service={service} />
