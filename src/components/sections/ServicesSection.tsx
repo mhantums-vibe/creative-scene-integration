@@ -136,7 +136,7 @@ export function ServicesSection({ limit, showSeeMore = false }: ServicesSectionP
                     )}
 
                     {/* Content */}
-                    <div className="relative z-10">
+                    <div className={`relative z-10 ${hasBackground ? 'backdrop-blur-md bg-black/20 rounded-lg p-3 -m-3' : ''}`}>
                       {/* Icon */}
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-colors ${hasBackground ? 'bg-white/20 backdrop-blur-sm' : 'bg-primary/10 group-hover:bg-primary/20'}`}>
                         <ServiceIcon service={service} />
