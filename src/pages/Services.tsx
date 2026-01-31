@@ -1,7 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ServicesSection } from "@/components/sections/ServicesSection";
-import { PortfolioSection } from "@/components/sections/PortfolioSection";
 import { motion } from "framer-motion";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Link } from "react-router-dom";
@@ -48,14 +47,6 @@ const Services = () => {
 
         {/* Services Grid */}
         <ServicesSection />
-
-        {/* Demo Projects */}
-        <PortfolioSection
-          limit={6}
-          showSeeMore={true}
-          title="Demo Projects"
-          subtitle="Explore our recent work and see what we can do for you"
-        />
       </main>
       <Footer />
     </div>
