@@ -71,12 +71,12 @@ const About = () => {
               transition={{ duration: 0.6 }}
               className="text-center mb-12"
             >
-              <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-                Our Core <span className="text-primary">Values</span>
-              </h2>
-              <p className="text-white/70 max-w-2xl mx-auto">
-                The principles that guide our work and define who we are as a company.
-              </p>
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+              Our Core <span className="text-primary">Values</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              The principles that guide our work and define who we are as a company.
+            </p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -88,13 +88,13 @@ const About = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <Card className="p-6 h-full bg-card/50 backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all">
-                    <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center mb-4">
-                      <value.icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">{value.title}</h3>
-                    <p className="text-white/70 text-sm leading-relaxed">{value.description}</p>
-                  </Card>
+                <Card className="p-6 h-full bg-card border-border hover:border-primary/50 transition-all">
+                  <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center mb-4">
+                    <value.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">{value.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{value.description}</p>
+                </Card>
                 </motion.div>
               ))}
             </div>
