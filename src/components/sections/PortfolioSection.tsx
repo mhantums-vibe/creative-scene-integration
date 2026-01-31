@@ -102,13 +102,13 @@ export function PortfolioSection({
         {/* Projects Grid */}
         {loading ? <div className="flex items-center justify-center py-16">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div> : <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{
+          </div> : <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{
         once: true,
         margin: "-100px"
       }}>
             {displayedProjects.map(project => <motion.div key={project.id} variants={itemVariants}>
                 <Link to={`/portfolio/${project.slug}`}>
-                  <Card className="group h-full overflow-hidden bg-card/50 backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all duration-300">
+                  <Card className="group h-full overflow-hidden bg-card backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all duration-300">
                     {/* Image */}
                     <div className="relative aspect-video overflow-hidden">
                       {project.image_url ? <img src={project.image_url} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" /> : <div className="w-full h-full bg-muted flex items-center justify-center">
@@ -122,24 +122,24 @@ export function PortfolioSection({
                     </div>
 
                     {/* Content */}
-                    <div className="p-6">
-                      {project.category && <Badge variant="secondary" className="mb-3">
+                    <div className="p-4">
+                      {project.category && <Badge variant="secondary" className="mb-2">
                           {project.category}
                         </Badge>}
-                      <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-primary transition-colors line-clamp-1">
+                      <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-1">
                         {project.title}
                       </h3>
-                      {project.description && <p className="text-white/70 text-sm mb-4 line-clamp-2">
+                      {project.description && <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
                           {project.description}
                         </p>}
 
                       {/* Technologies */}
-                      {project.technologies && project.technologies.length > 0 && <div className="flex flex-wrap gap-2">
-                          {project.technologies.slice(0, 4).map(tech => <span key={tech} className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/70">
+                      {project.technologies && project.technologies.length > 0 && <div className="flex flex-wrap gap-1.5">
+                          {project.technologies.slice(0, 3).map(tech => <span key={tech} className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
                               {tech}
                             </span>)}
-                          {project.technologies.length > 4 && <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/70">
-                              +{project.technologies.length - 4}
+                          {project.technologies.length > 3 && <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                              +{project.technologies.length - 3}
                             </span>}
                         </div>}
                     </div>
