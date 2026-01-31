@@ -1,8 +1,18 @@
 
 
-## Add Left-Side Black Gradient Overlay to Hero Banner
+## Create Unsplash Studio-Style Left Gradient Overlay
 
-Add a horizontal gradient overlay from left to right on the hero banner to enhance text readability on the left side where the content is displayed.
+Update the hero banner gradient to match the reference image style - a solid black area on the left that sharply transitions to reveal the content on the right.
+
+---
+
+### Reference Analysis
+
+The Unsplash Studio hero has:
+- **Solid black** (~95% opacity) covering the left 50-60% of the screen
+- **Sharp transition** in the middle area
+- **Fully visible images** on the right side
+- Text sits on the completely dark portion for maximum readability
 
 ---
 
@@ -10,24 +20,24 @@ Add a horizontal gradient overlay from left to right on the hero banner to enhan
 
 | Element | Current | Proposed |
 |---------|---------|----------|
-| Gradient overlay | `bg-gradient-to-t from-black/80 via-black/50 to-black/30` (bottom to top) | Keep existing + add left-to-right gradient |
-| Left side | Same opacity as rest of banner | Darker for better text contrast |
-| Right side (3D scene) | Same opacity | Lighter to show more of the background |
+| Left-side gradient | `from-black/70 via-black/40 to-transparent` | `from-black/95 via-black/90 via-40% via-black/50 via-60% to-transparent` |
+| Left coverage | Gradual fade from 70% | Solid black (95%) covering ~50% width, then fade |
+| Vertical gradient | Keep as-is | Keep as-is for depth |
 
 ---
 
 ### Visual Comparison
 
 ```text
-CURRENT (vertical gradient only):     WITH LEFT GRADIENT:
+CURRENT:                              PROPOSED (Unsplash-style):
 ┌─────────────────────────┐           ┌─────────────────────────┐
-│░░░░░░░░░░░░░░░░░░░░░░░░░│ ← Light   │████░░░░░░░░░░░░░░░░░░░░░│ ← Dark left
-│░░ Text Content    ░░░░░░│           │███░ Text Content  ░░░░░░│    fading
-│░░                 ░░░░░░│           │██░                ░░░░░░│    to
-│░░ [Buttons]       ░░░░░░│           │█░░ [Buttons]      ░░░░░░│    right
-│░░                 ░░░░░░│           │░░░                ░░░░░░│
-│████████████████████████│ ← Dark     │████████████████████████│ ← Dark bottom
+│███░░░░░░░░░░░░░░░░░░░░░│           │█████████████░░░░░░░░░░░│
+│██░░░░░░░░░░░░░░░░░░░░░░│           │█████████████░░░░░░░░░░░│
+│█░ Text Content   ░░░░░░│           │████████ Text █████░░░░░│
+│░░                ░░░░░░│           │████████ Content ██░░░░░│
+│░░░░░░░░░░░░░░░░░░░░░░░░│           │█████████████░░░░░░░░░░░│
 └─────────────────────────┘           └─────────────────────────┘
+ ← 70% fading to 0%                    ← 95% solid → sharp fade → 0%
 ```
 
 ---
@@ -36,40 +46,34 @@ CURRENT (vertical gradient only):     WITH LEFT GRADIENT:
 
 | File | Change |
 |------|--------|
-| `src/components/sections/HeroSection.tsx` | Add horizontal gradient overlay from left to right |
+| `src/components/sections/HeroSection.tsx` | Replace left-side gradient with Unsplash Studio-style solid-to-transparent gradient |
 
 ---
 
 ### Technical Details
 
-**Add a new gradient overlay (after line 60):**
+**Update line 62 - Replace the horizontal gradient:**
 
 ```tsx
-{/* Existing vertical gradient */}
-<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
-
-{/* NEW: Left-side horizontal gradient */}
+// Before
 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
 
-{/* Existing blur overlay */}
-<div 
-  className="absolute inset-0 transition-all duration-300 ease-out"
-  style={{ ... }}
-/>
+// After - Unsplash Studio style with solid black on left
+<div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.95)_0%,rgba(0,0,0,0.90)_40%,rgba(0,0,0,0.50)_60%,transparent_100%)]" />
 ```
 
-The classes:
-- `bg-gradient-to-r` - Gradient direction from left to right
-- `from-black/70` - Dark black on the left (70% opacity)
-- `via-black/40` - Medium fade in the middle
-- `to-transparent` - Fully transparent on the right side
+This custom gradient creates:
+- `0% - 40%`: Nearly solid black (95% → 90% opacity) - where text content sits
+- `40% - 60%`: Sharp transition zone (90% → 50% opacity)
+- `60% - 100%`: Fade to transparent - reveals right-side content (3D scene)
 
 ---
 
 ### Result
 
-- Left side (where text content is) has a stronger dark overlay
-- Right side (3D scene area) remains more visible
-- Better text readability without completely obscuring the background
-- Maintains the layered gradient effect (vertical + horizontal)
+- Left side has solid black coverage like Unsplash Studio reference
+- Text content sits on fully dark background for perfect readability
+- Sharp transition creates the distinct split effect
+- Right side (3D Spline scene) remains visible
+- Maintains the vertical gradient for bottom-to-top depth
 
