@@ -116,7 +116,7 @@ const Portfolio = () => {
                   {categories.map((category) => (
                     <Button
                       key={category}
-                      variant={activeCategory === category ? "hero" : "heroOutline"}
+                      variant={activeCategory === category ? "default" : "outline"}
                       size="sm"
                       onClick={() => setActiveCategory(category)}
                     >
