@@ -1,28 +1,34 @@
 
 
-## Fix Category Filter Visibility on Portfolio Page
+## Fix Category Filter - Projects Not Showing After Click
 
-The category filter buttons are not visible properly because they use the `heroOutline` variant which has `text-white` styling - designed for dark backgrounds but placed on the default page background.
+When clicking category buttons, projects don't appear because of Framer Motion animation configuration issue.
 
 ---
 
 ### Root Cause
 
-| Element | Current Styling | Problem |
-|---------|-----------------|---------|
-| Active filter button | `variant="hero"` | Works fine (green bg with white text) |
-| Inactive filter buttons | `variant="heroOutline"` | Uses `text-white`, `border-white/20`, `bg-white/5` - invisible on light backgrounds |
+The projects grid uses `whileInView` with `viewport={{ once: true }}`:
+
+```tsx
+<motion.div
+  variants={containerVariants}
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true }}  // <- Only animates ONCE, ever
+  className="grid..."
+>
+```
+
+**Problem**: After the initial animation runs, subsequent state changes (category filter) don't trigger a re-animation. The new filtered items inherit the "hidden" state but never animate to "visible" because the container already ran its one-time animation.
 
 ---
 
 ### Solution
 
-Update the category filter buttons to use proper variants that work on the page background:
-
-| State | Current | New |
-|-------|---------|-----|
-| Active | `variant="hero"` | `variant="default"` (primary color) |
-| Inactive | `variant="heroOutline"` | `variant="outline"` (border with primary text) |
+1. Replace `whileInView="visible"` with `animate="visible"` - this makes animation state-driven
+2. Add a `key` prop based on `activeCategory` to force re-mount and re-animate when category changes
+3. Keep `initial="hidden"` for the fade-in effect
 
 ---
 
@@ -30,58 +36,49 @@ Update the category filter buttons to use proper variants that work on the page 
 
 | File | Change |
 |------|--------|
-| `src/pages/Portfolio.tsx` | Change button variants from `hero`/`heroOutline` to `default`/`outline` for category filters |
+| `src/pages/Portfolio.tsx` | Update motion.div to use animate instead of whileInView, add key prop |
 
 ---
 
 ### Technical Details
 
-**Update `src/pages/Portfolio.tsx` (lines 117-124):**
+**Update `src/pages/Portfolio.tsx` (lines 129-134):**
 
 ```tsx
 // Before
-<Button
-  key={category}
-  variant={activeCategory === category ? "hero" : "heroOutline"}
-  size="sm"
-  onClick={() => setActiveCategory(category)}
+<motion.div
+  variants={containerVariants}
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true }}
+  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
 >
-  {category}
-</Button>
 
 // After
-<Button
-  key={category}
-  variant={activeCategory === category ? "default" : "outline"}
-  size="sm"
-  onClick={() => setActiveCategory(category)}
+<motion.div
+  key={activeCategory}
+  variants={containerVariants}
+  initial="hidden"
+  animate="visible"
+  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
 >
-  {category}
-</Button>
 ```
 
 ---
 
-### Visual Result
+### How The Fix Works
 
-```text
-Before (heroOutline - invisible on light bg):
-┌─────────────────────────────────────────┐
-│   [All] [Web App] [Mobile] [Design]     │  <- White text on light bg = invisible
-└─────────────────────────────────────────┘
-
-After (outline - visible on any bg):
-┌─────────────────────────────────────────┐
-│   [All] [Web App] [Mobile] [Design]     │  <- Primary text with border = visible
-└─────────────────────────────────────────┘
-```
+| Before | After |
+|--------|-------|
+| Animation runs once on page load | Animation runs on every category change |
+| `whileInView` depends on scroll position | `animate` is state-driven |
+| No re-mount on category change | `key={activeCategory}` forces re-mount |
 
 ---
 
 ### Result
 
-- Category filter buttons will be clearly visible on the page background
-- Active button shows solid primary color
-- Inactive buttons show primary-colored border and text
-- Consistent with theme colors for proper contrast in both light and dark modes
+- Projects will animate in when switching categories
+- Each category change triggers a fresh fade-in animation
+- Filtering will work correctly and visually show the filtered projects
 
