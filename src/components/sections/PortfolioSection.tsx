@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Loader2, ExternalLink } from "lucide-react";
+import { ArrowRight, Loader2, Eye } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -102,45 +102,44 @@ export function PortfolioSection({
         {/* Projects Grid */}
         {loading ? <div className="flex items-center justify-center py-16">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div> : <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{
+          </div> : <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{
         once: true,
         margin: "-100px"
       }}>
             {displayedProjects.map(project => <motion.div key={project.id} variants={itemVariants}>
                 <Link to={`/portfolio/${project.slug}`}>
-                  <Card className="group h-full overflow-hidden card-hover glass-card-light transition-all duration-300">
+                  <Card className="group h-full overflow-hidden bg-card/50 backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all duration-300">
                     {/* Image */}
-                    <div className="relative aspect-[4/3] overflow-hidden">
-                      {project.image_url ? <img src={project.image_url} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full bg-muted flex items-center justify-center">
-                          <span className="text-muted-foreground text-sm">No image</span>
+                    <div className="relative aspect-video overflow-hidden">
+                      {project.image_url ? <img src={project.image_url} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" /> : <div className="w-full h-full bg-muted flex items-center justify-center">
+                          <span className="text-muted-foreground">No image</span>
                         </div>}
-                      {project.category && <Badge className="absolute top-2 left-2 text-[10px] px-2 py-0.5 bg-primary/90 hover:bg-primary">
-                          {project.category}
-                        </Badge>}
-                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                          <ExternalLink className="w-4 h-4 text-primary-foreground" />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                          <Eye className="w-5 h-5 text-primary-foreground" />
                         </div>
                       </div>
                     </div>
 
                     {/* Content */}
-                    <div className="p-4 bg-[#f4f8f1] shadow-md">
-                      <h3 className="text-base font-bold text-foreground mb-1.5 group-hover:text-primary transition-colors line-clamp-1">
+                    <div className="p-6">
+                      {project.category && <Badge variant="secondary" className="mb-3">
+                          {project.category}
+                        </Badge>}
+                      <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-primary transition-colors line-clamp-1">
                         {project.title}
                       </h3>
-                      {project.description && <p className="text-muted-foreground text-xs mb-3 line-clamp-2">
+                      {project.description && <p className="text-white/70 text-sm mb-4 line-clamp-2">
                           {project.description}
                         </p>}
 
                       {/* Technologies */}
-                      {project.technologies && project.technologies.length > 0 && <div className="flex flex-wrap gap-1">
-                          {project.technologies.slice(0, 3).map(tech => <span key={tech} className="px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground text-[10px] font-medium">
+                      {project.technologies && project.technologies.length > 0 && <div className="flex flex-wrap gap-2">
+                          {project.technologies.slice(0, 4).map(tech => <span key={tech} className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/70">
                               {tech}
                             </span>)}
-                          {project.technologies.length > 3 && <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
-                              +{project.technologies.length - 3}
+                          {project.technologies.length > 4 && <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/70">
+                              +{project.technologies.length - 4}
                             </span>}
                         </div>}
                     </div>
