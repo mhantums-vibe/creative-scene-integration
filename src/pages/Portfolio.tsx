@@ -131,12 +131,12 @@ const Portfolio = () => {
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true }}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
                 >
                   {filteredProjects.map((project) => (
                     <motion.div key={project.id} variants={itemVariants}>
                       <Link to={`/portfolio/${project.slug}`}>
-                        <Card className="group overflow-hidden bg-card/50 backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all duration-300 cursor-pointer">
+                        <Card className="group overflow-hidden bg-card backdrop-blur-xl border-white/10 hover:border-primary/50 transition-all duration-300 cursor-pointer">
                           {/* Project Image */}
                           <div className="relative aspect-video overflow-hidden">
                             {project.image_url ? (
@@ -171,35 +171,35 @@ const Portfolio = () => {
                           </div>
 
                           {/* Project Info */}
-                          <div className="p-6">
+                          <div className="p-4">
                             {project.category && (
-                              <Badge variant="secondary" className="mb-3">
+                              <Badge variant="secondary" className="mb-2">
                                 {project.category}
                               </Badge>
                             )}
-                            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-primary transition-colors">
+                            <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-1">
                               {project.title}
                             </h3>
                             {project.description && (
-                              <p className="text-white/70 text-sm mb-4 line-clamp-2">
+                              <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
                                 {project.description}
                               </p>
                             )}
                             
                             {/* Technologies */}
                             {project.technologies && project.technologies.length > 0 && (
-                              <div className="flex flex-wrap gap-2">
-                                {project.technologies.slice(0, 4).map((tech) => (
+                              <div className="flex flex-wrap gap-1.5">
+                                {project.technologies.slice(0, 3).map((tech) => (
                                   <span
                                     key={tech}
-                                    className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/70"
+                                    className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground"
                                   >
                                     {tech}
                                   </span>
                                 ))}
-                                {project.technologies.length > 4 && (
-                                  <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/70">
-                                    +{project.technologies.length - 4}
+                                {project.technologies.length > 3 && (
+                                  <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                                    +{project.technologies.length - 3}
                                   </span>
                                 )}
                               </div>
