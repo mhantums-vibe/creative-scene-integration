@@ -2,18 +2,10 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { motion } from "framer-motion";
-import { Eye, Github, Loader2 } from "lucide-react";
+import { Eye, Github, Loader2, Briefcase } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -77,30 +69,20 @@ const Portfolio = () => {
       <Header />
       <main className="pt-20">
         {/* Hero Banner */}
-        <section className="relative py-16 lg:py-24 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
+        <section className="pt-32 pb-20 bg-accent relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent" />
           <div className="container mx-auto px-4 relative z-10">
-            <Breadcrumb className="mb-6">
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink asChild>
-                    <Link to="/" className="text-white/70 hover:text-white">Home</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="text-white/50" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage className="text-primary">Portfolio</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-            
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="max-w-3xl"
+              className="max-w-3xl mx-auto text-center"
             >
-              <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+              <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-2 mb-6">
+                <Briefcase className="w-4 h-4 text-primary" />
+                <span className="text-sm text-primary font-medium">Our Work</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
                 Our <span className="text-primary">Portfolio</span>
               </h1>
               <p className="text-lg text-white/70 leading-relaxed">
