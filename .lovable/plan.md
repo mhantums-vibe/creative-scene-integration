@@ -1,18 +1,23 @@
 
+## Fix Favicon Flickering on Page Refresh
 
-## Remove Duplicate Header from ContactSection
-
-The ContactSection component has a section header (pill badge, title, and description) that duplicates the banner already present in the Contact page. This creates redundant content when viewing the Contact page.
+The favicon shows "Y" briefly before switching to the main favicon because the browser defaults to loading `/public/favicon.ico` which contains an old "Y" icon, and there's no explicit favicon link in `index.html`.
 
 ---
 
-### Current Issue
+### Root Cause
 
-The Contact page now shows two headers:
-1. **Page Banner** (in Contact.tsx): "Get In Touch" pill → "Contact Us" title
-2. **Section Header** (in ContactSection.tsx): "Get in Touch" pill → "Let's Start Your Next Project" title
+| Issue | Current State |
+|-------|--------------|
+| No favicon link tag | `index.html` has no `<link rel="icon">` tag |
+| Default fallback | Browser loads `/favicon.ico` (contains "Y" icon) |
+| No favicon setting | `site_settings` table has no `favicon_url` entry |
 
-This is redundant and should be cleaned up.
+---
+
+### Solution
+
+Replace the old `/public/favicon.ico` with the YessBangla logo and add an explicit favicon link in `index.html`. This ensures the correct favicon loads immediately without any flicker.
 
 ---
 
@@ -20,57 +25,53 @@ This is redundant and should be cleaned up.
 
 | File | Change |
 |------|--------|
-| `src/components/sections/ContactSection.tsx` | Remove the section header (lines 69-89) |
+| `index.html` | Add explicit `<link rel="icon">` tag pointing to the favicon |
+| `public/favicon.ico` | Replace with the YessBangla logo favicon |
 
 ---
 
 ### Technical Details
 
-**Remove the section header block (lines 69-89):**
+**1. Update `index.html` to add explicit favicon link:**
 
-```tsx
-// DELETE this entire block:
-{/* Section Header */}
-<motion.div
-  className="text-center max-w-3xl mx-auto mb-16"
-  initial={{ opacity: 0, y: 20 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  viewport={{ once: true }}
-  transition={{ duration: 0.6 }}
->
-  <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-    Get in Touch
-  </span>
-  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-    Let's Start Your
-    <br />
-    <span className="gradient-text-primary">Next Project</span>
-  </h2>
-  <p className="text-lg text-muted-foreground">
-    Have a project in mind? We'd love to hear from you. 
-    Send us a message and we'll respond as soon as possible.
-  </p>
-</motion.div>
+Add the following inside the `<head>` section (after line 5):
+
+```html
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/favicon.png" />
 ```
 
-**Adjust section padding:**
+**2. Download and add the YessBangla logo as favicon:**
 
-Change the section padding from `py-24` to `py-16` since the page banner now provides adequate top spacing:
+The current logo is stored at:
+`https://zcimdsqvruzzorsdxxzs.supabase.co/storage/v1/object/public/site_assets/1769144181132.png`
 
-```tsx
-// Before
-<section id="contact" className="py-24 bg-background">
+We need to:
+- Download this image and save it as `public/favicon.png`
+- Optionally keep a `.ico` version for older browser compatibility
 
-// After
-<section id="contact" className="py-16 bg-background">
+**3. Also update the page title and meta tags:**
+
+While fixing the favicon, we should also update the title from "Lovable App" to "YessBangla":
+
+```html
+<title>YessBangla - Innovative IT Solutions</title>
+<meta name="description" content="YessBangla - Innovative IT Solutions for your business" />
+<meta property="og:title" content="YessBangla - Innovative IT Solutions" />
+<meta property="og:description" content="YessBangla - Innovative IT Solutions for your business" />
 ```
+
+---
+
+### Alternative Approach
+
+If you prefer to keep the favicon dynamic (fetched from database), we could create a React component that updates the favicon on mount. However, this would still cause a brief flicker on initial load. The static approach above is the recommended solution for zero flicker.
 
 ---
 
 ### Result
 
-- Contact page will have a single, clean header in the banner
-- ContactSection will only contain the contact info cards and form
-- No duplicate "Get in Touch" content
-- Better visual flow from banner to content
-
+- Favicon will load correctly on first paint without flickering
+- The "Y" icon will no longer appear
+- Page title will show "YessBangla" instead of "Lovable App"
+- Apple touch icon will also use the correct logo
