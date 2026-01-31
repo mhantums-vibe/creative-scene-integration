@@ -1,23 +1,7 @@
 
-## Fix Favicon Flickering on Page Refresh
+## Remove Contact Section from Homepage
 
-The favicon shows "Y" briefly before switching to the main favicon because the browser defaults to loading `/public/favicon.ico` which contains an old "Y" icon, and there's no explicit favicon link in `index.html`.
-
----
-
-### Root Cause
-
-| Issue | Current State |
-|-------|--------------|
-| No favicon link tag | `index.html` has no `<link rel="icon">` tag |
-| Default fallback | Browser loads `/favicon.ico` (contains "Y" icon) |
-| No favicon setting | `site_settings` table has no `favicon_url` entry |
-
----
-
-### Solution
-
-Replace the old `/public/favicon.ico` with the YessBangla logo and add an explicit favicon link in `index.html`. This ensures the correct favicon loads immediately without any flicker.
+Remove the contact cards and form from the homepage and make the Contact navigation button go directly to the dedicated Contact page.
 
 ---
 
@@ -25,53 +9,52 @@ Replace the old `/public/favicon.ico` with the YessBangla logo and add an explic
 
 | File | Change |
 |------|--------|
-| `index.html` | Add explicit `<link rel="icon">` tag pointing to the favicon |
-| `public/favicon.ico` | Replace with the YessBangla logo favicon |
+| `src/pages/Index.tsx` | Remove the ContactSection import and the contact section wrapper |
+| `src/components/layout/Header.tsx` | Remove `sectionId` from Contact nav item so it links directly to `/contact` |
 
 ---
 
 ### Technical Details
 
-**1. Update `index.html` to add explicit favicon link:**
+**1. Update `src/pages/Index.tsx`:**
 
-Add the following inside the `<head>` section (after line 5):
+Remove line 6 (ContactSection import) and lines 29-31 (the contact section):
 
-```html
-<link rel="icon" type="image/png" href="/favicon.png" />
-<link rel="apple-touch-icon" href="/favicon.png" />
+```tsx
+// Remove this import:
+import { ContactSection } from "@/components/sections/ContactSection";
+
+// Remove this section:
+<section id="contact">
+  <ContactSection />
+</section>
 ```
 
-**2. Download and add the YessBangla logo as favicon:**
+**2. Update `src/components/layout/Header.tsx`:**
 
-The current logo is stored at:
-`https://zcimdsqvruzzorsdxxzs.supabase.co/storage/v1/object/public/site_assets/1769144181132.png`
+Remove the `sectionId` property from the Contact item in `moreNavItems` (lines 39-42):
 
-We need to:
-- Download this image and save it as `public/favicon.png`
-- Optionally keep a `.ico` version for older browser compatibility
+```tsx
+// Before
+{
+  name: "Contact",
+  href: "/contact",
+  sectionId: "contact"  // Remove this line
+}
 
-**3. Also update the page title and meta tags:**
-
-While fixing the favicon, we should also update the title from "Lovable App" to "YessBangla":
-
-```html
-<title>YessBangla - Innovative IT Solutions</title>
-<meta name="description" content="YessBangla - Innovative IT Solutions for your business" />
-<meta property="og:title" content="YessBangla - Innovative IT Solutions" />
-<meta property="og:description" content="YessBangla - Innovative IT Solutions for your business" />
+// After
+{
+  name: "Contact",
+  href: "/contact"
+}
 ```
 
----
-
-### Alternative Approach
-
-If you prefer to keep the favicon dynamic (fetched from database), we could create a React component that updates the favicon on mount. However, this would still cause a brief flicker on initial load. The static approach above is the recommended solution for zero flicker.
+This ensures the `handleNavClick` function won't try to smooth-scroll or use hash navigation - it will simply navigate directly to `/contact`.
 
 ---
 
 ### Result
 
-- Favicon will load correctly on first paint without flickering
-- The "Y" icon will no longer appear
-- Page title will show "YessBangla" instead of "Lovable App"
-- Apple touch icon will also use the correct logo
+- Homepage will no longer show the contact cards and form
+- Clicking "Contact" in the navigation (both desktop dropdown and mobile menu) will navigate directly to the `/contact` page
+- Footer contact link already points to `/contact` and remains unchanged
