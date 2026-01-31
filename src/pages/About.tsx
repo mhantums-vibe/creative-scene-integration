@@ -62,7 +62,7 @@ const About = () => {
         <AboutSection />
 
         {/* Values Section */}
-        <section className="py-20 relative">
+        <section id="team" className="py-20 relative">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

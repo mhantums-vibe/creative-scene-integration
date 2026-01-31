@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { CheckCircle2, Users, Target, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { Link } from "react-router-dom";
 const features = ["Expert team with 8+ years of experience", "Cutting-edge technology stack", "Agile development methodology", "Dedicated support and maintenance", "Transparent communication", "Competitive pricing"];
 const stats = [{
   icon: Users,
@@ -118,11 +119,11 @@ export function AboutSection() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="default" size="lg">
-                Learn More About Us
+              <Button variant="default" size="lg" asChild>
+                <Link to="/about">Learn More About Us</Link>
               </Button>
-              <Button variant="outline" size="lg">
-                Meet Our Team
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/about#team">Meet Our Team</Link>
               </Button>
             </div>
           </motion.div>
