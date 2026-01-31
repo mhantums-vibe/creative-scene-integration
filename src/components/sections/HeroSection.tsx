@@ -58,6 +58,8 @@ export function HeroSection() {
         <div className="absolute inset-0 z-0">
           <img src={settings.hero_banner_url} alt="Hero Banner" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+          {/* Left-side horizontal gradient for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
           <div 
             className="absolute inset-0 transition-all duration-300 ease-out"
             style={{ 
