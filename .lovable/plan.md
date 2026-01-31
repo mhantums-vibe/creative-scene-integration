@@ -1,28 +1,31 @@
 
+## Fix About Page Card Text Visibility
 
-## Fix "Learn More About Us" and "Meet Our Team" Buttons
-
-The buttons in the About section are currently non-functional because they lack navigation logic.
+The card texts and headers on the About page are invisible because they use hardcoded `text-white` colors that don't work in light mode.
 
 ---
 
 ### Root Cause
 
-| Button | Current State | Problem |
-|--------|---------------|---------|
-| Learn More About Us | `<Button variant="default" size="lg">` | No onClick or Link - does nothing |
-| Meet Our Team | `<Button variant="outline" size="lg">` | No onClick or Link - does nothing |
+| Element | Current Class | Problem |
+|---------|---------------|---------|
+| Card title (h3) | `text-white` | White text on white background in light mode = invisible |
+| Card description (p) | `text-white/70` | Semi-transparent white on white = invisible |
+| Section heading | `text-white` | Same issue |
+| Section subheading | `text-white/70` | Same issue |
+
+The Values section on the About page has no dark background, so it inherits `bg-background` which is white in light mode. The text colors need to use theme-aware classes.
 
 ---
 
 ### Solution
 
-Convert both buttons to navigation links using React Router's `Link` component with `asChild` prop on Button:
+Replace hardcoded `text-white` classes with theme-aware text classes:
 
-| Button | Destination |
-|--------|-------------|
-| Learn More About Us | `/about` - navigates to the About page |
-| Meet Our Team | `/about#team` - navigates to About page, scrolls to Team section |
+| Current | Replace With | Reason |
+|---------|--------------|--------|
+| `text-white` | `text-foreground` | Uses theme-aware foreground color |
+| `text-white/70` | `text-muted-foreground` | Uses theme-aware muted text |
 
 ---
 
@@ -30,56 +33,56 @@ Convert both buttons to navigation links using React Router's `Link` component w
 
 | File | Change |
 |------|--------|
-| `src/components/sections/AboutSection.tsx` | Import Link from react-router-dom, wrap buttons with Link component |
-| `src/pages/About.tsx` | Add `id="team"` to the Team values card section for anchor navigation |
+| `src/pages/About.tsx` | Update text colors in the Values section to use theme-aware classes |
 
 ---
 
 ### Technical Details
 
-**Update `src/components/sections/AboutSection.tsx`:**
+**Update `src/pages/About.tsx` (lines 74-96):**
 
 ```tsx
-// Add import at top
-import { Link } from "react-router-dom";
+// Section header (line 74)
+<h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+  Our Core <span className="text-primary">Values</span>
+</h2>
 
-// Update buttons (lines 120-127)
-<div className="flex flex-col sm:flex-row gap-4">
-  <Button variant="default" size="lg" asChild>
-    <Link to="/about">Learn More About Us</Link>
-  </Button>
-  <Button variant="outline" size="lg" asChild>
-    <Link to="/about#team">Meet Our Team</Link>
-  </Button>
-</div>
+// Section description (line 77)
+<p className="text-muted-foreground max-w-2xl mx-auto">
+  The principles that guide our work and define who we are as a company.
+</p>
+
+// Card title (line 95)
+<h3 className="text-xl font-semibold text-foreground mb-2">{value.title}</h3>
+
+// Card description (line 96)
+<p className="text-muted-foreground text-sm leading-relaxed">{value.description}</p>
 ```
 
-**Update `src/pages/About.tsx`:**
-
-Add an `id="team"` to the Values/Team section for scroll targeting:
+Also update the Card background for better visibility:
 
 ```tsx
-// Update the Values section (around line 65)
-<section id="team" className="py-20 relative">
+// Line 91 - Add solid background instead of transparent
+<Card className="p-6 h-full bg-card border-border hover:border-primary/50 transition-all">
 ```
 
 ---
 
-### How It Works
+### Before vs After
 
-```text
-Homepage (AboutSection)
-        │
-        ├── [Learn More About Us] ──► /about (full About page)
-        │
-        └── [Meet Our Team] ──► /about#team (About page, scrolls to team section)
-```
+| Element | Before (Invisible in Light Mode) | After (Theme-Aware) |
+|---------|----------------------------------|---------------------|
+| "Our Core Values" | `text-white` | `text-foreground` |
+| Section subtitle | `text-white/70` | `text-muted-foreground` |
+| "Mission", "Vision", etc. | `text-white` | `text-foreground` |
+| Card descriptions | `text-white/70` | `text-muted-foreground` |
+| Card background | `bg-card/50` (transparent) | `bg-card` (solid) |
 
 ---
 
 ### Result
 
-- "Learn More About Us" button navigates to the dedicated About page
-- "Meet Our Team" button navigates to About page and scrolls to the team/values section
-- Both buttons work correctly from the homepage and any other page using AboutSection
-
+- Card titles (Mission, Vision, Values, Team) will be visible in both light and dark modes
+- Card descriptions will have proper contrast in all themes
+- Section headers will adapt to the current theme
+- Cards will have solid backgrounds for better text readability
