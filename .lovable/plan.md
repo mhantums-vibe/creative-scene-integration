@@ -1,8 +1,8 @@
 
 
-## Add Backdrop Blur Effect to Hero Banner
+## Add Left-Side Black Gradient Overlay to Hero Banner
 
-Apply a frosted glass backdrop blur effect to the hero section's banner image, matching the style used on service cards.
+Add a horizontal gradient overlay from left to right on the hero banner to enhance text readability on the left side where the content is displayed.
 
 ---
 
@@ -10,24 +10,24 @@ Apply a frosted glass backdrop blur effect to the hero section's banner image, m
 
 | Element | Current | Proposed |
 |---------|---------|----------|
-| Banner image | `opacity-30` | Full opacity with blur overlay |
-| Gradient overlay | `bg-gradient-to-b from-background/80...` | Keep gradient |
-| Blur layer | None | Add `backdrop-blur-md bg-black/10` |
+| Gradient overlay | `bg-gradient-to-t from-black/80 via-black/50 to-black/30` (bottom to top) | Keep existing + add left-to-right gradient |
+| Left side | Same opacity as rest of banner | Darker for better text contrast |
+| Right side (3D scene) | Same opacity | Lighter to show more of the background |
 
 ---
 
 ### Visual Comparison
 
 ```text
-CURRENT:                           WITH BACKDROP BLUR:
-┌─────────────────────────┐        ┌─────────────────────────┐
-│▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒│        │░░░░░░░░░░░░░░░░░░░░░░░░░│
-│▒▒ Innovative IT        ▒│        │░░ Innovative IT        ░│
-│▒▒ Solutions for        ▒│ ← 30%  │░░ Solutions for        ░│ ← Blurred
-│▒▒ Your Business        ▒│  opacity│░░ Your Business        ░│   frosted
-│▒▒                      ▒│        │░░                      ░│   glass
-│▒▒ [Stats]              ▒│        │░░ [Stats]              ░│
-└─────────────────────────┘        └─────────────────────────┘
+CURRENT (vertical gradient only):     WITH LEFT GRADIENT:
+┌─────────────────────────┐           ┌─────────────────────────┐
+│░░░░░░░░░░░░░░░░░░░░░░░░░│ ← Light   │████░░░░░░░░░░░░░░░░░░░░░│ ← Dark left
+│░░ Text Content    ░░░░░░│           │███░ Text Content  ░░░░░░│    fading
+│░░                 ░░░░░░│           │██░                ░░░░░░│    to
+│░░ [Buttons]       ░░░░░░│           │█░░ [Buttons]      ░░░░░░│    right
+│░░                 ░░░░░░│           │░░░                ░░░░░░│
+│████████████████████████│ ← Dark     │████████████████████████│ ← Dark bottom
+└─────────────────────────┘           └─────────────────────────┘
 ```
 
 ---
@@ -36,56 +36,40 @@ CURRENT:                           WITH BACKDROP BLUR:
 
 | File | Change |
 |------|--------|
-| `src/components/sections/HeroSection.tsx` | Add backdrop blur overlay layer, adjust image opacity |
+| `src/components/sections/HeroSection.tsx` | Add horizontal gradient overlay from left to right |
 
 ---
 
 ### Technical Details
 
-**Update the hero banner background (lines 41-44):**
+**Add a new gradient overlay (after line 60):**
 
 ```tsx
-// Before
-{settings.hero_banner_url && (
-  <div className="absolute inset-0 z-0">
-    <img 
-      src={settings.hero_banner_url} 
-      alt="Hero Banner" 
-      className="w-full h-full object-cover opacity-30" 
-    />
-    <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
-  </div>
-)}
+{/* Existing vertical gradient */}
+<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
 
-// After
-{settings.hero_banner_url && (
-  <div className="absolute inset-0 z-0">
-    <img 
-      src={settings.hero_banner_url} 
-      alt="Hero Banner" 
-      className="w-full h-full object-cover" 
-    />
-    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
-    <div className="absolute inset-0 backdrop-blur-md bg-black/10" />
-  </div>
-)}
+{/* NEW: Left-side horizontal gradient */}
+<div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+
+{/* Existing blur overlay */}
+<div 
+  className="absolute inset-0 transition-all duration-300 ease-out"
+  style={{ ... }}
+/>
 ```
 
----
-
-### Key Changes
-
-1. **Remove `opacity-30`** from the image - the blur effect will handle visibility
-2. **Change gradient direction** from `to-b` to `to-t` to match service cards style
-3. **Update gradient colors** to use `from-black/80 via-black/50 to-black/30` for consistency
-4. **Add blur overlay** with `backdrop-blur-md bg-black/10` for the frosted glass effect
+The classes:
+- `bg-gradient-to-r` - Gradient direction from left to right
+- `from-black/70` - Dark black on the left (70% opacity)
+- `via-black/40` - Medium fade in the middle
+- `to-transparent` - Fully transparent on the right side
 
 ---
 
 ### Result
 
-- Hero banner matches the frosted glass aesthetic of service cards
-- Background image is visible but blurred for better text readability
-- Consistent visual language across the site
-- Maintains the iPhone-style glass design system
+- Left side (where text content is) has a stronger dark overlay
+- Right side (3D scene area) remains more visible
+- Better text readability without completely obscuring the background
+- Maintains the layered gradient effect (vertical + horizontal)
 
