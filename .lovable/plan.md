@@ -1,35 +1,36 @@
 
-## Add Backdrop Blur Effect to Service Card Content
 
-Apply a frosted glass backdrop blur effect to the text content area, overlaying the background image for better readability and a modern glass aesthetic.
+## Apply Full Card Backdrop Blur Effect
+
+Move the backdrop blur from the inner content container to the entire card, creating a full frosted glass effect over the background image.
 
 ---
 
 ### Current vs Proposed
 
-| Element | Current | With Blur Effect |
-|---------|---------|------------------|
-| Content container | `relative z-10` (no blur) | `relative z-10` + inner blurred container |
-| Background overlay | `bg-gradient-to-t from-black/80...` | Same gradient overlay |
-| Text container | No blur behind text | `backdrop-blur-md bg-black/20` frosted glass |
+| Element | Current | Proposed |
+|---------|---------|----------|
+| Card | No blur styling for background images | Add `backdrop-blur-md` overlay layer |
+| Content container | `backdrop-blur-md bg-black/20 rounded-lg p-3 -m-3` | Remove blur, keep only `relative z-10` |
+| Blur coverage | Just behind text content | Entire card area |
 
 ---
 
 ### Visual Comparison
 
 ```text
-CURRENT:                          WITH BACKDROP BLUR:
-┌─────────────────┐               ┌─────────────────┐
-│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ ← Image       │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ ← Image
-│▓▓ 🌐           ▓│               │▓┌─────────────┐▓│
-│▓▓              ▓│ ← Text on     │▓│░░ 🌐       ░│▓│ ← Frosted
-│▓▓ Website Dev  ▓│    gradient   │▓│░░          ░│▓│    glass
-│▓▓ Description  ▓│    only       │▓│░░ Website  ░│▓│    behind
-│▓▓ [tags]       ▓│               │▓│░░ Desc...  ░│▓│    text
-│▓▓ Learn More → ▓│               │▓│░░ [tags]   ░│▓│
-└─────────────────┘               │▓│░░ Learn →  ░│▓│
-                                  │▓└─────────────┘▓│
-                                  └─────────────────┘
+CURRENT (content blur only):       PROPOSED (full card blur):
+┌─────────────────┐                ┌─────────────────┐
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ ← Sharp image  │░░░░░░░░░░░░░░░░░│ ← Full blur
+│▓┌─────────────┐▓│                │░░ 🌐           ░│
+│▓│░░ 🌐       ░│▓│ ← Blur only    │░░              ░│
+│▓│░░          ░│▓│    behind      │░░ Website Dev  ░│
+│▓│░░ Website  ░│▓│    content     │░░ Description  ░│
+│▓│░░ Desc...  ░│▓│                │░░ [tags]       ░│
+│▓│░░ [tags]   ░│▓│                │░░ Learn More → ░│
+│▓│░░ Learn →  ░│▓│                └─────────────────┘
+│▓└─────────────┘▓│
+└─────────────────┘
 ```
 
 ---
@@ -38,32 +39,34 @@ CURRENT:                          WITH BACKDROP BLUR:
 
 | File | Change |
 |------|--------|
-| `src/components/sections/ServicesSection.tsx` | Add `backdrop-blur-md rounded-lg p-3 -m-3` to content container when `hasBackground` is true |
+| `src/components/sections/ServicesSection.tsx` | Add full-card blur overlay, remove content-only blur |
 
 ---
 
 ### Technical Details
 
-**Update the content container (line 139):**
-
+**1. Add blur overlay after the gradient (line 134-135):**
 ```tsx
-// Before
-<div className="relative z-10">
-
-// After
-<div className={`relative z-10 ${hasBackground ? 'backdrop-blur-md rounded-lg p-3 -m-3' : ''}`}>
+<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+{/* Add this new blur layer */}
+<div className="absolute inset-0 backdrop-blur-md bg-black/10" />
 ```
 
-The classes:
-- `backdrop-blur-md` - Applies the frosted glass blur effect
-- `rounded-lg` - Rounded corners matching the card style
-- `p-3 -m-3` - Negative margin + padding to expand the blur area without affecting layout
+**2. Simplify content container (line 139):**
+```tsx
+// Before
+<div className={`relative z-10 ${hasBackground ? 'backdrop-blur-md bg-black/20 rounded-lg p-3 -m-3' : ''}`}>
+
+// After
+<div className="relative z-10">
+```
 
 ---
 
 ### Result
 
-- Text content sits on a frosted glass panel
-- Background image is visible but blurred behind text
-- Matches the iPhone-style glass aesthetic used elsewhere in the app
-- Improves text readability over busy background images
+- Entire card has a frosted glass effect over the background image
+- Consistent blur across the full card area
+- Cleaner implementation without nested blur containers
+- Matches iPhone-style glass aesthetic
+
