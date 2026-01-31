@@ -1,19 +1,28 @@
 
 
-## Compact Portfolio Project Cards with Better Text Visibility
+## Fix Category Filter Visibility on Portfolio Page
 
-Make the portfolio project cards more compact and ensure text is properly visible with an appropriate card background.
+The category filter buttons are not visible properly because they use the `heroOutline` variant which has `text-white` styling - designed for dark backgrounds but placed on the default page background.
 
 ---
 
-### Current Issues
+### Root Cause
 
-| Problem | Current State |
-|---------|---------------|
-| Large padding | Content area uses `p-6` (24px) |
-| Wide gap | Cards have `gap-8` (32px) spacing |
-| Low contrast background | `bg-card/50` (50% opacity) makes text hard to read |
-| Only 3 columns | Grid is `lg:grid-cols-3` |
+| Element | Current Styling | Problem |
+|---------|-----------------|---------|
+| Active filter button | `variant="hero"` | Works fine (green bg with white text) |
+| Inactive filter buttons | `variant="heroOutline"` | Uses `text-white`, `border-white/20`, `bg-white/5` - invisible on light backgrounds |
+
+---
+
+### Solution
+
+Update the category filter buttons to use proper variants that work on the page background:
+
+| State | Current | New |
+|-------|---------|-----|
+| Active | `variant="hero"` | `variant="default"` (primary color) |
+| Inactive | `variant="heroOutline"` | `variant="outline"` (border with primary text) |
 
 ---
 
@@ -21,54 +30,58 @@ Make the portfolio project cards more compact and ensure text is properly visibl
 
 | File | Change |
 |------|--------|
-| `src/components/sections/PortfolioSection.tsx` | Compact padding, add solid card background, reduce gaps, 4-column grid |
-| `src/pages/Portfolio.tsx` | Apply same compact styling to portfolio page cards |
+| `src/pages/Portfolio.tsx` | Change button variants from `hero`/`heroOutline` to `default`/`outline` for category filters |
 
 ---
 
 ### Technical Details
 
-**1. Update `src/components/sections/PortfolioSection.tsx`:**
+**Update `src/pages/Portfolio.tsx` (lines 117-124):**
 
-- Change grid from `lg:grid-cols-3 gap-8` to `lg:grid-cols-4 gap-6`
-- Update Card class from `bg-card/50` to `bg-card` for solid background
-- Reduce content padding from `p-6` to `p-4`
-- Reduce title size from `text-xl` to `text-lg`
-- Reduce badge margin from `mb-3` to `mb-2`
-- Reduce description margin from `mb-4` to `mb-3`
-- Use `text-foreground` instead of `text-white` for better theme support
+```tsx
+// Before
+<Button
+  key={category}
+  variant={activeCategory === category ? "hero" : "heroOutline"}
+  size="sm"
+  onClick={() => setActiveCategory(category)}
+>
+  {category}
+</Button>
 
-**2. Update `src/pages/Portfolio.tsx`:**
-
-- Same grid changes: `lg:grid-cols-4 gap-6`
-- Same Card background: `bg-card` (solid)
-- Same compact padding: `p-4`
-- Same text color updates for visibility
+// After
+<Button
+  key={category}
+  variant={activeCategory === category ? "default" : "outline"}
+  size="sm"
+  onClick={() => setActiveCategory(category)}
+>
+  {category}
+</Button>
+```
 
 ---
 
-### Visual Summary
+### Visual Result
 
 ```text
-Before:                          After:
-┌─────────┐ ┌─────────┐ ┌─────────┐    ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐
-│         │ │         │ │         │    │      │ │      │ │      │ │      │
-│  Card   │ │  Card   │ │  Card   │    │ Card │ │ Card │ │ Card │ │ Card │
-│  p-6    │ │  p-6    │ │  p-6    │    │ p-4  │ │ p-4  │ │ p-4  │ │ p-4  │
-│  50%bg  │ │  50%bg  │ │  50%bg  │    │solid │ │solid │ │solid │ │solid │
-└─────────┘ └─────────┘ └─────────┘    └──────┘ └──────┘ └──────┘ └──────┘
-     gap-8       gap-8                    gap-6    gap-6    gap-6
+Before (heroOutline - invisible on light bg):
+┌─────────────────────────────────────────┐
+│   [All] [Web App] [Mobile] [Design]     │  <- White text on light bg = invisible
+└─────────────────────────────────────────┘
 
-3-column layout                   4-column compact layout
+After (outline - visible on any bg):
+┌─────────────────────────────────────────┐
+│   [All] [Web App] [Mobile] [Design]     │  <- Primary text with border = visible
+└─────────────────────────────────────────┘
 ```
 
 ---
 
 ### Result
 
-- Cards will be more compact with tighter spacing
-- 4 cards per row on large screens (up from 3)
-- Solid card background ensures text is always readable
-- Consistent styling across homepage portfolio section and portfolio page
-- Text uses theme-aware colors (`text-foreground`) for proper contrast
+- Category filter buttons will be clearly visible on the page background
+- Active button shows solid primary color
+- Inactive buttons show primary-colored border and text
+- Consistent with theme colors for proper contrast in both light and dark modes
 
