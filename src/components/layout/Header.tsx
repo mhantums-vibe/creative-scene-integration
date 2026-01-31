@@ -37,8 +37,7 @@ const moreNavItems = [{
   sectionId: "testimonials"
 }, {
   name: "Contact",
-  href: "/contact",
-  sectionId: "contact"
+  href: "/contact"
 }];
 
 // All nav items for mobile menu

@@ -3,7 +3,6 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { ServicesSection } from "@/components/sections/ServicesSection";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
-import { ContactSection } from "@/components/sections/ContactSection";
 import { Footer } from "@/components/layout/Footer";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
 
@@ -25,9 +24,6 @@ const Index = () => {
         </section>
         <section id="testimonials">
           <TestimonialsSection />
-        </section>
-        <section id="contact">
-          <ContactSection />
         </section>
       </main>
       <Footer />
