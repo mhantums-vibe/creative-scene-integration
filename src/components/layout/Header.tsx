@@ -228,7 +228,7 @@ export function Header() {
         height: 0
       }} transition={{
         duration: 0.3
-      }} className="lg:hidden backdrop-blur-lg bg-black/60 border-t border-white/10">
+      }} className="lg:hidden backdrop-blur-2xl bg-black/50 border-t border-white/10">
             <div className="container mx-auto px-4 py-4">
               <nav className="flex flex-col gap-2">
                 {allNavItems.map(item => <Link key={item.name} to={item.href} className="px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors" onClick={e => {

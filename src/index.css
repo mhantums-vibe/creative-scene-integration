@@ -136,38 +136,48 @@
     filter: drop-shadow(0 0 30px hsl(0 0% 100% / 0.3)) drop-shadow(0 0 60px hsl(0 0% 100% / 0.15));
   }
 
-  /* Optimized glass effects - reduced blur for better scroll performance */
+  /* iPhone-style frosted glass - dark variant */
   .glass-card {
-    @apply backdrop-blur-md border border-white/20;
+    @apply backdrop-blur-2xl border border-white/20;
     background: hsl(0 0% 100% / 0.08);
     box-shadow: 0 8px 32px hsl(0 0% 0% / 0.12), inset 0 1px 0 hsl(0 0% 100% / 0.15);
   }
 
-  /* Glass card - light variant (optimized) */
+  /* iPhone-style frosted glass - light variant (clear, no color) */
   .glass-card-light {
-    @apply backdrop-blur-sm border border-white/40 transition-all duration-300 ease-out;
+    @apply backdrop-blur-2xl border border-white/40 transition-all duration-300 ease-out;
     background: hsl(0 0% 100% / 0.25);
-    box-shadow: 0 4px 24px hsl(0 0% 0% / 0.06);
+    box-shadow: 
+      0 4px 24px hsl(0 0% 0% / 0.06),
+      0 1px 2px hsl(0 0% 0% / 0.04),
+      inset 0 1px 0 hsl(0 0% 100% / 0.6);
   }
 
   .glass-card-light:hover {
-    background: hsl(0 0% 100% / 0.35);
-    border-color: hsl(0 0% 100% / 0.5);
+    background: hsl(0 0% 100% / 0.4);
+    border-color: hsl(0 0% 100% / 0.6);
     transform: translateY(-4px);
-    box-shadow: 0 8px 32px hsl(0 0% 0% / 0.1);
+    box-shadow: 
+      0 8px 32px hsl(0 0% 0% / 0.1),
+      0 0 60px hsl(0 0% 100% / 0.2),
+      0 0 30px hsl(0 0% 100% / 0.1),
+      inset 0 1px 0 hsl(0 0% 100% / 0.8);
   }
 
-  /* Optimized nav glass */
+  /* iPhone-style nav glass */
   .glass-nav {
-    @apply backdrop-blur-md border-b border-white/15;
-    background: hsl(0 0% 0% / 0.5);
+    @apply backdrop-blur-2xl border-b border-white/15;
+    background: hsl(0 0% 0% / 0.4);
+    box-shadow: 0 1px 0 hsl(0 0% 100% / 0.05);
   }
 
   /* Scrolled state nav glass */
   .glass-nav-scrolled {
-    @apply backdrop-blur-lg border-b border-white/25;
-    background: hsl(0 0% 0% / 0.75);
-    box-shadow: 0 4px 20px hsl(0 0% 0% / 0.2);
+    @apply backdrop-blur-2xl border-b border-white/25;
+    background: hsl(0 0% 0% / 0.7);
+    box-shadow: 
+      0 4px 30px hsl(0 0% 0% / 0.3),
+      0 1px 0 hsl(0 0% 100% / 0.08);
   }
 
   .hero-section {
