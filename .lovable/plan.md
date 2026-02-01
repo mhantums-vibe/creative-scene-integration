@@ -1,88 +1,53 @@
 
-## Fix About Page Card Text Visibility
+## Fix Careers Page Scroll Position
 
-The card texts and headers on the About page are invisible because they use hardcoded `text-white` colors that don't work in light mode.
+When clicking "Careers" in the navigation, the page opens at the bottom (showing the footer) instead of at the top. This happens because the `Careers.tsx` page is missing the `useScrollToSection` hook that handles scroll-to-top behavior.
 
 ---
 
 ### Root Cause
 
-| Element | Current Class | Problem |
-|---------|---------------|---------|
-| Card title (h3) | `text-white` | White text on white background in light mode = invisible |
-| Card description (p) | `text-white/70` | Semi-transparent white on white = invisible |
-| Section heading | `text-white` | Same issue |
-| Section subheading | `text-white/70` | Same issue |
-
-The Values section on the About page has no dark background, so it inherits `bg-background` which is white in light mode. The text colors need to use theme-aware classes.
+The `useScrollToSection` hook is only used in `Index.tsx`. Other pages like Careers, Services, Portfolio, About, Testimonials, and Contact don't call this hook, so they don't trigger the scroll-to-top behavior when navigated to.
 
 ---
 
 ### Solution
 
-Replace hardcoded `text-white` classes with theme-aware text classes:
-
-| Current | Replace With | Reason |
-|---------|--------------|--------|
-| `text-white` | `text-foreground` | Uses theme-aware foreground color |
-| `text-white/70` | `text-muted-foreground` | Uses theme-aware muted text |
+Add the `useScrollToSection` hook to all public-facing pages that need scroll-to-top functionality.
 
 ---
 
-### Changes
+### Files to Update
 
 | File | Change |
 |------|--------|
-| `src/pages/About.tsx` | Update text colors in the Values section to use theme-aware classes |
+| `src/pages/Careers.tsx` | Import and call `useScrollToSection()` |
+| `src/pages/Services.tsx` | Import and call `useScrollToSection()` |
+| `src/pages/Portfolio.tsx` | Import and call `useScrollToSection()` |
+| `src/pages/About.tsx` | Import and call `useScrollToSection()` |
+| `src/pages/Testimonials.tsx` | Import and call `useScrollToSection()` |
+| `src/pages/Contact.tsx` | Import and call `useScrollToSection()` |
 
 ---
 
 ### Technical Details
 
-**Update `src/pages/About.tsx` (lines 74-96):**
+Each page will add this import and hook call:
 
 ```tsx
-// Section header (line 74)
-<h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-  Our Core <span className="text-primary">Values</span>
-</h2>
+import { useScrollToSection } from "@/hooks/useScrollToSection";
 
-// Section description (line 77)
-<p className="text-muted-foreground max-w-2xl mx-auto">
-  The principles that guide our work and define who we are as a company.
-</p>
-
-// Card title (line 95)
-<h3 className="text-xl font-semibold text-foreground mb-2">{value.title}</h3>
-
-// Card description (line 96)
-<p className="text-muted-foreground text-sm leading-relaxed">{value.description}</p>
+export default function PageName() {
+  useScrollToSection(); // Add this line at the top of the component
+  
+  // ... rest of component
+}
 ```
-
-Also update the Card background for better visibility:
-
-```tsx
-// Line 91 - Add solid background instead of transparent
-<Card className="p-6 h-full bg-card border-border hover:border-primary/50 transition-all">
-```
-
----
-
-### Before vs After
-
-| Element | Before (Invisible in Light Mode) | After (Theme-Aware) |
-|---------|----------------------------------|---------------------|
-| "Our Core Values" | `text-white` | `text-foreground` |
-| Section subtitle | `text-white/70` | `text-muted-foreground` |
-| "Mission", "Vision", etc. | `text-white` | `text-foreground` |
-| Card descriptions | `text-white/70` | `text-muted-foreground` |
-| Card background | `bg-card/50` (transparent) | `bg-card` (solid) |
 
 ---
 
 ### Result
 
-- Card titles (Mission, Vision, Values, Team) will be visible in both light and dark modes
-- Card descriptions will have proper contrast in all themes
-- Section headers will adapt to the current theme
-- Cards will have solid backgrounds for better text readability
+- Clicking "Careers" (or any nav link) will show the page starting from the top
+- Hash-based navigation (like `/about#team`) will still scroll to the specific section
+- Consistent scroll behavior across all pages
