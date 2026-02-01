@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { motion } from "framer-motion";
 import { Users, Target, Eye, Heart, Info, Linkedin, Twitter, Mail } from "lucide-react";
+import { useScrollToSection } from "@/hooks/useScrollToSection";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -69,6 +70,8 @@ const values = [
 ];
 
 const About = () => {
+  useScrollToSection();
+  
   return (
     <div className="min-h-screen bg-background">
       <Header />

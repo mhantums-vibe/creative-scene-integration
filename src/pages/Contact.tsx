@@ -3,8 +3,11 @@ import { Footer } from "@/components/layout/Footer";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { motion } from "framer-motion";
 import { Mail } from "lucide-react";
+import { useScrollToSection } from "@/hooks/useScrollToSection";
 
 const Contact = () => {
+  useScrollToSection();
+  
   return (
     <div className="min-h-screen bg-background">
       <Header />

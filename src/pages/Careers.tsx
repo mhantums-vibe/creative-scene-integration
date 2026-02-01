@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { JobCard } from "@/components/careers/JobCard";
+import { useScrollToSection } from "@/hooks/useScrollToSection";
 import { 
   Briefcase, 
   Globe, 
@@ -37,6 +38,8 @@ const benefits = [
 ];
 
 export default function Careers() {
+  useScrollToSection();
+  
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["job-postings"],
     queryFn: async () => {
