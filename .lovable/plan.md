@@ -1,72 +1,120 @@
 
-## Scale Container Width to 1200px for All Pages
+## Fix Scroll Lag/Stuttering Performance Issues
 
-Change the global container max-width from 1400px to 1200px for a more focused, text-friendly layout across all pages.
+Address multiple performance bottlenecks causing choppy scrolling across the site. The lag is caused by heavy GPU effects (backdrop-blur), 3D rendering, and scroll-triggered calculations.
 
 ---
 
-### Current State
+### Root Causes Identified
 
-The Tailwind configuration sets the container max-width to 1400px:
+| Issue | Location | Impact |
+|-------|----------|--------|
+| Spline 3D WebGL scene | HeroSection | Very High - continuous GPU rendering |
+| Dynamic scroll blur calculation | HeroSection | High - runs on every scroll event |
+| Excessive backdrop-blur effects | Glass cards, Header, Hero overlay | High - GPU intensive CSS |
+| Multiple whileInView animations | All sections | Medium - simultaneous DOM updates |
+| Staggered animation children | Services, Portfolio, Testimonials | Medium - many simultaneous tweens |
 
-```typescript
-container: {
-  center: true,
-  padding: "2rem",
-  screens: {
-    "2xl": "1400px",
-  },
-},
+---
+
+### Optimization Strategy
+
+**Priority 1: Hero Section Scroll Blur**
+
+Remove or debounce the dynamic blur effect that recalculates on every scroll:
+
+```tsx
+// Current (problematic):
+useEffect(() => {
+  const handleScroll = () => {
+    setScrollY(window.scrollY);  // Triggers re-render on every scroll
+  };
+  window.addEventListener("scroll", handleScroll, { passive: true });
+}, []);
+
+// Solution: Use CSS or remove dynamic blur entirely
 ```
 
-All pages use the `container` class which inherits this setting.
+**Priority 2: Reduce Backdrop Blur Usage**
+
+Replace heavy `backdrop-blur-2xl` (40px) with lighter alternatives:
+
+| Current | Optimized |
+|---------|-----------|
+| `backdrop-blur-2xl` | `backdrop-blur-sm` or `backdrop-blur-md` |
+| Multiple layered blurs | Single blur layer |
+| Dynamic blur calculation | Static blur value |
+
+**Priority 3: Pause Spline During Scroll (Optional)**
+
+Add scroll detection to pause/reduce 3D animation when not in viewport or during active scrolling.
+
+**Priority 4: Optimize Framer Motion Animations**
+
+- Add `layout={false}` to motion elements that don't need layout animations
+- Reduce stagger timing
+- Use simpler easing functions
 
 ---
 
-### Solution
+### Files to Modify
 
-Update a single file - the Tailwind config - to change the container width globally.
-
-| File | Change |
-|------|--------|
-| `tailwind.config.ts` | Change container max-width from `1400px` to `1200px` |
+| File | Changes |
+|------|---------|
+| `src/components/sections/HeroSection.tsx` | Remove dynamic scroll blur, use static overlay |
+| `src/index.css` | Reduce glass-card-light blur intensity |
+| `src/components/layout/Header.tsx` | Reduce nav blur intensity |
+| `src/components/sections/ServicesSection.tsx` | Remove nested backdrop-blur on cards |
+| `src/components/sections/AboutSection.tsx` | Simplify decorative blur elements |
 
 ---
 
-### Technical Details
+### Technical Implementation
 
-Update the container screens configuration in `tailwind.config.ts`:
+**1. HeroSection.tsx - Remove scroll-based blur:**
 
-```typescript
-container: {
-  center: true,
-  padding: "2rem",
-  screens: {
-    "2xl": "1200px",  // Changed from 1400px
-  },
-},
+Remove the scroll tracking effect and use a static overlay:
+```tsx
+// Remove useState and useEffect for scrollY
+// Replace dynamic backdrop-filter with static gradient overlay
+<div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/20" />
+```
+
+**2. index.css - Optimize glass-card-light:**
+
+```css
+.glass-card-light {
+  @apply backdrop-blur-md border border-white/40;  /* Changed from backdrop-blur-2xl */
+  background: hsl(0 0% 100% / 0.25);
+  /* Simplified shadow, removed heavy effects */
+  box-shadow: 0 4px 24px hsl(0 0% 0% / 0.06);
+}
+```
+
+**3. Header.tsx - Reduce navigation blur:**
+
+```css
+.glass-nav {
+  @apply backdrop-blur-md border-b border-white/15;  /* Changed from backdrop-blur-2xl */
+}
+.glass-nav-scrolled {
+  @apply backdrop-blur-lg;  /* Changed from backdrop-blur-2xl */
+}
+```
+
+**4. ServicesSection.tsx - Remove nested blur:**
+
+Remove the extra `backdrop-blur-md` inside service cards with background images:
+```tsx
+// Remove this redundant blur layer:
+<div className="absolute inset-0 backdrop-blur-md bg-black/10" />
 ```
 
 ---
 
-### Affected Areas
+### Expected Results
 
-This change automatically applies to all components and pages using the `container` class:
-
-- Header navigation
-- Footer
-- Hero sections
-- Services section
-- About section
-- Portfolio grid
-- Contact section
-- All inner pages (Careers, Testimonials, etc.)
-
----
-
-### Result
-
-- All page content will have a max-width of 1200px
-- Content remains centered with 2rem padding on smaller screens
-- Creates a more focused, readable layout especially for text-heavy sections
-- Consistent width across all pages
+- Smoother scrolling on all devices
+- Reduced GPU usage (less battery drain on mobile)
+- Maintained visual appeal with optimized glass effects
+- Faster paint times during scroll
