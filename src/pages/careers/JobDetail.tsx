@@ -97,9 +97,9 @@ export default function JobDetail() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-20">
+      <main className="pt-16">
         {/* Hero Section */}
-        <section className="relative py-16 lg:py-24 bg-gradient-to-b from-primary/5 to-background">
+        <section className="relative py-12 lg:py-16 bg-gradient-to-b from-primary/5 to-background">
           <div className="container mx-auto px-4">
             <Breadcrumb className="mb-6">
               <BreadcrumbList>
