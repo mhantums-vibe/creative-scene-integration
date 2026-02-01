@@ -1,120 +1,156 @@
 
-## Fix Scroll Lag/Stuttering Performance Issues
+## Add Team Members Management to Admin Panel
 
-Address multiple performance bottlenecks causing choppy scrolling across the site. The lag is caused by heavy GPU effects (backdrop-blur), 3D rendering, and scroll-triggered calculations.
-
----
-
-### Root Causes Identified
-
-| Issue | Location | Impact |
-|-------|----------|--------|
-| Spline 3D WebGL scene | HeroSection | Very High - continuous GPU rendering |
-| Dynamic scroll blur calculation | HeroSection | High - runs on every scroll event |
-| Excessive backdrop-blur effects | Glass cards, Header, Hero overlay | High - GPU intensive CSS |
-| Multiple whileInView animations | All sections | Medium - simultaneous DOM updates |
-| Staggered animation children | Services, Portfolio, Testimonials | Medium - many simultaneous tweens |
+Create a new admin page to manage team member information displayed on the About page, following the existing admin panel patterns.
 
 ---
 
-### Optimization Strategy
+### Current State
 
-**Priority 1: Hero Section Scroll Blur**
+- The `team_members` table exists with fields: name, role, bio, image_url, linkedin_url, twitter_url, email, display_order, is_active
+- RLS policies already allow admins to perform CRUD operations
+- The About page displays team members but currently uses hardcoded data
+- No admin interface exists to manage team members
 
-Remove or debounce the dynamic blur effect that recalculates on every scroll:
+---
+
+### Implementation Plan
+
+| File | Action | Description |
+|------|--------|-------------|
+| `src/pages/admin/Team.tsx` | Create | New admin page for team member CRUD |
+| `src/components/admin/AdminSidebar.tsx` | Update | Add "Team" navigation item |
+| `src/App.tsx` | Update | Add route for `/admin/team` |
+| `src/pages/About.tsx` | Update | Fetch team members from database instead of hardcoded data |
+
+---
+
+### 1. Create Team Admin Page
+
+New file `src/pages/admin/Team.tsx` following the same patterns as Jobs.tsx and Portfolio.tsx:
+
+**Features:**
+- Table view showing all team members with avatar, name, role, social links, and status
+- Create/Edit dialog with form fields:
+  - Name (required)
+  - Role (required)
+  - Bio (textarea)
+  - Profile Image (using ImageUpload component)
+  - LinkedIn URL
+  - Twitter URL
+  - Email
+  - Display Order
+  - Is Active toggle
+- Delete confirmation dialog
+- Toggle active status directly from table
+- Image upload to `site_assets` storage bucket
+
+**Form Layout:**
+```text
++----------------------------------+
+| Name*            | Role*         |
++----------------------------------+
+| Bio (textarea)                   |
++----------------------------------+
+| Profile Image [ImageUpload]      |
++----------------------------------+
+| LinkedIn URL     | Twitter URL   |
++----------------------------------+
+| Email            | Display Order |
++----------------------------------+
+| [x] Active                       |
++----------------------------------+
+|           [Cancel] [Save]        |
++----------------------------------+
+```
+
+---
+
+### 2. Update Admin Sidebar Navigation
+
+Add new navigation item between "Portfolio" and "Job Postings":
 
 ```tsx
-// Current (problematic):
+{ title: "Team", url: "/admin/team", icon: Users }
+```
+
+---
+
+### 3. Add Route in App.tsx
+
+Add the team route inside the admin layout:
+
+```tsx
+<Route path="team" element={<AdminTeam />} />
+```
+
+---
+
+### 4. Update About Page
+
+Replace hardcoded `teamMembers` array with dynamic data from Supabase:
+
+```tsx
+const [teamMembers, setTeamMembers] = useState([]);
+
 useEffect(() => {
-  const handleScroll = () => {
-    setScrollY(window.scrollY);  // Triggers re-render on every scroll
+  const fetchTeam = async () => {
+    const { data } = await supabase
+      .from("team_members")
+      .select("*")
+      .eq("is_active", true)
+      .order("display_order");
+    setTeamMembers(data || []);
   };
-  window.addEventListener("scroll", handleScroll, { passive: true });
+  fetchTeam();
 }, []);
-
-// Solution: Use CSS or remove dynamic blur entirely
-```
-
-**Priority 2: Reduce Backdrop Blur Usage**
-
-Replace heavy `backdrop-blur-2xl` (40px) with lighter alternatives:
-
-| Current | Optimized |
-|---------|-----------|
-| `backdrop-blur-2xl` | `backdrop-blur-sm` or `backdrop-blur-md` |
-| Multiple layered blurs | Single blur layer |
-| Dynamic blur calculation | Static blur value |
-
-**Priority 3: Pause Spline During Scroll (Optional)**
-
-Add scroll detection to pause/reduce 3D animation when not in viewport or during active scrolling.
-
-**Priority 4: Optimize Framer Motion Animations**
-
-- Add `layout={false}` to motion elements that don't need layout animations
-- Reduce stagger timing
-- Use simpler easing functions
-
----
-
-### Files to Modify
-
-| File | Changes |
-|------|---------|
-| `src/components/sections/HeroSection.tsx` | Remove dynamic scroll blur, use static overlay |
-| `src/index.css` | Reduce glass-card-light blur intensity |
-| `src/components/layout/Header.tsx` | Reduce nav blur intensity |
-| `src/components/sections/ServicesSection.tsx` | Remove nested backdrop-blur on cards |
-| `src/components/sections/AboutSection.tsx` | Simplify decorative blur elements |
-
----
-
-### Technical Implementation
-
-**1. HeroSection.tsx - Remove scroll-based blur:**
-
-Remove the scroll tracking effect and use a static overlay:
-```tsx
-// Remove useState and useEffect for scrollY
-// Replace dynamic backdrop-filter with static gradient overlay
-<div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/20" />
-```
-
-**2. index.css - Optimize glass-card-light:**
-
-```css
-.glass-card-light {
-  @apply backdrop-blur-md border border-white/40;  /* Changed from backdrop-blur-2xl */
-  background: hsl(0 0% 100% / 0.25);
-  /* Simplified shadow, removed heavy effects */
-  box-shadow: 0 4px 24px hsl(0 0% 0% / 0.06);
-}
-```
-
-**3. Header.tsx - Reduce navigation blur:**
-
-```css
-.glass-nav {
-  @apply backdrop-blur-md border-b border-white/15;  /* Changed from backdrop-blur-2xl */
-}
-.glass-nav-scrolled {
-  @apply backdrop-blur-lg;  /* Changed from backdrop-blur-2xl */
-}
-```
-
-**4. ServicesSection.tsx - Remove nested blur:**
-
-Remove the extra `backdrop-blur-md` inside service cards with background images:
-```tsx
-// Remove this redundant blur layer:
-<div className="absolute inset-0 backdrop-blur-md bg-black/10" />
 ```
 
 ---
 
-### Expected Results
+### Technical Details
 
-- Smoother scrolling on all devices
-- Reduced GPU usage (less battery drain on mobile)
-- Maintained visual appeal with optimized glass effects
-- Faster paint times during scroll
+**Team Admin Page Structure:**
+
+1. **Interface Definition:**
+```typescript
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  bio: string | null;
+  image_url: string | null;
+  linkedin_url: string | null;
+  twitter_url: string | null;
+  email: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+}
+```
+
+2. **Image Upload Handler:**
+```typescript
+const handleImageUpload = async (file: File): Promise<string> => {
+  const filePath = `team/${crypto.randomUUID()}.${file.name.split(".").pop()}`;
+  await supabase.storage.from("site_assets").upload(filePath, file);
+  return supabase.storage.from("site_assets").getPublicUrl(filePath).data.publicUrl;
+};
+```
+
+3. **Table Columns:**
+   - Avatar thumbnail
+   - Name + Role
+   - Social Links (icons linking to profiles)
+   - Status badge
+   - Actions (Edit, Toggle, Delete)
+
+---
+
+### Expected Result
+
+- Admins can add, edit, and remove team members from the admin panel
+- Changes reflect immediately on the About page
+- Profile images upload to Supabase storage
+- Display order controls the sequence on the public site
+- Inactive members are hidden from the public About page
