@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
+import authLogo from "@/assets/auth-logo.jpeg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -108,9 +109,11 @@ export function AuthForm({ mode }: AuthFormProps) {
     >
       <Card className="w-full max-w-md mx-auto bg-card/50 backdrop-blur-md border-border/50">
         <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 rounded-lg bg-primary flex items-center justify-center mb-4">
-            <span className="text-primary-foreground font-bold text-xl">Y</span>
-          </div>
+          <img 
+            src={authLogo} 
+            alt="YessBangla Logo" 
+            className="mx-auto w-14 h-14 rounded-lg object-cover mb-4"
+          />
           <CardTitle className="text-2xl">
             {mode === "login" ? "Welcome Back" : "Create Account"}
           </CardTitle>
