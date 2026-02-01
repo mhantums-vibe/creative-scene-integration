@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
@@ -25,7 +24,6 @@ const stats = [{
   label: "Years Experience"
 }];
 export function HeroSection() {
-  const [scrollY, setScrollY] = useState(0);
   const {
     user
   } = useAuth();
@@ -33,19 +31,6 @@ export function HeroSection() {
   const {
     settings
   } = useSiteSettings();
-
-  // Track scroll for backdrop blur animation
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Calculate blur intensity based on scroll (0-20px blur)
-  const blurIntensity = Math.min(scrollY / 30, 20);
-  const overlayOpacity = Math.min(0.1 + (scrollY / 500) * 0.2, 0.3);
 
   const handleBookingClick = () => {
     if (!user) {
@@ -57,16 +42,9 @@ export function HeroSection() {
       {settings.hero_banner_url && (
         <div className="absolute inset-0 z-0">
           <img src={settings.hero_banner_url} alt="Hero Banner" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
           {/* Left-side horizontal gradient for better text readability - Unsplash Studio style */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.95)_0%,rgba(0,0,0,0.90)_40%,rgba(0,0,0,0.50)_60%,transparent_100%)]" />
-          <div 
-            className="absolute inset-0 transition-all duration-300 ease-out"
-            style={{ 
-              backdropFilter: `blur(${blurIntensity}px)`,
-              backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})`
-            }}
-          />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.90)_0%,rgba(0,0,0,0.70)_40%,rgba(0,0,0,0.30)_60%,transparent_100%)]" />
         </div>
       )}
       
