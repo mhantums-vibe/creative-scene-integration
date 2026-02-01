@@ -16,8 +16,8 @@ export function useScrollToSection() {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }, 100);
-    } else if (location.pathname === "/") {
-      // Scroll to top when navigating to homepage without hash
+    } else {
+      // Scroll to top when navigating to any page without hash
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [location]);
