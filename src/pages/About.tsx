@@ -1,50 +1,25 @@
+import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { motion } from "framer-motion";
-import { Users, Target, Eye, Heart, Info, Linkedin, Twitter, Mail } from "lucide-react";
+import { Users, Target, Eye, Heart, Info, Linkedin, Twitter, Mail, Loader2 } from "lucide-react";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 
-const teamMembers = [
-  {
-    name: "Rafiq Ahmed",
-    role: "Founder & CEO",
-    bio: "Visionary leader with 10+ years in digital innovation. Passionate about transforming businesses through technology.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
-    initials: "RA",
-    linkedin: "#",
-    twitter: "#",
-  },
-  {
-    name: "Fatima Khan",
-    role: "Creative Director",
-    bio: "Award-winning designer crafting memorable brand experiences. Believes in the power of visual storytelling.",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop&crop=face",
-    initials: "FK",
-    linkedin: "#",
-    twitter: "#",
-  },
-  {
-    name: "Arif Hassan",
-    role: "Lead Developer",
-    bio: "Full-stack expert specializing in scalable web applications. Advocates for clean code and best practices.",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
-    initials: "AH",
-    linkedin: "#",
-    twitter: "#",
-  },
-  {
-    name: "Nadia Rahman",
-    role: "Marketing Manager",
-    bio: "Strategic marketer driving growth through data-driven campaigns. Expert in digital marketing and SEO.",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face",
-    initials: "NR",
-    linkedin: "#",
-    twitter: "#",
-  },
-];
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  bio: string | null;
+  image_url: string | null;
+  linkedin_url: string | null;
+  twitter_url: string | null;
+  email: string | null;
+  display_order: number;
+}
 
 const values = [
   {
@@ -70,7 +45,40 @@ const values = [
 ];
 
 const About = () => {
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [isLoadingTeam, setIsLoadingTeam] = useState(true);
+  
   useScrollToSection();
+
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("team_members")
+          .select("*")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true });
+
+        if (error) throw error;
+        setTeamMembers(data || []);
+      } catch (error) {
+        console.error("Error fetching team members:", error);
+      } finally {
+        setIsLoadingTeam(false);
+      }
+    };
+
+    fetchTeamMembers();
+  }, []);
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
   
   return (
     <div className="min-h-screen bg-background">
@@ -162,54 +170,72 @@ const About = () => {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {teamMembers.map((member, index) => (
-                <motion.div
-                  key={member.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <Card className="p-6 h-full bg-card border-border hover:border-primary/50 transition-all group">
-                    <div className="flex flex-col items-center text-center">
-                      <Avatar className="w-24 h-24 mb-4 ring-4 ring-primary/20 group-hover:ring-primary/40 transition-all">
-                        <AvatarImage src={member.image} alt={member.name} />
-                        <AvatarFallback className="text-xl font-semibold bg-primary/20 text-primary">
-                          {member.initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <h3 className="text-lg font-semibold text-foreground mb-1">{member.name}</h3>
-                      <p className="text-primary text-sm font-medium mb-3">{member.role}</p>
-                      <p className="text-muted-foreground text-sm leading-relaxed mb-4">{member.bio}</p>
-                      <div className="flex items-center gap-3">
-                        <a
-                          href={member.linkedin}
-                          className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                          aria-label={`${member.name}'s LinkedIn`}
-                        >
-                          <Linkedin className="w-4 h-4" />
-                        </a>
-                        <a
-                          href={member.twitter}
-                          className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                          aria-label={`${member.name}'s Twitter`}
-                        >
-                          <Twitter className="w-4 h-4" />
-                        </a>
-                        <a
-                          href={`mailto:${member.name.toLowerCase().replace(' ', '.')}@yessbangal.com`}
-                          className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                          aria-label={`Email ${member.name}`}
-                        >
-                          <Mail className="w-4 h-4" />
-                        </a>
+            {isLoadingTeam ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : teamMembers.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">No team members to display.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {teamMembers.map((member, index) => (
+                  <motion.div
+                    key={member.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <Card className="p-6 h-full bg-card border-border hover:border-primary/50 transition-all group">
+                      <div className="flex flex-col items-center text-center">
+                        <Avatar className="w-24 h-24 mb-4 ring-4 ring-primary/20 group-hover:ring-primary/40 transition-all">
+                          <AvatarImage src={member.image_url || undefined} alt={member.name} />
+                          <AvatarFallback className="text-xl font-semibold bg-primary/20 text-primary">
+                            {getInitials(member.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <h3 className="text-lg font-semibold text-foreground mb-1">{member.name}</h3>
+                        <p className="text-primary text-sm font-medium mb-3">{member.role}</p>
+                        <p className="text-muted-foreground text-sm leading-relaxed mb-4">{member.bio}</p>
+                        <div className="flex items-center gap-3">
+                          {member.linkedin_url && (
+                            <a
+                              href={member.linkedin_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
+                              aria-label={`${member.name}'s LinkedIn`}
+                            >
+                              <Linkedin className="w-4 h-4" />
+                            </a>
+                          )}
+                          {member.twitter_url && (
+                            <a
+                              href={member.twitter_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
+                              aria-label={`${member.name}'s Twitter`}
+                            >
+                              <Twitter className="w-4 h-4" />
+                            </a>
+                          )}
+                          {member.email && (
+                            <a
+                              href={`mailto:${member.email}`}
+                              className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
+                              aria-label={`Email ${member.name}`}
+                            >
+                              <Mail className="w-4 h-4" />
+                            </a>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>
