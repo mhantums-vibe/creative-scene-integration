@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { motion } from "framer-motion";
 import { Quote, Star, MessageSquareQuote } from "lucide-react";
+import { useScrollToSection } from "@/hooks/useScrollToSection";
 import { Card } from "@/components/ui/card";
 
 const testimonials = [
@@ -77,6 +78,8 @@ const itemVariants = {
 };
 
 const Testimonials = () => {
+  useScrollToSection();
+  
   return (
     <div className="min-h-screen bg-background">
       <Header />

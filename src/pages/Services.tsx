@@ -3,8 +3,10 @@ import { Footer } from "@/components/layout/Footer";
 import { ServicesSection } from "@/components/sections/ServicesSection";
 import { motion } from "framer-motion";
 import { Settings } from "lucide-react";
+import { useScrollToSection } from "@/hooks/useScrollToSection";
 
 const Services = () => {
+  useScrollToSection();
   return (
     <div className="min-h-screen bg-background">
       <Header />

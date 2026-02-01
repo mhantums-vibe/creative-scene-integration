@@ -3,6 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { motion } from "framer-motion";
 import { Eye, Github, Loader2, Briefcase } from "lucide-react";
+import { useScrollToSection } from "@/hooks/useScrollToSection";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +37,8 @@ const itemVariants = {
 };
 
 const Portfolio = () => {
+  useScrollToSection();
+  
   const [projects, setProjects] = useState<PortfolioItem[]>([]);
   const [categories, setCategories] = useState<string[]>(["All"]);
   const [activeCategory, setActiveCategory] = useState("All");
