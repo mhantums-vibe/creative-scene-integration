@@ -1,75 +1,72 @@
 
-## Move Section Header to Services Page Hero Banner
+## Scale Container Width to 1200px for All Pages
 
-Move the "Comprehensive IT Solutions for Every Need" header content from the `ServicesSection` component into the Services page hero banner. This creates a cleaner layout by consolidating the header into the hero and removing redundancy.
+Change the global container max-width from 1400px to 1200px for a more focused, text-friendly layout across all pages.
 
 ---
 
-### Current Issue
+### Current State
 
-The Services page currently shows:
-1. **Hero Banner**: "Our Services" with basic description
-2. **ServicesSection**: "Comprehensive IT Solutions for Every Need" header + services grid
+The Tailwind configuration sets the container max-width to 1400px:
 
-This creates visual redundancy with two separate headers.
+```typescript
+container: {
+  center: true,
+  padding: "2rem",
+  screens: {
+    "2xl": "1400px",
+  },
+},
+```
+
+All pages use the `container` class which inherits this setting.
 
 ---
 
 ### Solution
 
+Update a single file - the Tailwind config - to change the container width globally.
+
 | File | Change |
 |------|--------|
-| `src/pages/Services.tsx` | Update hero banner to use the "Comprehensive IT Solutions for Every Need" content |
-| `src/components/sections/ServicesSection.tsx` | Add prop to hide header when used on dedicated page |
+| `tailwind.config.ts` | Change container max-width from `1400px` to `1200px` |
 
 ---
 
 ### Technical Details
 
-**1. Update Services.tsx hero banner (lines 28-34):**
+Update the container screens configuration in `tailwind.config.ts`:
 
-Replace the current hero content:
-```tsx
-<h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-  Comprehensive IT Solutions
-  <br />
-  <span className="text-primary">for Every Need</span>
-</h1>
-<p className="text-lg text-white/70 leading-relaxed">
-  We offer a wide range of digital services to help your business thrive in the modern digital landscape.
-</p>
+```typescript
+container: {
+  center: true,
+  padding: "2rem",
+  screens: {
+    "2xl": "1200px",  // Changed from 1400px
+  },
+},
 ```
 
-**2. Update ServicesSection.tsx:**
+---
 
-Add a `hideHeader` prop to the component interface:
-```tsx
-interface ServicesSectionProps {
-  limit?: number;
-  showSeeMore?: boolean;
-  hideHeader?: boolean;
-}
-```
+### Affected Areas
 
-Conditionally render the header section based on this prop:
-```tsx
-{!hideHeader && (
-  <motion.div className="text-center max-w-3xl mx-auto mb-16">
-    {/* ... header content ... */}
-  </motion.div>
-)}
-```
+This change automatically applies to all components and pages using the `container` class:
 
-**3. Update Services.tsx to pass the prop:**
-```tsx
-<ServicesSection hideHeader />
-```
+- Header navigation
+- Footer
+- Hero sections
+- Services section
+- About section
+- Portfolio grid
+- Contact section
+- All inner pages (Careers, Testimonials, etc.)
 
 ---
 
 ### Result
 
-- Services page shows consolidated hero with "Comprehensive IT Solutions for Every Need"
-- Homepage continues to show the full section with its own header
-- No duplicate headers on the Services page
-- Consistent with other inner page patterns (Careers, Portfolio, etc.)
+- All page content will have a max-width of 1200px
+- Content remains centered with 2rem padding on smaller screens
+- Creates a more focused, readable layout especially for text-heavy sections
+- Consistent width across all pages
