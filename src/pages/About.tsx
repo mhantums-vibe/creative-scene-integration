@@ -72,9 +72,9 @@ const About = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-20">
+      <main className="pt-16">
         {/* Hero Banner */}
-        <section className="pt-32 pb-20 bg-accent relative overflow-hidden">
+        <section className="pt-24 pb-16 bg-accent relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent" />
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -102,7 +102,7 @@ const About = () => {
         <AboutSection />
 
         {/* Values Section */}
-        <section id="team" className="py-20 relative">
+        <section id="team" className="py-16 relative">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -142,7 +142,7 @@ const About = () => {
         </section>
 
         {/* Team Section */}
-        <section className="py-20 bg-accent/30 relative">
+        <section className="py-16 bg-accent/30 relative">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

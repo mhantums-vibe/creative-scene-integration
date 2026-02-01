@@ -80,9 +80,9 @@ const Testimonials = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-20">
+      <main className="pt-16">
         {/* Hero Banner */}
-        <section className="pt-32 pb-20 bg-accent relative overflow-hidden">
+        <section className="pt-24 pb-16 bg-accent relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent" />
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -106,7 +106,7 @@ const Testimonials = () => {
         </section>
 
         {/* Testimonials Grid */}
-        <section className="py-20">
+        <section className="py-16">
           <div className="container mx-auto px-4">
             <motion.div
               variants={containerVariants}

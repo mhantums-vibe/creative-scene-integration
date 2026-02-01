@@ -55,8 +55,9 @@ export default function Careers() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 bg-accent relative overflow-hidden">
+      <main className="pt-16">
+        {/* Hero Section */}
+        <section className="pt-24 pb-16 bg-accent relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
@@ -80,8 +81,8 @@ export default function Careers() {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-20 bg-muted/30">
+        {/* Benefits Section */}
+        <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <motion.div
             className="text-center mb-12"
@@ -119,8 +120,8 @@ export default function Careers() {
         </div>
       </section>
 
-      {/* Open Positions Section */}
-      <section className="py-20">
+        {/* Open Positions Section */}
+        <section className="py-16">
         <div className="container mx-auto px-4">
           <motion.div
             className="text-center mb-12"
@@ -161,7 +162,8 @@ export default function Careers() {
             </motion.div>
           )}
         </div>
-      </section>
+        </section>
+      </main>
 
       <Footer />
     </div>
