@@ -26,18 +26,19 @@ const Services = () => {
                 <span className="text-sm text-primary font-medium">What We Offer</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-                Our <span className="text-primary">Services</span>
+                Comprehensive IT Solutions
+                <br />
+                <span className="text-primary">for Every Need</span>
               </h1>
               <p className="text-lg text-white/70 leading-relaxed">
-                We offer comprehensive digital solutions to help your business thrive in the modern world. 
-                From web development to creative design, we've got you covered.
+                We offer a wide range of digital services to help your business thrive in the modern digital landscape.
               </p>
             </motion.div>
           </div>
         </section>
 
         {/* Services Grid */}
-        <ServicesSection />
+        <ServicesSection hideHeader />
       </main>
       <Footer />
     </div>
